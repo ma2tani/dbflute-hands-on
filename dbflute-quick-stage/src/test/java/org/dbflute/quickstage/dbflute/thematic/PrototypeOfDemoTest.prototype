@@ -13,7 +13,7 @@ import org.seasar.dbflute.cbean.SubQuery;
  * @author jflute
  */
 @SuppressWarnings("unused")
-public class PrototypeOfDemoTest extends UnitContainerTestCase {
+public class DemoTest extends UnitContainerTestCase {
 
     private MemberBhv memberBhv;
     private PurchaseBhv purchaseBhv;

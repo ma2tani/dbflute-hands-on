@@ -2,13 +2,14 @@
 # ========================================================================================
 #                                                                                 Overview
 #                                                                                 ========
-The quick stage for DBFlute (and Seasar).
-You can get the environment to execute DBFlute quickly.
+script配下の make-demo-test.bat|sh を叩いてみましょう。
+org.dbflute.quickstage.dbflute.thematic 配下に DemoTest.java ができます。
+(ctrl + shift + R で DemoTest を探してみましょう)
 
-src/test/java の org.dbflute.quickstage.dbflute.thematic 配下の、
-PrototypeOfDemoTest をコピーして、DemoTest を作成してみましょう。
-test_demo() でJUnit実行すれば、すぐに ConditionBean をテストできます。
+test_demo() をJUnit実行すれば、すぐに ConditionBean をテストできます。
 (Quick JUnit であれば ctrl + 0 で実行できます)
+gitignoreになっているので、自由に修正できます。
+「さくっとお試しConditionBean実装」という感じで、検証やテストや勉強などに利用してください。
 
 
 # ========================================================================================
