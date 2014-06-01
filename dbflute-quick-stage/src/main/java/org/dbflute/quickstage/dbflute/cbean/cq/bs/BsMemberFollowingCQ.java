@@ -18,6 +18,8 @@ package org.dbflute.quickstage.dbflute.cbean.cq.bs;
 import java.util.Map;
 
 import org.seasar.dbflute.cbean.*;
+import org.seasar.dbflute.cbean.chelper.*;
+import org.seasar.dbflute.cbean.coption.*;
 import org.seasar.dbflute.cbean.cvalue.ConditionValue;
 import org.seasar.dbflute.cbean.sqlclause.SqlClause;
 import org.seasar.dbflute.exception.IllegalConditionBeanOperationException;
@@ -39,8 +41,8 @@ public class BsMemberFollowingCQ extends AbstractBsMemberFollowingCQ {
     // ===================================================================================
     //                                                                         Constructor
     //                                                                         ===========
-    public BsMemberFollowingCQ(ConditionQuery childQuery, SqlClause sqlClause, String aliasName, int nestLevel) {
-        super(childQuery, sqlClause, aliasName, nestLevel);
+    public BsMemberFollowingCQ(ConditionQuery referrerQuery, SqlClause sqlClause, String aliasName, int nestLevel) {
+        super(referrerQuery, sqlClause, aliasName, nestLevel);
     }
 
     // ===================================================================================
@@ -50,7 +52,7 @@ public class BsMemberFollowingCQ extends AbstractBsMemberFollowingCQ {
      * Prepare InlineView query. <br />
      * {select ... from ... left outer join (select * from MEMBER_FOLLOWING) where FOO = [value] ...}
      * <pre>
-     * cb.query().queryMemberStatus().<span style="color: #FD4747">inline()</span>.setFoo...;
+     * cb.query().queryMemberStatus().<span style="color: #DD4747">inline()</span>.setFoo...;
      * </pre>
      * @return The condition-query for InlineView query. (NotNull)
      */
@@ -73,7 +75,7 @@ public class BsMemberFollowingCQ extends AbstractBsMemberFollowingCQ {
      * Prepare OnClause query. <br />
      * {select ... from ... left outer join MEMBER_FOLLOWING on ... and FOO = [value] ...}
      * <pre>
-     * cb.query().queryMemberStatus().<span style="color: #FD4747">on()</span>.setFoo...;
+     * cb.query().queryMemberStatus().<span style="color: #DD4747">on()</span>.setFoo...;
      * </pre>
      * @return The condition-query for OnClause query. (NotNull)
      * @throws IllegalConditionBeanOperationException When this condition-query is base query.
@@ -86,7 +88,6 @@ public class BsMemberFollowingCQ extends AbstractBsMemberFollowingCQ {
     // ===================================================================================
     //                                                                               Query
     //                                                                               =====
-
     protected ConditionValue _memberFollowingId;
     public ConditionValue getMemberFollowingId() {
         if (_memberFollowingId == null) { _memberFollowingId = nCV(); }
@@ -133,14 +134,14 @@ public class BsMemberFollowingCQ extends AbstractBsMemberFollowingCQ {
 
     /** 
      * Add order-by as ascend. <br />
-     * (わたし)MY_MEMBER_ID: {UQ, IX, NotNull, INTEGER(10), FK to MEMBER}
+     * (わたし)MY_MEMBER_ID: {UQ+, IX+, NotNull, INTEGER(10), FK to MEMBER}
      * @return this. (NotNull)
      */
     public BsMemberFollowingCQ addOrderBy_MyMemberId_Asc() { regOBA("MY_MEMBER_ID"); return this; }
 
     /**
      * Add order-by as descend. <br />
-     * (わたし)MY_MEMBER_ID: {UQ, IX, NotNull, INTEGER(10), FK to MEMBER}
+     * (わたし)MY_MEMBER_ID: {UQ+, IX+, NotNull, INTEGER(10), FK to MEMBER}
      * @return this. (NotNull)
      */
     public BsMemberFollowingCQ addOrderBy_MyMemberId_Desc() { regOBD("MY_MEMBER_ID"); return this; }
@@ -170,14 +171,14 @@ public class BsMemberFollowingCQ extends AbstractBsMemberFollowingCQ {
 
     /** 
      * Add order-by as ascend. <br />
-     * (あなた)YOUR_MEMBER_ID: {UQ+, IX, NotNull, INTEGER(10), FK to MEMBER}
+     * (あなた)YOUR_MEMBER_ID: {+UQ, IX+, NotNull, INTEGER(10), FK to MEMBER}
      * @return this. (NotNull)
      */
     public BsMemberFollowingCQ addOrderBy_YourMemberId_Asc() { regOBA("YOUR_MEMBER_ID"); return this; }
 
     /**
      * Add order-by as descend. <br />
-     * (あなた)YOUR_MEMBER_ID: {UQ+, IX, NotNull, INTEGER(10), FK to MEMBER}
+     * (あなた)YOUR_MEMBER_ID: {+UQ, IX+, NotNull, INTEGER(10), FK to MEMBER}
      * @return this. (NotNull)
      */
     public BsMemberFollowingCQ addOrderBy_YourMemberId_Desc() { regOBD("YOUR_MEMBER_ID"); return this; }
@@ -213,9 +214,9 @@ public class BsMemberFollowingCQ extends AbstractBsMemberFollowingCQ {
      *     public void query(PurchaseCB subCB) {
      *         subCB.specify().columnPurchaseDatetime();
      *     }
-     * }, <span style="color: #FD4747">aliasName</span>);
+     * }, <span style="color: #DD4747">aliasName</span>);
      * <span style="color: #3F7E5E">// order by [alias-name] asc</span>
-     * cb.<span style="color: #FD4747">addSpecifiedDerivedOrderBy_Asc</span>(<span style="color: #FD4747">aliasName</span>);
+     * cb.<span style="color: #DD4747">addSpecifiedDerivedOrderBy_Asc</span>(<span style="color: #DD4747">aliasName</span>);
      * </pre>
      * @param aliasName The alias name specified at (Specify)DerivedReferrer. (NotNull)
      * @return this. (NotNull)
@@ -230,9 +231,9 @@ public class BsMemberFollowingCQ extends AbstractBsMemberFollowingCQ {
      *     public void query(PurchaseCB subCB) {
      *         subCB.specify().columnPurchaseDatetime();
      *     }
-     * }, <span style="color: #FD4747">aliasName</span>);
+     * }, <span style="color: #DD4747">aliasName</span>);
      * <span style="color: #3F7E5E">// order by [alias-name] desc</span>
-     * cb.<span style="color: #FD4747">addSpecifiedDerivedOrderBy_Desc</span>(<span style="color: #FD4747">aliasName</span>);
+     * cb.<span style="color: #DD4747">addSpecifiedDerivedOrderBy_Desc</span>(<span style="color: #DD4747">aliasName</span>);
      * </pre>
      * @param aliasName The alias name specified at (Specify)DerivedReferrer. (NotNull)
      * @return this. (NotNull)
@@ -243,7 +244,7 @@ public class BsMemberFollowingCQ extends AbstractBsMemberFollowingCQ {
     // ===================================================================================
     //                                                                         Union Query
     //                                                                         ===========
-    protected void reflectRelationOnUnionQuery(ConditionQuery bqs, ConditionQuery uqs) {
+    public void reflectRelationOnUnionQuery(ConditionQuery bqs, ConditionQuery uqs) {
         MemberFollowingCQ bq = (MemberFollowingCQ)bqs;
         MemberFollowingCQ uq = (MemberFollowingCQ)uqs;
         if (bq.hasConditionQueryMemberByMyMemberId()) {
@@ -394,5 +395,7 @@ public class BsMemberFollowingCQ extends AbstractBsMemberFollowingCQ {
     // very internal (for suppressing warn about 'Not Use Import')
     protected String xCB() { return MemberFollowingCB.class.getName(); }
     protected String xCQ() { return MemberFollowingCQ.class.getName(); }
+    protected String xCHp() { return HpCalculator.class.getName(); }
+    protected String xCOp() { return ConditionOption.class.getName(); }
     protected String xMap() { return Map.class.getName(); }
 }

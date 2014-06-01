@@ -18,6 +18,8 @@ package org.dbflute.quickstage.dbflute.cbean.cq.bs;
 import java.util.Map;
 
 import org.seasar.dbflute.cbean.*;
+import org.seasar.dbflute.cbean.chelper.*;
+import org.seasar.dbflute.cbean.coption.*;
 import org.seasar.dbflute.cbean.cvalue.ConditionValue;
 import org.seasar.dbflute.cbean.sqlclause.SqlClause;
 import org.seasar.dbflute.exception.IllegalConditionBeanOperationException;
@@ -39,8 +41,8 @@ public class BsMemberServiceCQ extends AbstractBsMemberServiceCQ {
     // ===================================================================================
     //                                                                         Constructor
     //                                                                         ===========
-    public BsMemberServiceCQ(ConditionQuery childQuery, SqlClause sqlClause, String aliasName, int nestLevel) {
-        super(childQuery, sqlClause, aliasName, nestLevel);
+    public BsMemberServiceCQ(ConditionQuery referrerQuery, SqlClause sqlClause, String aliasName, int nestLevel) {
+        super(referrerQuery, sqlClause, aliasName, nestLevel);
     }
 
     // ===================================================================================
@@ -50,7 +52,7 @@ public class BsMemberServiceCQ extends AbstractBsMemberServiceCQ {
      * Prepare InlineView query. <br />
      * {select ... from ... left outer join (select * from MEMBER_SERVICE) where FOO = [value] ...}
      * <pre>
-     * cb.query().queryMemberStatus().<span style="color: #FD4747">inline()</span>.setFoo...;
+     * cb.query().queryMemberStatus().<span style="color: #DD4747">inline()</span>.setFoo...;
      * </pre>
      * @return The condition-query for InlineView query. (NotNull)
      */
@@ -73,7 +75,7 @@ public class BsMemberServiceCQ extends AbstractBsMemberServiceCQ {
      * Prepare OnClause query. <br />
      * {select ... from ... left outer join MEMBER_SERVICE on ... and FOO = [value] ...}
      * <pre>
-     * cb.query().queryMemberStatus().<span style="color: #FD4747">on()</span>.setFoo...;
+     * cb.query().queryMemberStatus().<span style="color: #DD4747">on()</span>.setFoo...;
      * </pre>
      * @return The condition-query for OnClause query. (NotNull)
      * @throws IllegalConditionBeanOperationException When this condition-query is base query.
@@ -86,7 +88,6 @@ public class BsMemberServiceCQ extends AbstractBsMemberServiceCQ {
     // ===================================================================================
     //                                                                               Query
     //                                                                               =====
-
     protected ConditionValue _memberServiceId;
     public ConditionValue getMemberServiceId() {
         if (_memberServiceId == null) { _memberServiceId = nCV(); }
@@ -318,9 +319,9 @@ public class BsMemberServiceCQ extends AbstractBsMemberServiceCQ {
      *     public void query(PurchaseCB subCB) {
      *         subCB.specify().columnPurchaseDatetime();
      *     }
-     * }, <span style="color: #FD4747">aliasName</span>);
+     * }, <span style="color: #DD4747">aliasName</span>);
      * <span style="color: #3F7E5E">// order by [alias-name] asc</span>
-     * cb.<span style="color: #FD4747">addSpecifiedDerivedOrderBy_Asc</span>(<span style="color: #FD4747">aliasName</span>);
+     * cb.<span style="color: #DD4747">addSpecifiedDerivedOrderBy_Asc</span>(<span style="color: #DD4747">aliasName</span>);
      * </pre>
      * @param aliasName The alias name specified at (Specify)DerivedReferrer. (NotNull)
      * @return this. (NotNull)
@@ -335,9 +336,9 @@ public class BsMemberServiceCQ extends AbstractBsMemberServiceCQ {
      *     public void query(PurchaseCB subCB) {
      *         subCB.specify().columnPurchaseDatetime();
      *     }
-     * }, <span style="color: #FD4747">aliasName</span>);
+     * }, <span style="color: #DD4747">aliasName</span>);
      * <span style="color: #3F7E5E">// order by [alias-name] desc</span>
-     * cb.<span style="color: #FD4747">addSpecifiedDerivedOrderBy_Desc</span>(<span style="color: #FD4747">aliasName</span>);
+     * cb.<span style="color: #DD4747">addSpecifiedDerivedOrderBy_Desc</span>(<span style="color: #DD4747">aliasName</span>);
      * </pre>
      * @param aliasName The alias name specified at (Specify)DerivedReferrer. (NotNull)
      * @return this. (NotNull)
@@ -348,7 +349,7 @@ public class BsMemberServiceCQ extends AbstractBsMemberServiceCQ {
     // ===================================================================================
     //                                                                         Union Query
     //                                                                         ===========
-    protected void reflectRelationOnUnionQuery(ConditionQuery bqs, ConditionQuery uqs) {
+    public void reflectRelationOnUnionQuery(ConditionQuery bqs, ConditionQuery uqs) {
         MemberServiceCQ bq = (MemberServiceCQ)bqs;
         MemberServiceCQ uq = (MemberServiceCQ)uqs;
         if (bq.hasConditionQueryMember()) {
@@ -499,5 +500,7 @@ public class BsMemberServiceCQ extends AbstractBsMemberServiceCQ {
     // very internal (for suppressing warn about 'Not Use Import')
     protected String xCB() { return MemberServiceCB.class.getName(); }
     protected String xCQ() { return MemberServiceCQ.class.getName(); }
+    protected String xCHp() { return HpCalculator.class.getName(); }
+    protected String xCOp() { return ConditionOption.class.getName(); }
     protected String xMap() { return Map.class.getName(); }
 }

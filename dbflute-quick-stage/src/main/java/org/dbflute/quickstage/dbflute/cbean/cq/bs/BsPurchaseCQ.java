@@ -18,6 +18,8 @@ package org.dbflute.quickstage.dbflute.cbean.cq.bs;
 import java.util.Map;
 
 import org.seasar.dbflute.cbean.*;
+import org.seasar.dbflute.cbean.chelper.*;
+import org.seasar.dbflute.cbean.coption.*;
 import org.seasar.dbflute.cbean.cvalue.ConditionValue;
 import org.seasar.dbflute.cbean.sqlclause.SqlClause;
 import org.seasar.dbflute.exception.IllegalConditionBeanOperationException;
@@ -39,8 +41,8 @@ public class BsPurchaseCQ extends AbstractBsPurchaseCQ {
     // ===================================================================================
     //                                                                         Constructor
     //                                                                         ===========
-    public BsPurchaseCQ(ConditionQuery childQuery, SqlClause sqlClause, String aliasName, int nestLevel) {
-        super(childQuery, sqlClause, aliasName, nestLevel);
+    public BsPurchaseCQ(ConditionQuery referrerQuery, SqlClause sqlClause, String aliasName, int nestLevel) {
+        super(referrerQuery, sqlClause, aliasName, nestLevel);
     }
 
     // ===================================================================================
@@ -50,7 +52,7 @@ public class BsPurchaseCQ extends AbstractBsPurchaseCQ {
      * Prepare InlineView query. <br />
      * {select ... from ... left outer join (select * from PURCHASE) where FOO = [value] ...}
      * <pre>
-     * cb.query().queryMemberStatus().<span style="color: #FD4747">inline()</span>.setFoo...;
+     * cb.query().queryMemberStatus().<span style="color: #DD4747">inline()</span>.setFoo...;
      * </pre>
      * @return The condition-query for InlineView query. (NotNull)
      */
@@ -73,7 +75,7 @@ public class BsPurchaseCQ extends AbstractBsPurchaseCQ {
      * Prepare OnClause query. <br />
      * {select ... from ... left outer join PURCHASE on ... and FOO = [value] ...}
      * <pre>
-     * cb.query().queryMemberStatus().<span style="color: #FD4747">on()</span>.setFoo...;
+     * cb.query().queryMemberStatus().<span style="color: #DD4747">on()</span>.setFoo...;
      * </pre>
      * @return The condition-query for OnClause query. (NotNull)
      * @throws IllegalConditionBeanOperationException When this condition-query is base query.
@@ -86,13 +88,67 @@ public class BsPurchaseCQ extends AbstractBsPurchaseCQ {
     // ===================================================================================
     //                                                                               Query
     //                                                                               =====
-
     protected ConditionValue _purchaseId;
     public ConditionValue getPurchaseId() {
         if (_purchaseId == null) { _purchaseId = nCV(); }
         return _purchaseId;
     }
     protected ConditionValue getCValuePurchaseId() { return getPurchaseId(); }
+
+    protected Map<String, PurchasePaymentCQ> _purchaseId_ExistsReferrer_PurchasePaymentListMap;
+    public Map<String, PurchasePaymentCQ> getPurchaseId_ExistsReferrer_PurchasePaymentList() { return _purchaseId_ExistsReferrer_PurchasePaymentListMap; }
+    public String keepPurchaseId_ExistsReferrer_PurchasePaymentList(PurchasePaymentCQ sq) {
+        if (_purchaseId_ExistsReferrer_PurchasePaymentListMap == null) { _purchaseId_ExistsReferrer_PurchasePaymentListMap = newLinkedHashMapSized(4); }
+        String ky = "subQueryMapKey" + (_purchaseId_ExistsReferrer_PurchasePaymentListMap.size() + 1);
+        _purchaseId_ExistsReferrer_PurchasePaymentListMap.put(ky, sq); return "purchaseId_ExistsReferrer_PurchasePaymentList." + ky;
+    }
+
+    protected Map<String, PurchasePaymentCQ> _purchaseId_NotExistsReferrer_PurchasePaymentListMap;
+    public Map<String, PurchasePaymentCQ> getPurchaseId_NotExistsReferrer_PurchasePaymentList() { return _purchaseId_NotExistsReferrer_PurchasePaymentListMap; }
+    public String keepPurchaseId_NotExistsReferrer_PurchasePaymentList(PurchasePaymentCQ sq) {
+        if (_purchaseId_NotExistsReferrer_PurchasePaymentListMap == null) { _purchaseId_NotExistsReferrer_PurchasePaymentListMap = newLinkedHashMapSized(4); }
+        String ky = "subQueryMapKey" + (_purchaseId_NotExistsReferrer_PurchasePaymentListMap.size() + 1);
+        _purchaseId_NotExistsReferrer_PurchasePaymentListMap.put(ky, sq); return "purchaseId_NotExistsReferrer_PurchasePaymentList." + ky;
+    }
+
+    protected Map<String, PurchasePaymentCQ> _purchaseId_SpecifyDerivedReferrer_PurchasePaymentListMap;
+    public Map<String, PurchasePaymentCQ> getPurchaseId_SpecifyDerivedReferrer_PurchasePaymentList() { return _purchaseId_SpecifyDerivedReferrer_PurchasePaymentListMap; }
+    public String keepPurchaseId_SpecifyDerivedReferrer_PurchasePaymentList(PurchasePaymentCQ sq) {
+        if (_purchaseId_SpecifyDerivedReferrer_PurchasePaymentListMap == null) { _purchaseId_SpecifyDerivedReferrer_PurchasePaymentListMap = newLinkedHashMapSized(4); }
+        String ky = "subQueryMapKey" + (_purchaseId_SpecifyDerivedReferrer_PurchasePaymentListMap.size() + 1);
+        _purchaseId_SpecifyDerivedReferrer_PurchasePaymentListMap.put(ky, sq); return "purchaseId_SpecifyDerivedReferrer_PurchasePaymentList." + ky;
+    }
+
+    protected Map<String, PurchasePaymentCQ> _purchaseId_InScopeRelation_PurchasePaymentListMap;
+    public Map<String, PurchasePaymentCQ> getPurchaseId_InScopeRelation_PurchasePaymentList() { return _purchaseId_InScopeRelation_PurchasePaymentListMap; }
+    public String keepPurchaseId_InScopeRelation_PurchasePaymentList(PurchasePaymentCQ sq) {
+        if (_purchaseId_InScopeRelation_PurchasePaymentListMap == null) { _purchaseId_InScopeRelation_PurchasePaymentListMap = newLinkedHashMapSized(4); }
+        String ky = "subQueryMapKey" + (_purchaseId_InScopeRelation_PurchasePaymentListMap.size() + 1);
+        _purchaseId_InScopeRelation_PurchasePaymentListMap.put(ky, sq); return "purchaseId_InScopeRelation_PurchasePaymentList." + ky;
+    }
+
+    protected Map<String, PurchasePaymentCQ> _purchaseId_NotInScopeRelation_PurchasePaymentListMap;
+    public Map<String, PurchasePaymentCQ> getPurchaseId_NotInScopeRelation_PurchasePaymentList() { return _purchaseId_NotInScopeRelation_PurchasePaymentListMap; }
+    public String keepPurchaseId_NotInScopeRelation_PurchasePaymentList(PurchasePaymentCQ sq) {
+        if (_purchaseId_NotInScopeRelation_PurchasePaymentListMap == null) { _purchaseId_NotInScopeRelation_PurchasePaymentListMap = newLinkedHashMapSized(4); }
+        String ky = "subQueryMapKey" + (_purchaseId_NotInScopeRelation_PurchasePaymentListMap.size() + 1);
+        _purchaseId_NotInScopeRelation_PurchasePaymentListMap.put(ky, sq); return "purchaseId_NotInScopeRelation_PurchasePaymentList." + ky;
+    }
+
+    protected Map<String, PurchasePaymentCQ> _purchaseId_QueryDerivedReferrer_PurchasePaymentListMap;
+    public Map<String, PurchasePaymentCQ> getPurchaseId_QueryDerivedReferrer_PurchasePaymentList() { return _purchaseId_QueryDerivedReferrer_PurchasePaymentListMap; }
+    public String keepPurchaseId_QueryDerivedReferrer_PurchasePaymentList(PurchasePaymentCQ sq) {
+        if (_purchaseId_QueryDerivedReferrer_PurchasePaymentListMap == null) { _purchaseId_QueryDerivedReferrer_PurchasePaymentListMap = newLinkedHashMapSized(4); }
+        String ky = "subQueryMapKey" + (_purchaseId_QueryDerivedReferrer_PurchasePaymentListMap.size() + 1);
+        _purchaseId_QueryDerivedReferrer_PurchasePaymentListMap.put(ky, sq); return "purchaseId_QueryDerivedReferrer_PurchasePaymentList." + ky;
+    }
+    protected Map<String, Object> _purchaseId_QueryDerivedReferrer_PurchasePaymentListParameterMap;
+    public Map<String, Object> getPurchaseId_QueryDerivedReferrer_PurchasePaymentListParameter() { return _purchaseId_QueryDerivedReferrer_PurchasePaymentListParameterMap; }
+    public String keepPurchaseId_QueryDerivedReferrer_PurchasePaymentListParameter(Object vl) {
+        if (_purchaseId_QueryDerivedReferrer_PurchasePaymentListParameterMap == null) { _purchaseId_QueryDerivedReferrer_PurchasePaymentListParameterMap = newLinkedHashMapSized(4); }
+        String ky = "subQueryParameterKey" + (_purchaseId_QueryDerivedReferrer_PurchasePaymentListParameterMap.size() + 1);
+        _purchaseId_QueryDerivedReferrer_PurchasePaymentListParameterMap.put(ky, vl); return "purchaseId_QueryDerivedReferrer_PurchasePaymentListParameter." + ky;
+    }
 
     /** 
      * Add order-by as ascend. <br />
@@ -133,14 +189,14 @@ public class BsPurchaseCQ extends AbstractBsPurchaseCQ {
 
     /** 
      * Add order-by as ascend. <br />
-     * (会員ID)MEMBER_ID: {UQ, IX, NotNull, INTEGER(10), FK to MEMBER}
+     * (会員ID)MEMBER_ID: {UQ+, IX+, NotNull, INTEGER(10), FK to MEMBER}
      * @return this. (NotNull)
      */
     public BsPurchaseCQ addOrderBy_MemberId_Asc() { regOBA("MEMBER_ID"); return this; }
 
     /**
      * Add order-by as descend. <br />
-     * (会員ID)MEMBER_ID: {UQ, IX, NotNull, INTEGER(10), FK to MEMBER}
+     * (会員ID)MEMBER_ID: {UQ+, IX+, NotNull, INTEGER(10), FK to MEMBER}
      * @return this. (NotNull)
      */
     public BsPurchaseCQ addOrderBy_MemberId_Desc() { regOBD("MEMBER_ID"); return this; }
@@ -170,14 +226,14 @@ public class BsPurchaseCQ extends AbstractBsPurchaseCQ {
 
     /** 
      * Add order-by as ascend. <br />
-     * (商品ID)PRODUCT_ID: {UQ+, IX, NotNull, INTEGER(10), FK to PRODUCT}
+     * (商品ID)PRODUCT_ID: {+UQ, IX+, NotNull, INTEGER(10), FK to PRODUCT}
      * @return this. (NotNull)
      */
     public BsPurchaseCQ addOrderBy_ProductId_Asc() { regOBA("PRODUCT_ID"); return this; }
 
     /**
      * Add order-by as descend. <br />
-     * (商品ID)PRODUCT_ID: {UQ+, IX, NotNull, INTEGER(10), FK to PRODUCT}
+     * (商品ID)PRODUCT_ID: {+UQ, IX+, NotNull, INTEGER(10), FK to PRODUCT}
      * @return this. (NotNull)
      */
     public BsPurchaseCQ addOrderBy_ProductId_Desc() { regOBD("PRODUCT_ID"); return this; }
@@ -191,14 +247,14 @@ public class BsPurchaseCQ extends AbstractBsPurchaseCQ {
 
     /** 
      * Add order-by as ascend. <br />
-     * (購入日時)PURCHASE_DATETIME: {UQ+, IX, NotNull, TIMESTAMP(23, 10)}
+     * (購入日時)PURCHASE_DATETIME: {+UQ, IX+, NotNull, TIMESTAMP(23, 10)}
      * @return this. (NotNull)
      */
     public BsPurchaseCQ addOrderBy_PurchaseDatetime_Asc() { regOBA("PURCHASE_DATETIME"); return this; }
 
     /**
      * Add order-by as descend. <br />
-     * (購入日時)PURCHASE_DATETIME: {UQ+, IX, NotNull, TIMESTAMP(23, 10)}
+     * (購入日時)PURCHASE_DATETIME: {+UQ, IX+, NotNull, TIMESTAMP(23, 10)}
      * @return this. (NotNull)
      */
     public BsPurchaseCQ addOrderBy_PurchaseDatetime_Desc() { regOBD("PURCHASE_DATETIME"); return this; }
@@ -381,9 +437,9 @@ public class BsPurchaseCQ extends AbstractBsPurchaseCQ {
      *     public void query(PurchaseCB subCB) {
      *         subCB.specify().columnPurchaseDatetime();
      *     }
-     * }, <span style="color: #FD4747">aliasName</span>);
+     * }, <span style="color: #DD4747">aliasName</span>);
      * <span style="color: #3F7E5E">// order by [alias-name] asc</span>
-     * cb.<span style="color: #FD4747">addSpecifiedDerivedOrderBy_Asc</span>(<span style="color: #FD4747">aliasName</span>);
+     * cb.<span style="color: #DD4747">addSpecifiedDerivedOrderBy_Asc</span>(<span style="color: #DD4747">aliasName</span>);
      * </pre>
      * @param aliasName The alias name specified at (Specify)DerivedReferrer. (NotNull)
      * @return this. (NotNull)
@@ -398,9 +454,9 @@ public class BsPurchaseCQ extends AbstractBsPurchaseCQ {
      *     public void query(PurchaseCB subCB) {
      *         subCB.specify().columnPurchaseDatetime();
      *     }
-     * }, <span style="color: #FD4747">aliasName</span>);
+     * }, <span style="color: #DD4747">aliasName</span>);
      * <span style="color: #3F7E5E">// order by [alias-name] desc</span>
-     * cb.<span style="color: #FD4747">addSpecifiedDerivedOrderBy_Desc</span>(<span style="color: #FD4747">aliasName</span>);
+     * cb.<span style="color: #DD4747">addSpecifiedDerivedOrderBy_Desc</span>(<span style="color: #DD4747">aliasName</span>);
      * </pre>
      * @param aliasName The alias name specified at (Specify)DerivedReferrer. (NotNull)
      * @return this. (NotNull)
@@ -411,7 +467,7 @@ public class BsPurchaseCQ extends AbstractBsPurchaseCQ {
     // ===================================================================================
     //                                                                         Union Query
     //                                                                         ===========
-    protected void reflectRelationOnUnionQuery(ConditionQuery bqs, ConditionQuery uqs) {
+    public void reflectRelationOnUnionQuery(ConditionQuery bqs, ConditionQuery uqs) {
         PurchaseCQ bq = (PurchaseCQ)bqs;
         PurchaseCQ uq = (PurchaseCQ)uqs;
         if (bq.hasConditionQueryMember()) {
@@ -599,5 +655,7 @@ public class BsPurchaseCQ extends AbstractBsPurchaseCQ {
     // very internal (for suppressing warn about 'Not Use Import')
     protected String xCB() { return PurchaseCB.class.getName(); }
     protected String xCQ() { return PurchaseCQ.class.getName(); }
+    protected String xCHp() { return HpCalculator.class.getName(); }
+    protected String xCOp() { return ConditionOption.class.getName(); }
     protected String xMap() { return Map.class.getName(); }
 }

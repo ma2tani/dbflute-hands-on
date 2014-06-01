@@ -135,6 +135,9 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
     // -----------------------------------------------------
     //                                              Internal
     //                                              --------
+    /** The unique-driven properties for this entity. (NotNull) */
+    protected final EntityUniqueDrivenProperties __uniqueDrivenProperties = newUniqueDrivenProperties();
+
     /** The modified properties for this entity. (NotNull) */
     protected final EntityModifiedProperties __modifiedProperties = newModifiedProperties();
 
@@ -180,6 +183,28 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
     public boolean hasPrimaryKeyValue() {
         if (getProductId() == null) { return false; }
         return true;
+    }
+
+    /**
+     * To be unique by the unique column. <br />
+     * You can update the entity by the key when entity update (NOT batch update).
+     * @param productHandleCode (商品ハンドルコード): UQ, NotNull, VARCHAR(100). (NotNull)
+     */
+    public void uniqueBy(String productHandleCode) {
+        __uniqueDrivenProperties.clear();
+        __uniqueDrivenProperties.addPropertyName("productHandleCode");
+        setProductHandleCode(productHandleCode);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Set<String> myuniqueDrivenProperties() {
+        return __uniqueDrivenProperties.getPropertyNames();
+    }
+
+    protected EntityUniqueDrivenProperties newUniqueDrivenProperties() {
+        return new EntityUniqueDrivenProperties();
     }
 
     // ===================================================================================
@@ -415,17 +440,17 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
     /**
      * Determine the object is equal with this. <br />
      * If primary-keys or columns of the other are same as this one, returns true.
-     * @param other The other entity. (NullAllowed: if null, returns false fixedly)
+     * @param obj The object as other entity. (NullAllowed: if null, returns false fixedly)
      * @return Comparing result.
      */
-    public boolean equals(Object other) {
-        if (other == null || !(other instanceof BsProduct)) { return false; }
-        BsProduct otherEntity = (BsProduct)other;
-        if (!xSV(getProductId(), otherEntity.getProductId())) { return false; }
+    public boolean equals(Object obj) {
+        if (obj == null || !(obj instanceof BsProduct)) { return false; }
+        BsProduct other = (BsProduct)obj;
+        if (!xSV(getProductId(), other.getProductId())) { return false; }
         return true;
     }
-    protected boolean xSV(Object value1, Object value2) { // isSameValue()
-        return InternalUtil.isSameValue(value1, value2);
+    protected boolean xSV(Object v1, Object v2) {
+        return FunCustodial.isSameValue(v1, v2);
     }
 
     /**
@@ -433,13 +458,13 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @return The hash-code from primary-key or columns.
      */
     public int hashCode() {
-        int result = 17;
-        result = xCH(result, getTableDbName());
-        result = xCH(result, getProductId());
-        return result;
+        int hs = 17;
+        hs = xCH(hs, getTableDbName());
+        hs = xCH(hs, getProductId());
+        return hs;
     }
-    protected int xCH(int result, Object value) { // calculateHashcode()
-        return InternalUtil.calculateHashcode(result, value);
+    protected int xCH(int hs, Object vl) {
+        return FunCustodial.calculateHashcode(hs, vl);
     }
 
     /**
@@ -454,7 +479,7 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @return The display string of all columns and relation existences. (NotNull)
      */
     public String toString() {
-        return buildDisplayString(InternalUtil.toClassTitle(this), true, true);
+        return buildDisplayString(FunCustodial.toClassTitle(this), true, true);
     }
 
     /**
@@ -463,17 +488,17 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
     public String toStringWithRelation() {
         StringBuilder sb = new StringBuilder();
         sb.append(toString());
-        String l = "\n  ";
+        String li = "\n  ";
         if (_productCategory != null)
-        { sb.append(l).append(xbRDS(_productCategory, "productCategory")); }
+        { sb.append(li).append(xbRDS(_productCategory, "productCategory")); }
         if (_productStatus != null)
-        { sb.append(l).append(xbRDS(_productStatus, "productStatus")); }
-        if (_purchaseList != null) { for (Entity e : _purchaseList)
-        { if (e != null) { sb.append(l).append(xbRDS(e, "purchaseList")); } } }
+        { sb.append(li).append(xbRDS(_productStatus, "productStatus")); }
+        if (_purchaseList != null) { for (Entity et : _purchaseList)
+        { if (et != null) { sb.append(li).append(xbRDS(et, "purchaseList")); } } }
         return sb.toString();
     }
-    protected String xbRDS(Entity e, String name) { // buildRelationDisplayString()
-        return e.buildDisplayString(name, true, true);
+    protected String xbRDS(Entity et, String name) { // buildRelationDisplayString()
+        return et.buildDisplayString(name, true, true);
     }
 
     /**
@@ -489,33 +514,33 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
     }
     protected String buildColumnString() {
         StringBuilder sb = new StringBuilder();
-        String delimiter = ", ";
-        sb.append(delimiter).append(getProductId());
-        sb.append(delimiter).append(getProductName());
-        sb.append(delimiter).append(getProductHandleCode());
-        sb.append(delimiter).append(getProductCategoryCode());
-        sb.append(delimiter).append(getProductStatusCode());
-        sb.append(delimiter).append(getRegularPrice());
-        sb.append(delimiter).append(getRegisterDatetime());
-        sb.append(delimiter).append(getRegisterUser());
-        sb.append(delimiter).append(getUpdateDatetime());
-        sb.append(delimiter).append(getUpdateUser());
-        sb.append(delimiter).append(getVersionNo());
-        if (sb.length() > delimiter.length()) {
-            sb.delete(0, delimiter.length());
+        String dm = ", ";
+        sb.append(dm).append(getProductId());
+        sb.append(dm).append(getProductName());
+        sb.append(dm).append(getProductHandleCode());
+        sb.append(dm).append(getProductCategoryCode());
+        sb.append(dm).append(getProductStatusCode());
+        sb.append(dm).append(getRegularPrice());
+        sb.append(dm).append(getRegisterDatetime());
+        sb.append(dm).append(getRegisterUser());
+        sb.append(dm).append(getUpdateDatetime());
+        sb.append(dm).append(getUpdateUser());
+        sb.append(dm).append(getVersionNo());
+        if (sb.length() > dm.length()) {
+            sb.delete(0, dm.length());
         }
         sb.insert(0, "{").append("}");
         return sb.toString();
     }
     protected String buildRelationString() {
         StringBuilder sb = new StringBuilder();
-        String c = ",";
-        if (_productCategory != null) { sb.append(c).append("productCategory"); }
-        if (_productStatus != null) { sb.append(c).append("productStatus"); }
+        String cm = ",";
+        if (_productCategory != null) { sb.append(cm).append("productCategory"); }
+        if (_productStatus != null) { sb.append(cm).append("productStatus"); }
         if (_purchaseList != null && !_purchaseList.isEmpty())
-        { sb.append(c).append("purchaseList"); }
-        if (sb.length() > c.length()) {
-            sb.delete(0, c.length()).insert(0, "(").append(")");
+        { sb.append(cm).append("purchaseList"); }
+        if (sb.length() > cm.length()) {
+            sb.delete(0, cm.length()).insert(0, "(").append(")");
         }
         return sb.toString();
     }
@@ -729,6 +754,6 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
     }
 
     protected String convertEmptyToNull(String value) {
-        return InternalUtil.convertEmptyToNull(value);
+        return FunCustodial.convertEmptyToNull(value);
     }
 }

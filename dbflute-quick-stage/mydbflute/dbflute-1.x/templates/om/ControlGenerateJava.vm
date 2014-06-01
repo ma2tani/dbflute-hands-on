@@ -76,23 +76,12 @@ $database.checkProperties()
 #set ($glDBCurrent = "${glProjectPrefix}DBCurrent")
 #set ($glDBFluteConfig = "${glProjectPrefix}DBFluteConfig")
 #set ($glDBFluteInitializer = "${glProjectPrefix}DBFluteInitializer")
+#set ($glDBMetaInstanceHandler = "${glProjectPrefix}DBMetaInstanceHandler")
 #set ($glEntityDefinedCommonColumn = "${glProjectPrefix}EntityDefinedCommonColumn")
 #set ($glImplementedBehaviorSelector = "${glProjectPrefix}ImplementedBehaviorSelector")
 #set ($glImplementedCommonColumnAutoSetupper = "${glProjectPrefix}ImplementedCommonColumnAutoSetupper")
 #set ($glImplementedInvokerAssistant = "${glProjectPrefix}ImplementedInvokerAssistant")
 #set ($glImplementedSqlClauseCreator = "${glProjectPrefix}ImplementedSqlClauseCreator")
-#set ($glDBMetaInstanceHandler = "${glProjectPrefix}DBMetaInstanceHandler")
-
-## -----------------------------------------------------
-##                                               Plug-in
-##                                               -------
-## [Buri]
-#set ($glBasicParticipantProvider = "${glProjectPrefix}BasicParticipantProvider")
-#set ($glBasicBuriUserDataProvider = "${glProjectPrefix}BasicBuriUserDataProvider")
-#set ($glBehaviorToDataAccessRule = "${glProjectPrefix}BehaviorToDataAccessRule")
-#set ($glBuriDef = "${glProjectPrefix}BuriDef")
-#set ($glFixedBuriDataAccessScriptFactoryImpl = "${glProjectPrefix}FixedBuriDataAccessScriptFactoryImpl")
-#set ($glFixedScriptDataAccessUtilKeyImpl = "${glProjectPrefix}FixedScriptDataAccessUtilKeyImpl")
 
 ## ===================================================================================
 ##                                                                            Variable
@@ -124,12 +113,6 @@ $database.checkProperties()
 #set ($glPackageNss = "${database.conditionBeanPackage}.nss")
 #set ($glPackageBaseDBMeta = "${glPackageBaseEntity}.dbmeta")
 #set ($glPackageBaseCustomizeDBMeta = "${glPackageBaseCustomizeEntity}.dbmeta")
-
-## -----------------------------------------------------
-##                                               Plug-in
-##                                               -------
-## [Buri]
-#set ($glPackagePluginBuri = "${database.baseCommonPackage}.plugin.buri")
 
 ## *****************************************************************************************************************
 ##                                                                                                           Parsing
@@ -187,85 +170,18 @@ $generator.parse("om/${glResourceDirectory}/allcommon/ImplementedSqlClauseCreato
 $database.info("}")
 
 ## ===================================================================================
-##                                                                             Plug-in
-##                                                                             =======
-## -----------------------------------------------------
-##                                                  Buri
-##                                                  ----
-#if ($database.isUseBuri())
-  $database.info("public void parsePluginBuri() {")
-
-  #set ($path = $database.getPackageAsPath(${glPackagePluginBuri}))
-  $database.makeDirectory($path)
-
-  $database.info("    parse('BasicBuriUserDataProvider');")
-  #set ( $path = "${database.getPackageAsPath(${glPackagePluginBuri})}${glBasicBuriUserDataProvider}.${glClassFileExtension}" )
-  $generator.parse("om/${glResourceDirectory}/plugin/buri/BasicBuriUserDataProvider.${glTemplateFileExtension}",$path ,"" ,"")
-
-  $database.info("    parse('BasicParticipantProvider');")
-  #set ( $path = "${database.getPackageAsPath(${glPackagePluginBuri})}${glBasicParticipantProvider}.${glClassFileExtension}" )
-  $generator.parse("om/${glResourceDirectory}/plugin/buri/BasicParticipantProvider.${glTemplateFileExtension}",$path ,"" ,"")
-
-  $database.info("    parse('BehaviorToDataAccessRule');")
-  #set ( $path = "${database.getPackageAsPath(${glPackagePluginBuri})}${glBehaviorToDataAccessRule}.${glClassFileExtension}" )
-  $generator.parse("om/${glResourceDirectory}/plugin/buri/BehaviorToDataAccessRule.${glTemplateFileExtension}",$path ,"" ,"")
-
-  $database.info("    parse('BuriDef');")
-  #set ( $path = "${database.getPackageAsPath(${glPackagePluginBuri})}${glBuriDef}.${glClassFileExtension}" )
-  $generator.parse("om/${glResourceDirectory}/plugin/buri/BuriDef.${glTemplateFileExtension}",$path ,"" ,"")
-
-  $database.info("    parse('FixedBuriDataAccessScriptFactoryImpl');")
-  #set ( $path = "${database.getPackageAsPath(${glPackagePluginBuri})}${glFixedBuriDataAccessScriptFactoryImpl}.${glClassFileExtension}" )
-  $generator.parse("om/${glResourceDirectory}/plugin/buri/FixedBuriDataAccessScriptFactoryImpl.${glTemplateFileExtension}",$path ,"" ,"")
-
-  $database.info("    parse('FixedScriptDataAccessUtilKeyImpl');")
-  #set ( $path = "${database.getPackageAsPath(${glPackagePluginBuri})}${glFixedScriptDataAccessUtilKeyImpl}.${glClassFileExtension}" )
-  $generator.parse("om/${glResourceDirectory}/plugin/buri/FixedScriptDataAccessUtilKeyImpl.${glTemplateFileExtension}",$path ,"" ,"")
-
-  $database.info("}")
-#end
-
-## ===================================================================================
 ##                                                                     ContainerConfig
 ##                                                                     ===============
 $database.info("public void parseContainerConfig() {")
 #if ($database.isTargetContainerSeasar())
-  #if ($database.isAvailableHotDeploy())
-  #set ($glBehaviorCreator = "${glProjectPrefix}BehaviorCreator")
-  #set ($glPackageBaseCommonS2Container = "${database.baseCommonPackage}.s2container")
-  #set ($path = $database.getPackageAsPath(${glPackageBaseCommonS2Container}))
+#foreach ($dbfluteDiconPackageName in $database.DBFluteDiconPackageNameList)
+  #set ($path = "${dbfluteDiconPackageName}" )
   $database.makeDirectory($path)
 
-  $database.info("    parse('BehaviorCreator');")
-  #set ( $path = "${database.getPackageAsPath(${glPackageBaseCommonS2Container})}${glBehaviorCreator}.${glClassFileExtension}" )
-  $generator.parse("om/${glResourceDirectory}/allcommon/container/seasar/hotdeploy/BehaviorCreator.${glTemplateFileExtension}",$path ,"" ,"")
-
-  #foreach ($dbfluteDiconPackageName in $database.DBFluteDiconPackageNameList)
-    #set ($path = "${dbfluteDiconPackageName}" )
-    $database.makeDirectory($path)
-
-    #set ($path = "${dbfluteDiconPackageName}/${glDBFluteDiconFileName}" )
-    $database.info("    parse('${path}')")
-    $generator.parse("om/${glResourceDirectory}/allcommon/container/seasar/hotdeploy/HotDeployDicon.${glTemplateFileExtension}", $path, "", "")
-
-    #set ($path = "${dbfluteDiconPackageName}/${glCreatorDiconFileName}" )
-    $database.info("    parse('${path}')")
-    $generator.parse("om/${glResourceDirectory}/allcommon/container/seasar/hotdeploy/CreatorDicon.${glTemplateFileExtension}", $path, "", "")
-
-    #set ($path = "${dbfluteDiconPackageName}/${glCustomizerDiconFileName}" )
-    $database.info("    parse('${path}')")
-    $generator.parse("om/${glResourceDirectory}/allcommon/container/seasar/hotdeploy/CustomizerDicon.${glTemplateFileExtension}", $path, "", "")
-  #end
-  #else
-  #foreach ($dbfluteDiconPackageName in $database.DBFluteDiconPackageNameList)
-    #set ($path = "${dbfluteDiconPackageName}" )
-    $database.makeDirectory($path)
-
-    #set ($path = "${dbfluteDiconPackageName}/${glDBFluteDiconFileName}" )
-    $database.info("    parse('${path}')")
-    $generator.parse("om/${glResourceDirectory}/allcommon/container/seasar/DBFluteDicon.${glTemplateFileExtension}", $path, "", "")
-  #end
-  #end
+  #set ($path = "${dbfluteDiconPackageName}/${glDBFluteDiconFileName}" )
+  $database.info("    parse('${path}')")
+  $generator.parse("om/${glResourceDirectory}/allcommon/container/seasar/DBFluteDicon.${glTemplateFileExtension}", $path, "", "")
+#end
 #end
 #if ($database.isTargetContainerSpring())
   #foreach ($dbfluteBeansPackageName in $database.DBFluteBeansPackageNameList)
@@ -443,14 +359,18 @@ $database.info("public void parseTableClass() {")
   #set ( $path = "${database.getPackageAsPath(${glPackageBaseCQ})}${myAbstractBaseConditionQueryClassName}.${glClassFileExtension}" )
   $generator.parse("om/${glResourceDirectory}/cbean/AbstractBsConditionQuery.${glTemplateFileExtension}", $path, "table", $table)
 
-  #set ( $path = "${database.getPackageAsPath(${glPackageCIQ})}${myConditionInlineQueryClassName}.${glClassFileExtension}" )
-  $generator.parse("om/${glResourceDirectory}/cbean/BsConditionInlineQuery.${glTemplateFileExtension}", $path, "table", $table)
+  #if ($table.hasConditionInlineQuery())
+    #set ( $path = "${database.getPackageAsPath(${glPackageCIQ})}${myConditionInlineQueryClassName}.${glClassFileExtension}" )
+    $generator.parse("om/${glResourceDirectory}/cbean/BsConditionInlineQuery.${glTemplateFileExtension}", $path, "table", $table)
+  #end
 
   #set ( $path = "${database.getPackageAsPath(${glPackageBaseCQ})}${myBaseConditionQueryClassName}.${glClassFileExtension}" )
   $generator.parse("om/${glResourceDirectory}/cbean/BsConditionQuery.${glTemplateFileExtension}", $path, "table", $table)
 
-  #set ( $path = "${database.getPackageAsPath(${glPackageNss})}${myNestSelectSetupperClassName}.${glClassFileExtension}" )
-  $generator.parse("om/${glResourceDirectory}/cbean/NestSelectSetupper.${glTemplateFileExtension}", $path, "table", $table)
+  #if ($table.hasNestSelectSetupper())
+    #set ( $path = "${database.getPackageAsPath(${glPackageNss})}${myNestSelectSetupperClassName}.${glClassFileExtension}" )
+    $generator.parse("om/${glResourceDirectory}/cbean/NestSelectSetupper.${glTemplateFileExtension}", $path, "table", $table)
+  #end
 
   #set ( $path = "${database.getPackageAsPath(${glPackageCB})}${myConditionBeanClassName}.${glClassFileExtension}" )
   #if (!$files.file(${generator.outputPath},$path).exists())

@@ -18,7 +18,6 @@ package org.dbflute.quickstage.dbflute.allcommon;
 import java.util.Collections;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Set;
 import java.lang.reflect.Method;
 
 import org.seasar.dbflute.Entity;
@@ -37,13 +36,13 @@ public class DBMetaInstanceHandler implements DBMetaProvider {
     // ===================================================================================
     //                                                                        Resource Map
     //                                                                        ============
-    /** The map of DB meta instance by key: table DB-name. */
+    /** The map of DB meta instance by key 'table DB-name'. (NotNull, LazyLoaded) */
     protected static final Map<String, DBMeta> _tableDbNameInstanceMap = newHashMap();
 
-    /** The map of DB meta instance by key: entity type. */
+    /** The map of DB meta instance by key 'entity type'. (NotNull, LazyLoaded) */
     protected static final Map<Class<?>, DBMeta> _entityTypeInstanceMap = newHashMap();
 
-    /** The map of table DB name and DB meta class name. */
+    /** The map of table DB name and DB meta class name. (NotNull) */
     protected static final Map<String, String> _tableDbNameClassNameMap;
     static {
         final Map<String, String> tmpMap = newHashMap();
@@ -59,6 +58,7 @@ public class DBMetaInstanceHandler implements DBMetaProvider {
         tmpMap.put("PRODUCT_CATEGORY", "org.dbflute.quickstage.dbflute.bsentity.dbmeta.ProductCategoryDbm");
         tmpMap.put("PRODUCT_STATUS", "org.dbflute.quickstage.dbflute.bsentity.dbmeta.ProductStatusDbm");
         tmpMap.put("PURCHASE", "org.dbflute.quickstage.dbflute.bsentity.dbmeta.PurchaseDbm");
+        tmpMap.put("PURCHASE_PAYMENT", "org.dbflute.quickstage.dbflute.bsentity.dbmeta.PurchasePaymentDbm");
         tmpMap.put("REGION", "org.dbflute.quickstage.dbflute.bsentity.dbmeta.RegionDbm");
         tmpMap.put("SERVICE_RANK", "org.dbflute.quickstage.dbflute.bsentity.dbmeta.ServiceRankDbm");
         tmpMap.put("SUMMARY_PRODUCT", "org.dbflute.quickstage.dbflute.bsentity.dbmeta.SummaryProductDbm");
@@ -67,18 +67,17 @@ public class DBMetaInstanceHandler implements DBMetaProvider {
         _tableDbNameClassNameMap = Collections.unmodifiableMap(tmpMap);
     }
 
-    /** The flexible map of table DB name. This is for conversion at finding. */
+    /** The flexible map of table DB name for conversion in finding process. (NotNull) */
     protected static final Map<String, String> _tableDbNameFlexibleMap = StringKeyMap.createAsFlexible();
     static {
-        final Set<String> tableDbNameSet = _tableDbNameClassNameMap.keySet();
-        for (String tableDbName : tableDbNameSet) {
+        for (String tableDbName : _tableDbNameClassNameMap.keySet()) {
             _tableDbNameFlexibleMap.put(tableDbName, tableDbName);
         }
     }
 
     /**
      * Get the unmodifiable map of DB meta.
-     * @return The unmodifiable map that contains all instances of DB meta. (NotNull & NotEmpty)
+     * @return The unmodifiable map that contains all instances of DB meta. (NotNull, NotEmpty)
      */
     public static Map<String, DBMeta> getUnmodifiableDBMetaMap() {
         initializeDBMetaMap();
@@ -99,8 +98,7 @@ public class DBMetaInstanceHandler implements DBMetaProvider {
                 findDBMeta(tableDbName); // initialize
             }
             if (!isInitialized()) {
-                String msg = "Failed to initialize tableDbNameInstanceMap:";
-                msg = msg + " tableDbNameInstanceMap=" + _tableDbNameInstanceMap;
+                String msg = "Failed to initialize tableDbNameInstanceMap: " + _tableDbNameInstanceMap;
                 throw new IllegalStateException(msg);
             }
         }
@@ -169,7 +167,7 @@ public class DBMetaInstanceHandler implements DBMetaProvider {
     }
 
     // ===================================================================================
-    //                                                                       By Table Name
+    //                                                                       by Table Name
     //                                                                       =============
     /**
      * @param tableFlexibleName The flexible name of table. (NotNull)
@@ -234,7 +232,7 @@ public class DBMetaInstanceHandler implements DBMetaProvider {
     }
 
     // ===================================================================================
-    //                                                                      By Entity Type
+    //                                                                      by Entity Type
     //                                                                      ==============
     /**
      * @param entityType The entity type of table, which should implement the entity interface. (NotNull)
@@ -264,19 +262,20 @@ public class DBMetaInstanceHandler implements DBMetaProvider {
             if (dbmetaName == null) {
                 return null;
             }
-            _tableDbNameInstanceMap.put(tableDbName, getDBMeta(dbmetaName));
+            _tableDbNameInstanceMap.put(tableDbName, toDBMetaInstance(dbmetaName));
             return _tableDbNameInstanceMap.get(tableDbName);
         }
     }
 
-    protected static DBMeta getDBMeta(String className) {
+    protected static DBMeta toDBMetaInstance(String dbmetaName) {
         try {
-            Class<?> clazz = Class.forName(className);
-            Method methoz = clazz.getMethod("getInstance", (Class[])null);
-            Object result = methoz.invoke(null, (Object[])null);
+            Class<?> dbmetaType = Class.forName(dbmetaName);
+            Method method = dbmetaType.getMethod("getInstance", (Class[])null);
+            Object result = method.invoke(null, (Object[])null);
             return (DBMeta)result;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to get the instance: " + className, e);
+            String msg = "Failed to get the instance: " + dbmetaName;
+            throw new IllegalStateException(msg, e);
         }
     }
 
@@ -308,7 +307,8 @@ public class DBMetaInstanceHandler implements DBMetaProvider {
         try {
             return (Entity)entityType.newInstance();
         } catch (Exception e) {
-            throw new RuntimeException("Failed to new the instance: " + entityType, e);
+            String msg = "Failed to new the instance: " + entityType;
+            throw new IllegalStateException(msg, e);
         }
     }
 

@@ -21,6 +21,8 @@ import org.seasar.dbflute.*;
 import org.seasar.dbflute.bhv.*;
 import org.seasar.dbflute.cbean.*;
 import org.seasar.dbflute.dbmeta.DBMeta;
+import org.seasar.dbflute.exception.*;
+import org.seasar.dbflute.optional.*;
 import org.seasar.dbflute.outsidesql.executor.*;
 import org.dbflute.quickstage.dbflute.exbhv.*;
 import org.dbflute.quickstage.dbflute.exentity.*;
@@ -106,7 +108,7 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      * <pre>
      * MemberFollowingCB cb = new MemberFollowingCB();
      * cb.query().setFoo...(value);
-     * int count = memberFollowingBhv.<span style="color: #FD4747">selectCount</span>(cb);
+     * int count = memberFollowingBhv.<span style="color: #DD4747">selectCount</span>(cb);
      * </pre>
      * @param cb The condition-bean of MemberFollowing. (NotNull)
      * @return The count for the condition. (NotMinus)
@@ -134,12 +136,14 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
     //                                                                       Entity Select
     //                                                                       =============
     /**
-     * Select the entity by the condition-bean.
+     * Select the entity by the condition-bean. #beforejava8 <br />
+     * <span style="color: #AD4747; font-size: 120%">The return might be null if no data, so you should have null check.</span> <br />
+     * <span style="color: #AD4747; font-size: 120%">If the data always exists as your business rule, use selectEntityWithDeletedCheck().</span>
      * <pre>
      * MemberFollowingCB cb = new MemberFollowingCB();
      * cb.query().setFoo...(value);
-     * MemberFollowing memberFollowing = memberFollowingBhv.<span style="color: #FD4747">selectEntity</span>(cb);
-     * if (memberFollowing != null) {
+     * MemberFollowing memberFollowing = memberFollowingBhv.<span style="color: #DD4747">selectEntity</span>(cb);
+     * if (memberFollowing != null) { <span style="color: #3F7E5E">// null check</span>
      *     ... = memberFollowing.get...();
      * } else {
      *     ...
@@ -147,17 +151,21 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      * </pre>
      * @param cb The condition-bean of MemberFollowing. (NotNull)
      * @return The entity selected by the condition. (NullAllowed: if no data, it returns null)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
+     * @exception EntityDuplicatedException When the entity has been duplicated.
+     * @exception SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
      */
     public MemberFollowing selectEntity(MemberFollowingCB cb) {
         return doSelectEntity(cb, MemberFollowing.class);
     }
 
-    protected <ENTITY extends MemberFollowing> ENTITY doSelectEntity(final MemberFollowingCB cb, Class<ENTITY> tp) {
-        assertCBStateValid(cb);
+    protected <ENTITY extends MemberFollowing> ENTITY doSelectEntity(MemberFollowingCB cb, Class<ENTITY> tp) {
+        assertCBStateValid(cb); assertObjectNotNull("entityType", tp);
         return helpSelectEntityInternally(cb, tp, new InternalSelectEntityCallback<ENTITY, MemberFollowingCB>() {
-            public List<ENTITY> callbackSelectList(MemberFollowingCB cb, Class<ENTITY> tp) { return doSelectList(cb, tp); } });
+            public List<ENTITY> callbackSelectList(MemberFollowingCB lcb, Class<ENTITY> ltp) { return doSelectList(lcb, ltp); } });
+    }
+
+    protected <ENTITY extends MemberFollowing> OptionalEntity<ENTITY> doSelectOptionalEntity(MemberFollowingCB cb, Class<ENTITY> tp) {
+        return createOptionalEntity(doSelectEntity(cb, tp), cb);
     }
 
     @Override
@@ -166,27 +174,28 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
     }
 
     /**
-     * Select the entity by the condition-bean with deleted check.
+     * Select the entity by the condition-bean with deleted check. <br />
+     * <span style="color: #AD4747; font-size: 120%">If the data always exists as your business rule, this method is good.</span>
      * <pre>
      * MemberFollowingCB cb = new MemberFollowingCB();
      * cb.query().setFoo...(value);
-     * MemberFollowing memberFollowing = memberFollowingBhv.<span style="color: #FD4747">selectEntityWithDeletedCheck</span>(cb);
+     * MemberFollowing memberFollowing = memberFollowingBhv.<span style="color: #DD4747">selectEntityWithDeletedCheck</span>(cb);
      * ... = memberFollowing.get...(); <span style="color: #3F7E5E">// the entity always be not null</span>
      * </pre>
      * @param cb The condition-bean of MemberFollowing. (NotNull)
      * @return The entity selected by the condition. (NotNull: if no data, throws exception)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted. (not found)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
+     * @exception EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @exception EntityDuplicatedException When the entity has been duplicated.
+     * @exception SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
      */
     public MemberFollowing selectEntityWithDeletedCheck(MemberFollowingCB cb) {
         return doSelectEntityWithDeletedCheck(cb, MemberFollowing.class);
     }
 
-    protected <ENTITY extends MemberFollowing> ENTITY doSelectEntityWithDeletedCheck(final MemberFollowingCB cb, Class<ENTITY> tp) {
-        assertCBStateValid(cb);
+    protected <ENTITY extends MemberFollowing> ENTITY doSelectEntityWithDeletedCheck(MemberFollowingCB cb, Class<ENTITY> tp) {
+        assertCBStateValid(cb); assertObjectNotNull("entityType", tp);
         return helpSelectEntityWithDeletedCheckInternally(cb, tp, new InternalSelectEntityWithDeletedCheckCallback<ENTITY, MemberFollowingCB>() {
-            public List<ENTITY> callbackSelectList(MemberFollowingCB cb, Class<ENTITY> tp) { return doSelectList(cb, tp); } });
+            public List<ENTITY> callbackSelectList(MemberFollowingCB lcb, Class<ENTITY> ltp) { return doSelectList(lcb, ltp); } });
     }
 
     @Override
@@ -196,39 +205,65 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
 
     /**
      * Select the entity by the primary-key value.
-     * @param memberFollowingId The one of primary key. (NotNull)
+     * @param memberFollowingId (会員フォローイングID): PK, ID, NotNull, BIGINT(19). (NotNull)
      * @return The entity selected by the PK. (NullAllowed: if no data, it returns null)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
+     * @exception EntityDuplicatedException When the entity has been duplicated.
+     * @exception SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
      */
     public MemberFollowing selectByPKValue(Long memberFollowingId) {
-        return doSelectByPKValue(memberFollowingId, MemberFollowing.class);
+        return doSelectByPK(memberFollowingId, MemberFollowing.class);
     }
 
-    protected <ENTITY extends MemberFollowing> ENTITY doSelectByPKValue(Long memberFollowingId, Class<ENTITY> entityType) {
-        return doSelectEntity(buildPKCB(memberFollowingId), entityType);
+    protected <ENTITY extends MemberFollowing> ENTITY doSelectByPK(Long memberFollowingId, Class<ENTITY> entityType) {
+        return doSelectEntity(xprepareCBAsPK(memberFollowingId), entityType);
+    }
+
+    protected <ENTITY extends MemberFollowing> OptionalEntity<ENTITY> doSelectOptionalByPK(Long memberFollowingId, Class<ENTITY> entityType) {
+        return createOptionalEntity(doSelectByPK(memberFollowingId, entityType), memberFollowingId);
     }
 
     /**
      * Select the entity by the primary-key value with deleted check.
-     * @param memberFollowingId The one of primary key. (NotNull)
+     * @param memberFollowingId (会員フォローイングID): PK, ID, NotNull, BIGINT(19). (NotNull)
      * @return The entity selected by the PK. (NotNull: if no data, throws exception)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted. (not found)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
+     * @exception EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @exception EntityDuplicatedException When the entity has been duplicated.
+     * @exception SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
      */
     public MemberFollowing selectByPKValueWithDeletedCheck(Long memberFollowingId) {
-        return doSelectByPKValueWithDeletedCheck(memberFollowingId, MemberFollowing.class);
+        return doSelectByPKWithDeletedCheck(memberFollowingId, MemberFollowing.class);
     }
 
-    protected <ENTITY extends MemberFollowing> ENTITY doSelectByPKValueWithDeletedCheck(Long memberFollowingId, Class<ENTITY> entityType) {
-        return doSelectEntityWithDeletedCheck(buildPKCB(memberFollowingId), entityType);
+    protected <ENTITY extends MemberFollowing> ENTITY doSelectByPKWithDeletedCheck(Long memberFollowingId, Class<ENTITY> entityType) {
+        return doSelectEntityWithDeletedCheck(xprepareCBAsPK(memberFollowingId), entityType);
     }
 
-    private MemberFollowingCB buildPKCB(Long memberFollowingId) {
+    protected MemberFollowingCB xprepareCBAsPK(Long memberFollowingId) {
         assertObjectNotNull("memberFollowingId", memberFollowingId);
-        MemberFollowingCB cb = newMyConditionBean();
-        cb.query().setMemberFollowingId_Equal(memberFollowingId);
+        MemberFollowingCB cb = newMyConditionBean(); cb.acceptPrimaryKey(memberFollowingId);
+        return cb;
+    }
+
+    /**
+     * Select the entity by the unique-key value.
+     * @param myMemberId (わたし): UQ+, IX+, NotNull, INTEGER(10), FK to MEMBER. (NotNull)
+     * @param yourMemberId (あなた): +UQ, IX+, NotNull, INTEGER(10), FK to MEMBER. (NotNull)
+     * @return The optional entity selected by the unique key. (NotNull: if no data, empty entity)
+     * @exception EntityAlreadyDeletedException When get(), required() of return value is called and the value is null, which means entity has already been deleted (not found).
+     * @exception EntityDuplicatedException When the entity has been duplicated.
+     * @exception SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
+     */
+    public OptionalEntity<MemberFollowing> selectByUniqueOf(Integer myMemberId, Integer yourMemberId) {
+        return doSelectByUniqueOf(myMemberId, yourMemberId, MemberFollowing.class);
+    }
+
+    protected <ENTITY extends MemberFollowing> OptionalEntity<ENTITY> doSelectByUniqueOf(Integer myMemberId, Integer yourMemberId, Class<ENTITY> entityType) {
+        return createOptionalEntity(doSelectEntity(xprepareCBAsUniqueOf(myMemberId, yourMemberId), entityType), myMemberId, yourMemberId);
+    }
+
+    protected MemberFollowingCB xprepareCBAsUniqueOf(Integer myMemberId, Integer yourMemberId) {
+        assertObjectNotNull("myMemberId", myMemberId);assertObjectNotNull("yourMemberId", yourMemberId);
+        MemberFollowingCB cb = newMyConditionBean(); cb.acceptUniqueOf(myMemberId, yourMemberId);
         return cb;
     }
 
@@ -241,14 +276,14 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      * MemberFollowingCB cb = new MemberFollowingCB();
      * cb.query().setFoo...(value);
      * cb.query().addOrderBy_Bar...();
-     * ListResultBean&lt;MemberFollowing&gt; memberFollowingList = memberFollowingBhv.<span style="color: #FD4747">selectList</span>(cb);
+     * ListResultBean&lt;MemberFollowing&gt; memberFollowingList = memberFollowingBhv.<span style="color: #DD4747">selectList</span>(cb);
      * for (MemberFollowing memberFollowing : memberFollowingList) {
      *     ... = memberFollowing.get...();
      * }
      * </pre>
      * @param cb The condition-bean of MemberFollowing. (NotNull)
      * @return The result bean of selected list. (NotNull: if no data, returns empty list)
-     * @exception org.seasar.dbflute.exception.DangerousResultSizeException When the result size is over the specified safety size.
+     * @exception DangerousResultSizeException When the result size is over the specified safety size.
      */
     public ListResultBean<MemberFollowing> selectList(MemberFollowingCB cb) {
         return doSelectList(cb, MemberFollowing.class);
@@ -258,7 +293,7 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
         assertCBStateValid(cb); assertObjectNotNull("entityType", tp);
         assertSpecifyDerivedReferrerEntityProperty(cb, tp);
         return helpSelectListInternally(cb, tp, new InternalSelectListCallback<ENTITY, MemberFollowingCB>() {
-            public List<ENTITY> callbackSelectList(MemberFollowingCB cb, Class<ENTITY> tp) { return delegateSelectList(cb, tp); } });
+            public List<ENTITY> callbackSelectList(MemberFollowingCB lcb, Class<ENTITY> ltp) { return delegateSelectList(lcb, ltp); } });
     }
 
     @Override
@@ -276,8 +311,8 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      * MemberFollowingCB cb = new MemberFollowingCB();
      * cb.query().setFoo...(value);
      * cb.query().addOrderBy_Bar...();
-     * cb.<span style="color: #FD4747">paging</span>(20, 3); <span style="color: #3F7E5E">// 20 records per a page and current page number is 3</span>
-     * PagingResultBean&lt;MemberFollowing&gt; page = memberFollowingBhv.<span style="color: #FD4747">selectPage</span>(cb);
+     * cb.<span style="color: #DD4747">paging</span>(20, 3); <span style="color: #3F7E5E">// 20 records per a page and current page number is 3</span>
+     * PagingResultBean&lt;MemberFollowing&gt; page = memberFollowingBhv.<span style="color: #DD4747">selectPage</span>(cb);
      * int allRecordCount = page.getAllRecordCount();
      * int allPageCount = page.getAllPageCount();
      * boolean isExistPrePage = page.isExistPrePage();
@@ -289,7 +324,7 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      * </pre>
      * @param cb The condition-bean of MemberFollowing. (NotNull)
      * @return The result bean of selected page. (NotNull: if no data, returns bean as empty list)
-     * @exception org.seasar.dbflute.exception.DangerousResultSizeException When the result size is over the specified safety size.
+     * @exception DangerousResultSizeException When the result size is over the specified safety size.
      */
     public PagingResultBean<MemberFollowing> selectPage(MemberFollowingCB cb) {
         return doSelectPage(cb, MemberFollowing.class);
@@ -316,7 +351,7 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      * <pre>
      * MemberFollowingCB cb = new MemberFollowingCB();
      * cb.query().setFoo...(value);
-     * memberFollowingBhv.<span style="color: #FD4747">selectCursor</span>(cb, new EntityRowHandler&lt;MemberFollowing&gt;() {
+     * memberFollowingBhv.<span style="color: #DD4747">selectCursor</span>(cb, new EntityRowHandler&lt;MemberFollowing&gt;() {
      *     public void handle(MemberFollowing entity) {
      *         ... = entity.getFoo...();
      *     }
@@ -345,9 +380,9 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      * Select the scalar value derived by a function from uniquely-selected records. <br />
      * You should call a function method after this method called like as follows:
      * <pre>
-     * memberFollowingBhv.<span style="color: #FD4747">scalarSelect</span>(Date.class).max(new ScalarQuery() {
+     * memberFollowingBhv.<span style="color: #DD4747">scalarSelect</span>(Date.class).max(new ScalarQuery() {
      *     public void query(MemberFollowingCB cb) {
-     *         cb.specify().<span style="color: #FD4747">columnFooDatetime()</span>; <span style="color: #3F7E5E">// required for a function</span>
+     *         cb.specify().<span style="color: #DD4747">columnFooDatetime()</span>; <span style="color: #3F7E5E">// required for a function</span>
      *         cb.query().setBarName_PrefixSearch("S");
      *     }
      * });
@@ -393,7 +428,8 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      */
     public List<Member> pulloutMemberByMyMemberId(List<MemberFollowing> memberFollowingList) {
         return helpPulloutInternally(memberFollowingList, new InternalPulloutCallback<MemberFollowing, Member>() {
-            public Member getFr(MemberFollowing et) { return et.getMemberByMyMemberId(); }
+            public Member getFr(MemberFollowing et)
+            { return et.getMemberByMyMemberId(); }
             public boolean hasRf() { return true; }
             public void setRfLs(Member et, List<MemberFollowing> ls)
             { et.setMemberFollowingByMyMemberIdList(ls); }
@@ -406,7 +442,8 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      */
     public List<Member> pulloutMemberByYourMemberId(List<MemberFollowing> memberFollowingList) {
         return helpPulloutInternally(memberFollowingList, new InternalPulloutCallback<MemberFollowing, Member>() {
-            public Member getFr(MemberFollowing et) { return et.getMemberByYourMemberId(); }
+            public Member getFr(MemberFollowing et)
+            { return et.getMemberByYourMemberId(); }
             public boolean hasRf() { return true; }
             public void setRfLs(Member et, List<MemberFollowing> ls)
             { et.setMemberFollowingByYourMemberIdList(ls); }
@@ -440,12 +477,12 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      * <span style="color: #3F7E5E">// you don't need to set values of common columns</span>
      * <span style="color: #3F7E5E">//memberFollowing.setRegisterUser(value);</span>
      * <span style="color: #3F7E5E">//memberFollowing.set...;</span>
-     * memberFollowingBhv.<span style="color: #FD4747">insert</span>(memberFollowing);
+     * memberFollowingBhv.<span style="color: #DD4747">insert</span>(memberFollowing);
      * ... = memberFollowing.getPK...(); <span style="color: #3F7E5E">// if auto-increment, you can get the value after</span>
      * </pre>
      * <p>While, when the entity is created by select, all columns are registered.</p>
      * @param memberFollowing The entity of insert target. (NotNull, PrimaryKeyNullAllowed: when auto-increment)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
+     * @exception EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
     public void insert(MemberFollowing memberFollowing) {
         doInsert(memberFollowing, null);
@@ -481,17 +518,17 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      * <span style="color: #3F7E5E">//memberFollowing.setRegisterUser(value);</span>
      * <span style="color: #3F7E5E">//memberFollowing.set...;</span>
      * <span style="color: #3F7E5E">// if exclusive control, the value of exclusive control column is required</span>
-     * memberFollowing.<span style="color: #FD4747">setVersionNo</span>(value);
+     * memberFollowing.<span style="color: #DD4747">setVersionNo</span>(value);
      * try {
-     *     memberFollowingBhv.<span style="color: #FD4747">update</span>(memberFollowing);
+     *     memberFollowingBhv.<span style="color: #DD4747">update</span>(memberFollowing);
      * } catch (EntityAlreadyUpdatedException e) { <span style="color: #3F7E5E">// if concurrent update</span>
      *     ...
      * }
      * </pre>
      * @param memberFollowing The entity of update target. (NotNull, PrimaryKeyNotNull, ConcurrencyColumnRequired)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted. (not found)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
+     * @exception EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @exception EntityDuplicatedException When the entity has been duplicated.
+     * @exception EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
     public void update(final MemberFollowing memberFollowing) {
         doUpdate(memberFollowing, null);
@@ -541,11 +578,11 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
     /**
      * Insert or update the entity modified-only. (DefaultConstraintsEnabled, NonExclusiveControl) <br />
      * if (the entity has no PK) { insert() } else { update(), but no data, insert() } <br />
-     * <p><span style="color: #FD4747; font-size: 120%">Attention, you cannot update by unique keys instead of PK.</span></p>
+     * <p><span style="color: #DD4747; font-size: 120%">Attention, you cannot update by unique keys instead of PK.</span></p>
      * @param memberFollowing The entity of insert or update target. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted. (not found)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
+     * @exception EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @exception EntityDuplicatedException When the entity has been duplicated.
+     * @exception EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
     public void insertOrUpdate(MemberFollowing memberFollowing) {
         doInesrtOrUpdate(memberFollowing, null, null);
@@ -581,16 +618,16 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      * MemberFollowing memberFollowing = new MemberFollowing();
      * memberFollowing.setPK...(value); <span style="color: #3F7E5E">// required</span>
      * <span style="color: #3F7E5E">// if exclusive control, the value of exclusive control column is required</span>
-     * memberFollowing.<span style="color: #FD4747">setVersionNo</span>(value);
+     * memberFollowing.<span style="color: #DD4747">setVersionNo</span>(value);
      * try {
-     *     memberFollowingBhv.<span style="color: #FD4747">delete</span>(memberFollowing);
+     *     memberFollowingBhv.<span style="color: #DD4747">delete</span>(memberFollowing);
      * } catch (EntityAlreadyUpdatedException e) { <span style="color: #3F7E5E">// if concurrent update</span>
      *     ...
      * }
      * </pre>
      * @param memberFollowing The entity of delete target. (NotNull, PrimaryKeyNotNull, ConcurrencyColumnRequired)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted. (not found)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
+     * @exception EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @exception EntityDuplicatedException When the entity has been duplicated.
      */
     public void delete(MemberFollowing memberFollowing) {
         doDelete(memberFollowing, null);
@@ -625,7 +662,7 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
     /**
      * Batch-insert the entity list modified-only of same-set columns. (DefaultConstraintsEnabled) <br />
      * This method uses executeBatch() of java.sql.PreparedStatement. <br />
-     * <p><span style="color: #FD4747; font-size: 120%">The columns of least common multiple are registered like this:</span></p>
+     * <p><span style="color: #DD4747; font-size: 120%">The columns of least common multiple are registered like this:</span></p>
      * <pre>
      * for (... : ...) {
      *     MemberFollowing memberFollowing = new MemberFollowing();
@@ -638,7 +675,7 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      *     <span style="color: #3F7E5E">// columns not-called in all entities are registered as null or default value</span>
      *     memberFollowingList.add(memberFollowing);
      * }
-     * memberFollowingBhv.<span style="color: #FD4747">batchInsert</span>(memberFollowingList);
+     * memberFollowingBhv.<span style="color: #DD4747">batchInsert</span>(memberFollowingList);
      * </pre>
      * <p>While, when the entities are created by select, all columns are registered.</p>
      * <p>And if the table has an identity, entities after the process don't have incremented values.
@@ -672,7 +709,7 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
     /**
      * Batch-update the entity list modified-only of same-set columns. (NonExclusiveControl) <br />
      * This method uses executeBatch() of java.sql.PreparedStatement. <br />
-     * <span style="color: #FD4747; font-size: 120%">You should specify same-set columns to all entities like this:</span>
+     * <span style="color: #DD4747; font-size: 120%">You should specify same-set columns to all entities like this:</span>
      * <pre>
      * for (... : ...) {
      *     MemberFollowing memberFollowing = new MemberFollowing();
@@ -687,11 +724,11 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      *     <span style="color: #3F7E5E">// (others are not updated: their values are kept)</span>
      *     memberFollowingList.add(memberFollowing);
      * }
-     * memberFollowingBhv.<span style="color: #FD4747">batchUpdate</span>(memberFollowingList);
+     * memberFollowingBhv.<span style="color: #DD4747">batchUpdate</span>(memberFollowingList);
      * </pre>
      * @param memberFollowingList The list of the entity. (NotNull, EmptyAllowed, PrimaryKeyNotNull)
      * @return The array of updated count. (NotNull, EmptyAllowed)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @exception EntityAlreadyDeletedException When the entity has already been deleted. (not found)
      */
     public int[] batchUpdate(List<MemberFollowing> memberFollowingList) {
         UpdateOption<MemberFollowingCB> op = createPlainUpdateOption();
@@ -720,16 +757,16 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      * This method uses executeBatch() of java.sql.PreparedStatement.
      * <pre>
      * <span style="color: #3F7E5E">// e.g. update two columns only</span>
-     * memberFollowingBhv.<span style="color: #FD4747">batchUpdate</span>(memberFollowingList, new SpecifyQuery<MemberFollowingCB>() {
+     * memberFollowingBhv.<span style="color: #DD4747">batchUpdate</span>(memberFollowingList, new SpecifyQuery<MemberFollowingCB>() {
      *     public void specify(MemberFollowingCB cb) { <span style="color: #3F7E5E">// the two only updated</span>
-     *         cb.specify().<span style="color: #FD4747">columnFooStatusCode()</span>; <span style="color: #3F7E5E">// should be modified in any entities</span>
-     *         cb.specify().<span style="color: #FD4747">columnBarDate()</span>; <span style="color: #3F7E5E">// should be modified in any entities</span>
+     *         cb.specify().<span style="color: #DD4747">columnFooStatusCode()</span>; <span style="color: #3F7E5E">// should be modified in any entities</span>
+     *         cb.specify().<span style="color: #DD4747">columnBarDate()</span>; <span style="color: #3F7E5E">// should be modified in any entities</span>
      *     }
      * });
      * <span style="color: #3F7E5E">// e.g. update every column in the table</span>
-     * memberFollowingBhv.<span style="color: #FD4747">batchUpdate</span>(memberFollowingList, new SpecifyQuery<MemberFollowingCB>() {
+     * memberFollowingBhv.<span style="color: #DD4747">batchUpdate</span>(memberFollowingList, new SpecifyQuery<MemberFollowingCB>() {
      *     public void specify(MemberFollowingCB cb) { <span style="color: #3F7E5E">// all columns are updated</span>
-     *         cb.specify().<span style="color: #FD4747">columnEveryColumn()</span>; <span style="color: #3F7E5E">// no check of modified properties</span>
+     *         cb.specify().<span style="color: #DD4747">columnEveryColumn()</span>; <span style="color: #3F7E5E">// no check of modified properties</span>
      *     }
      * });
      * </pre>
@@ -741,7 +778,7 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      * @param memberFollowingList The list of the entity. (NotNull, EmptyAllowed, PrimaryKeyNotNull)
      * @param updateColumnSpec The specification of update columns. (NotNull)
      * @return The array of updated count. (NotNull, EmptyAllowed)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @exception EntityAlreadyDeletedException When the entity has already been deleted. (not found)
      */
     public int[] batchUpdate(List<MemberFollowing> memberFollowingList, SpecifyQuery<MemberFollowingCB> updateColumnSpec) {
         return doBatchUpdate(memberFollowingList, createSpecifiedUpdateOption(updateColumnSpec));
@@ -757,7 +794,7 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      * This method uses executeBatch() of java.sql.PreparedStatement.
      * @param memberFollowingList The list of the entity. (NotNull, EmptyAllowed, PrimaryKeyNotNull)
      * @return The array of deleted count. (NotNull, EmptyAllowed)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @exception EntityAlreadyDeletedException When the entity has already been deleted. (not found)
      */
     public int[] batchDelete(List<MemberFollowing> memberFollowingList) {
         return doBatchDelete(memberFollowingList, null);
@@ -786,7 +823,7 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
     /**
      * Insert the several entities by query (modified-only for fixed value).
      * <pre>
-     * memberFollowingBhv.<span style="color: #FD4747">queryInsert</span>(new QueryInsertSetupper&lt;MemberFollowing, MemberFollowingCB&gt;() {
+     * memberFollowingBhv.<span style="color: #DD4747">queryInsert</span>(new QueryInsertSetupper&lt;MemberFollowing, MemberFollowingCB&gt;() {
      *     public ConditionBean setup(memberFollowing entity, MemberFollowingCB intoCB) {
      *         FooCB cb = FooCB();
      *         cb.setupSelect_Bar();
@@ -848,12 +885,12 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      * <span style="color: #3F7E5E">//memberFollowing.setVersionNo(value);</span>
      * MemberFollowingCB cb = new MemberFollowingCB();
      * cb.query().setFoo...(value);
-     * memberFollowingBhv.<span style="color: #FD4747">queryUpdate</span>(memberFollowing, cb);
+     * memberFollowingBhv.<span style="color: #DD4747">queryUpdate</span>(memberFollowing, cb);
      * </pre>
      * @param memberFollowing The entity that contains update values. (NotNull, PrimaryKeyNullAllowed)
      * @param cb The condition-bean of MemberFollowing. (NotNull)
      * @return The updated count.
-     * @exception org.seasar.dbflute.exception.NonQueryUpdateNotAllowedException When the query has no condition.
+     * @exception NonQueryUpdateNotAllowedException When the query has no condition.
      */
     public int queryUpdate(MemberFollowing memberFollowing, MemberFollowingCB cb) {
         return doQueryUpdate(memberFollowing, cb, null);
@@ -876,11 +913,11 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      * <pre>
      * MemberFollowingCB cb = new MemberFollowingCB();
      * cb.query().setFoo...(value);
-     * memberFollowingBhv.<span style="color: #FD4747">queryDelete</span>(memberFollowing, cb);
+     * memberFollowingBhv.<span style="color: #DD4747">queryDelete</span>(memberFollowing, cb);
      * </pre>
      * @param cb The condition-bean of MemberFollowing. (NotNull)
      * @return The deleted count.
-     * @exception org.seasar.dbflute.exception.NonQueryDeleteNotAllowedException When the query has no condition.
+     * @exception NonQueryDeleteNotAllowedException When the query has no condition.
      */
     public int queryDelete(MemberFollowingCB cb) {
         return doQueryDelete(cb, null);
@@ -916,12 +953,12 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      * InsertOption<MemberFollowingCB> option = new InsertOption<MemberFollowingCB>();
      * <span style="color: #3F7E5E">// you can insert by your values for common columns</span>
      * option.disableCommonColumnAutoSetup();
-     * memberFollowingBhv.<span style="color: #FD4747">varyingInsert</span>(memberFollowing, option);
+     * memberFollowingBhv.<span style="color: #DD4747">varyingInsert</span>(memberFollowing, option);
      * ... = memberFollowing.getPK...(); <span style="color: #3F7E5E">// if auto-increment, you can get the value after</span>
      * </pre>
      * @param memberFollowing The entity of insert target. (NotNull, PrimaryKeyNullAllowed: when auto-increment)
      * @param option The option of insert for varying requests. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
+     * @exception EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
     public void varyingInsert(MemberFollowing memberFollowing, InsertOption<MemberFollowingCB> option) {
         assertInsertOptionNotNull(option);
@@ -937,25 +974,25 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      * memberFollowing.setPK...(value); <span style="color: #3F7E5E">// required</span>
      * memberFollowing.setOther...(value); <span style="color: #3F7E5E">// you should set only modified columns</span>
      * <span style="color: #3F7E5E">// if exclusive control, the value of exclusive control column is required</span>
-     * memberFollowing.<span style="color: #FD4747">setVersionNo</span>(value);
+     * memberFollowing.<span style="color: #DD4747">setVersionNo</span>(value);
      * try {
      *     <span style="color: #3F7E5E">// you can update by self calculation values</span>
      *     UpdateOption&lt;MemberFollowingCB&gt; option = new UpdateOption&lt;MemberFollowingCB&gt;();
      *     option.self(new SpecifyQuery&lt;MemberFollowingCB&gt;() {
      *         public void specify(MemberFollowingCB cb) {
-     *             cb.specify().<span style="color: #FD4747">columnXxxCount()</span>;
+     *             cb.specify().<span style="color: #DD4747">columnXxxCount()</span>;
      *         }
      *     }).plus(1); <span style="color: #3F7E5E">// XXX_COUNT = XXX_COUNT + 1</span>
-     *     memberFollowingBhv.<span style="color: #FD4747">varyingUpdate</span>(memberFollowing, option);
+     *     memberFollowingBhv.<span style="color: #DD4747">varyingUpdate</span>(memberFollowing, option);
      * } catch (EntityAlreadyUpdatedException e) { <span style="color: #3F7E5E">// if concurrent update</span>
      *     ...
      * }
      * </pre>
      * @param memberFollowing The entity of update target. (NotNull, PrimaryKeyNotNull, ConcurrencyColumnRequired)
      * @param option The option of update for varying requests. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted. (not found)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
+     * @exception EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @exception EntityDuplicatedException When the entity has been duplicated.
+     * @exception EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
     public void varyingUpdate(MemberFollowing memberFollowing, UpdateOption<MemberFollowingCB> option) {
         assertUpdateOptionNotNull(option);
@@ -968,9 +1005,9 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      * @param memberFollowing The entity of insert or update target. (NotNull)
      * @param insertOption The option of insert for varying requests. (NotNull)
      * @param updateOption The option of update for varying requests. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted. (not found)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
+     * @exception EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @exception EntityDuplicatedException When the entity has been duplicated.
+     * @exception EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
     public void varyingInsertOrUpdate(MemberFollowing memberFollowing, InsertOption<MemberFollowingCB> insertOption, UpdateOption<MemberFollowingCB> updateOption) {
         assertInsertOptionNotNull(insertOption); assertUpdateOptionNotNull(updateOption);
@@ -983,8 +1020,8 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      * Other specifications are same as delete(entity).
      * @param memberFollowing The entity of delete target. (NotNull, PrimaryKeyNotNull, ConcurrencyColumnRequired)
      * @param option The option of update for varying requests. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted. (not found)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
+     * @exception EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @exception EntityDuplicatedException When the entity has been duplicated.
      */
     public void varyingDelete(MemberFollowing memberFollowing, DeleteOption<MemberFollowingCB> option) {
         assertDeleteOptionNotNull(option);
@@ -1070,16 +1107,16 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      * UpdateOption&lt;MemberFollowingCB&gt; option = new UpdateOption&lt;MemberFollowingCB&gt;();
      * option.self(new SpecifyQuery&lt;MemberFollowingCB&gt;() {
      *     public void specify(MemberFollowingCB cb) {
-     *         cb.specify().<span style="color: #FD4747">columnFooCount()</span>;
+     *         cb.specify().<span style="color: #DD4747">columnFooCount()</span>;
      *     }
      * }).plus(1); <span style="color: #3F7E5E">// FOO_COUNT = FOO_COUNT + 1</span>
-     * memberFollowingBhv.<span style="color: #FD4747">varyingQueryUpdate</span>(memberFollowing, cb, option);
+     * memberFollowingBhv.<span style="color: #DD4747">varyingQueryUpdate</span>(memberFollowing, cb, option);
      * </pre>
      * @param memberFollowing The entity that contains update values. (NotNull) {PrimaryKeyNotRequired}
      * @param cb The condition-bean of MemberFollowing. (NotNull)
      * @param option The option of update for varying requests. (NotNull)
      * @return The updated count.
-     * @exception org.seasar.dbflute.exception.NonQueryUpdateNotAllowedException When the query has no condition (if not allowed).
+     * @exception NonQueryUpdateNotAllowedException When the query has no condition (if not allowed).
      */
     public int varyingQueryUpdate(MemberFollowing memberFollowing, MemberFollowingCB cb, UpdateOption<MemberFollowingCB> option) {
         assertUpdateOptionNotNull(option);
@@ -1093,7 +1130,7 @@ public abstract class BsMemberFollowingBhv extends AbstractBehaviorWritable {
      * @param cb The condition-bean of MemberFollowing. (NotNull)
      * @param option The option of delete for varying requests. (NotNull)
      * @return The deleted count.
-     * @exception org.seasar.dbflute.exception.NonQueryDeleteNotAllowedException When the query has no condition (if not allowed).
+     * @exception NonQueryDeleteNotAllowedException When the query has no condition (if not allowed).
      */
     public int varyingQueryDelete(MemberFollowingCB cb, DeleteOption<MemberFollowingCB> option) {
         assertDeleteOptionNotNull(option);

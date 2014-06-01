@@ -139,6 +139,9 @@ public abstract class BsMember implements EntityDefinedCommonColumn, Serializabl
     // -----------------------------------------------------
     //                                              Internal
     //                                              --------
+    /** The unique-driven properties for this entity. (NotNull) */
+    protected final EntityUniqueDrivenProperties __uniqueDrivenProperties = newUniqueDrivenProperties();
+
     /** The modified properties for this entity. (NotNull) */
     protected final EntityModifiedProperties __modifiedProperties = newModifiedProperties();
 
@@ -184,6 +187,28 @@ public abstract class BsMember implements EntityDefinedCommonColumn, Serializabl
     public boolean hasPrimaryKeyValue() {
         if (getMemberId() == null) { return false; }
         return true;
+    }
+
+    /**
+     * To be unique by the unique column. <br />
+     * You can update the entity by the key when entity update (NOT batch update).
+     * @param memberAccount (会員アカウント): UQ, NotNull, VARCHAR(50). (NotNull)
+     */
+    public void uniqueBy(String memberAccount) {
+        __uniqueDrivenProperties.clear();
+        __uniqueDrivenProperties.addPropertyName("memberAccount");
+        setMemberAccount(memberAccount);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Set<String> myuniqueDrivenProperties() {
+        return __uniqueDrivenProperties.getPropertyNames();
+    }
+
+    protected EntityUniqueDrivenProperties newUniqueDrivenProperties() {
+        return new EntityUniqueDrivenProperties();
     }
 
     // ===================================================================================
@@ -589,17 +614,17 @@ public abstract class BsMember implements EntityDefinedCommonColumn, Serializabl
     /**
      * Determine the object is equal with this. <br />
      * If primary-keys or columns of the other are same as this one, returns true.
-     * @param other The other entity. (NullAllowed: if null, returns false fixedly)
+     * @param obj The object as other entity. (NullAllowed: if null, returns false fixedly)
      * @return Comparing result.
      */
-    public boolean equals(Object other) {
-        if (other == null || !(other instanceof BsMember)) { return false; }
-        BsMember otherEntity = (BsMember)other;
-        if (!xSV(getMemberId(), otherEntity.getMemberId())) { return false; }
+    public boolean equals(Object obj) {
+        if (obj == null || !(obj instanceof BsMember)) { return false; }
+        BsMember other = (BsMember)obj;
+        if (!xSV(getMemberId(), other.getMemberId())) { return false; }
         return true;
     }
-    protected boolean xSV(Object value1, Object value2) { // isSameValue()
-        return InternalUtil.isSameValue(value1, value2);
+    protected boolean xSV(Object v1, Object v2) {
+        return FunCustodial.isSameValue(v1, v2);
     }
 
     /**
@@ -607,13 +632,13 @@ public abstract class BsMember implements EntityDefinedCommonColumn, Serializabl
      * @return The hash-code from primary-key or columns.
      */
     public int hashCode() {
-        int result = 17;
-        result = xCH(result, getTableDbName());
-        result = xCH(result, getMemberId());
-        return result;
+        int hs = 17;
+        hs = xCH(hs, getTableDbName());
+        hs = xCH(hs, getMemberId());
+        return hs;
     }
-    protected int xCH(int result, Object value) { // calculateHashcode()
-        return InternalUtil.calculateHashcode(result, value);
+    protected int xCH(int hs, Object vl) {
+        return FunCustodial.calculateHashcode(hs, vl);
     }
 
     /**
@@ -628,7 +653,7 @@ public abstract class BsMember implements EntityDefinedCommonColumn, Serializabl
      * @return The display string of all columns and relation existences. (NotNull)
      */
     public String toString() {
-        return buildDisplayString(InternalUtil.toClassTitle(this), true, true);
+        return buildDisplayString(FunCustodial.toClassTitle(this), true, true);
     }
 
     /**
@@ -637,33 +662,33 @@ public abstract class BsMember implements EntityDefinedCommonColumn, Serializabl
     public String toStringWithRelation() {
         StringBuilder sb = new StringBuilder();
         sb.append(toString());
-        String l = "\n  ";
+        String li = "\n  ";
         if (_memberStatus != null)
-        { sb.append(l).append(xbRDS(_memberStatus, "memberStatus")); }
+        { sb.append(li).append(xbRDS(_memberStatus, "memberStatus")); }
         if (_memberAddressAsValid != null)
-        { sb.append(l).append(xbRDS(_memberAddressAsValid, "memberAddressAsValid")); }
+        { sb.append(li).append(xbRDS(_memberAddressAsValid, "memberAddressAsValid")); }
         if (_memberLoginAsLatest != null)
-        { sb.append(l).append(xbRDS(_memberLoginAsLatest, "memberLoginAsLatest")); }
+        { sb.append(li).append(xbRDS(_memberLoginAsLatest, "memberLoginAsLatest")); }
         if (_memberSecurityAsOne != null)
-        { sb.append(l).append(xbRDS(_memberSecurityAsOne, "memberSecurityAsOne")); }
+        { sb.append(li).append(xbRDS(_memberSecurityAsOne, "memberSecurityAsOne")); }
         if (_memberServiceAsOne != null)
-        { sb.append(l).append(xbRDS(_memberServiceAsOne, "memberServiceAsOne")); }
+        { sb.append(li).append(xbRDS(_memberServiceAsOne, "memberServiceAsOne")); }
         if (_memberWithdrawalAsOne != null)
-        { sb.append(l).append(xbRDS(_memberWithdrawalAsOne, "memberWithdrawalAsOne")); }
-        if (_memberAddressList != null) { for (Entity e : _memberAddressList)
-        { if (e != null) { sb.append(l).append(xbRDS(e, "memberAddressList")); } } }
-        if (_memberFollowingByMyMemberIdList != null) { for (Entity e : _memberFollowingByMyMemberIdList)
-        { if (e != null) { sb.append(l).append(xbRDS(e, "memberFollowingByMyMemberIdList")); } } }
-        if (_memberFollowingByYourMemberIdList != null) { for (Entity e : _memberFollowingByYourMemberIdList)
-        { if (e != null) { sb.append(l).append(xbRDS(e, "memberFollowingByYourMemberIdList")); } } }
-        if (_memberLoginList != null) { for (Entity e : _memberLoginList)
-        { if (e != null) { sb.append(l).append(xbRDS(e, "memberLoginList")); } } }
-        if (_purchaseList != null) { for (Entity e : _purchaseList)
-        { if (e != null) { sb.append(l).append(xbRDS(e, "purchaseList")); } } }
+        { sb.append(li).append(xbRDS(_memberWithdrawalAsOne, "memberWithdrawalAsOne")); }
+        if (_memberAddressList != null) { for (Entity et : _memberAddressList)
+        { if (et != null) { sb.append(li).append(xbRDS(et, "memberAddressList")); } } }
+        if (_memberFollowingByMyMemberIdList != null) { for (Entity et : _memberFollowingByMyMemberIdList)
+        { if (et != null) { sb.append(li).append(xbRDS(et, "memberFollowingByMyMemberIdList")); } } }
+        if (_memberFollowingByYourMemberIdList != null) { for (Entity et : _memberFollowingByYourMemberIdList)
+        { if (et != null) { sb.append(li).append(xbRDS(et, "memberFollowingByYourMemberIdList")); } } }
+        if (_memberLoginList != null) { for (Entity et : _memberLoginList)
+        { if (et != null) { sb.append(li).append(xbRDS(et, "memberLoginList")); } } }
+        if (_purchaseList != null) { for (Entity et : _purchaseList)
+        { if (et != null) { sb.append(li).append(xbRDS(et, "purchaseList")); } } }
         return sb.toString();
     }
-    protected String xbRDS(Entity e, String name) { // buildRelationDisplayString()
-        return e.buildDisplayString(name, true, true);
+    protected String xbRDS(Entity et, String name) { // buildRelationDisplayString()
+        return et.buildDisplayString(name, true, true);
     }
 
     /**
@@ -679,51 +704,51 @@ public abstract class BsMember implements EntityDefinedCommonColumn, Serializabl
     }
     protected String buildColumnString() {
         StringBuilder sb = new StringBuilder();
-        String delimiter = ", ";
-        sb.append(delimiter).append(getMemberId());
-        sb.append(delimiter).append(getMemberName());
-        sb.append(delimiter).append(getMemberAccount());
-        sb.append(delimiter).append(getMemberStatusCode());
-        sb.append(delimiter).append(getFormalizedDatetime());
-        sb.append(delimiter).append(xfUD(getBirthdate()));
-        sb.append(delimiter).append(getRegisterDatetime());
-        sb.append(delimiter).append(getRegisterUser());
-        sb.append(delimiter).append(getUpdateDatetime());
-        sb.append(delimiter).append(getUpdateUser());
-        sb.append(delimiter).append(getVersionNo());
-        if (sb.length() > delimiter.length()) {
-            sb.delete(0, delimiter.length());
+        String dm = ", ";
+        sb.append(dm).append(getMemberId());
+        sb.append(dm).append(getMemberName());
+        sb.append(dm).append(getMemberAccount());
+        sb.append(dm).append(getMemberStatusCode());
+        sb.append(dm).append(getFormalizedDatetime());
+        sb.append(dm).append(xfUD(getBirthdate()));
+        sb.append(dm).append(getRegisterDatetime());
+        sb.append(dm).append(getRegisterUser());
+        sb.append(dm).append(getUpdateDatetime());
+        sb.append(dm).append(getUpdateUser());
+        sb.append(dm).append(getVersionNo());
+        if (sb.length() > dm.length()) {
+            sb.delete(0, dm.length());
         }
         sb.insert(0, "{").append("}");
         return sb.toString();
     }
     protected String xfUD(Date date) { // formatUtilDate()
-        return InternalUtil.toString(date, xgDP());
+        return FunCustodial.toString(date, xgDP());
     }
     protected String xgDP() { // getDatePattern
         return "yyyy-MM-dd";
     }
     protected String buildRelationString() {
         StringBuilder sb = new StringBuilder();
-        String c = ",";
-        if (_memberStatus != null) { sb.append(c).append("memberStatus"); }
-        if (_memberAddressAsValid != null) { sb.append(c).append("memberAddressAsValid"); }
-        if (_memberLoginAsLatest != null) { sb.append(c).append("memberLoginAsLatest"); }
-        if (_memberSecurityAsOne != null) { sb.append(c).append("memberSecurityAsOne"); }
-        if (_memberServiceAsOne != null) { sb.append(c).append("memberServiceAsOne"); }
-        if (_memberWithdrawalAsOne != null) { sb.append(c).append("memberWithdrawalAsOne"); }
+        String cm = ",";
+        if (_memberStatus != null) { sb.append(cm).append("memberStatus"); }
+        if (_memberAddressAsValid != null) { sb.append(cm).append("memberAddressAsValid"); }
+        if (_memberLoginAsLatest != null) { sb.append(cm).append("memberLoginAsLatest"); }
+        if (_memberSecurityAsOne != null) { sb.append(cm).append("memberSecurityAsOne"); }
+        if (_memberServiceAsOne != null) { sb.append(cm).append("memberServiceAsOne"); }
+        if (_memberWithdrawalAsOne != null) { sb.append(cm).append("memberWithdrawalAsOne"); }
         if (_memberAddressList != null && !_memberAddressList.isEmpty())
-        { sb.append(c).append("memberAddressList"); }
+        { sb.append(cm).append("memberAddressList"); }
         if (_memberFollowingByMyMemberIdList != null && !_memberFollowingByMyMemberIdList.isEmpty())
-        { sb.append(c).append("memberFollowingByMyMemberIdList"); }
+        { sb.append(cm).append("memberFollowingByMyMemberIdList"); }
         if (_memberFollowingByYourMemberIdList != null && !_memberFollowingByYourMemberIdList.isEmpty())
-        { sb.append(c).append("memberFollowingByYourMemberIdList"); }
+        { sb.append(cm).append("memberFollowingByYourMemberIdList"); }
         if (_memberLoginList != null && !_memberLoginList.isEmpty())
-        { sb.append(c).append("memberLoginList"); }
+        { sb.append(cm).append("memberLoginList"); }
         if (_purchaseList != null && !_purchaseList.isEmpty())
-        { sb.append(c).append("purchaseList"); }
-        if (sb.length() > c.length()) {
-            sb.delete(0, c.length()).insert(0, "(").append(")");
+        { sb.append(cm).append("purchaseList"); }
+        if (sb.length() > cm.length()) {
+            sb.delete(0, cm.length()).insert(0, "(").append(")");
         }
         return sb.toString();
     }
@@ -973,6 +998,6 @@ public abstract class BsMember implements EntityDefinedCommonColumn, Serializabl
     }
 
     protected String convertEmptyToNull(String value) {
-        return InternalUtil.convertEmptyToNull(value);
+        return FunCustodial.convertEmptyToNull(value);
     }
 }

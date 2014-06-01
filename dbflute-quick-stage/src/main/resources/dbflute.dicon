@@ -25,6 +25,7 @@
     <component name="productCategoryBhv" class="org.dbflute.quickstage.dbflute.exbhv.ProductCategoryBhv"/>
     <component name="productStatusBhv" class="org.dbflute.quickstage.dbflute.exbhv.ProductStatusBhv"/>
     <component name="purchaseBhv" class="org.dbflute.quickstage.dbflute.exbhv.PurchaseBhv"/>
+    <component name="purchasePaymentBhv" class="org.dbflute.quickstage.dbflute.exbhv.PurchasePaymentBhv"/>
     <component name="regionBhv" class="org.dbflute.quickstage.dbflute.exbhv.RegionBhv"/>
     <component name="serviceRankBhv" class="org.dbflute.quickstage.dbflute.exbhv.ServiceRankBhv"/>
     <component name="summaryProductBhv" class="org.dbflute.quickstage.dbflute.exbhv.SummaryProductBhv"/>

@@ -110,6 +110,9 @@ public abstract class BsServiceRank implements Entity, Serializable, Cloneable {
     // -----------------------------------------------------
     //                                              Internal
     //                                              --------
+    /** The unique-driven properties for this entity. (NotNull) */
+    protected final EntityUniqueDrivenProperties __uniqueDrivenProperties = newUniqueDrivenProperties();
+
     /** The modified properties for this entity. (NotNull) */
     protected final EntityModifiedProperties __modifiedProperties = newModifiedProperties();
 
@@ -154,6 +157,28 @@ public abstract class BsServiceRank implements Entity, Serializable, Cloneable {
         return true;
     }
 
+    /**
+     * To be unique by the unique column. <br />
+     * You can update the entity by the key when entity update (NOT batch update).
+     * @param displayOrder (表示順): UQ, NotNull, INTEGER(10). (NotNull)
+     */
+    public void uniqueBy(Integer displayOrder) {
+        __uniqueDrivenProperties.clear();
+        __uniqueDrivenProperties.addPropertyName("displayOrder");
+        setDisplayOrder(displayOrder);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Set<String> myuniqueDrivenProperties() {
+        return __uniqueDrivenProperties.getPropertyNames();
+    }
+
+    protected EntityUniqueDrivenProperties newUniqueDrivenProperties() {
+        return new EntityUniqueDrivenProperties();
+    }
+
     // ===================================================================================
     //                                                             Classification Property
     //                                                             =======================
@@ -196,7 +221,7 @@ public abstract class BsServiceRank implements Entity, Serializable, Cloneable {
      * @param cdef The instance of classification definition (as ENUM type). (NullAllowed: if null, null value is set to the column)
      */
     public void setNewAcceptableFlgAsFlg(CDef.Flg cdef) {
-        setNewAcceptableFlg(cdef != null ? InternalUtil.toNumber(cdef.code(), Integer.class) : null);
+        setNewAcceptableFlg(cdef != null ? FunCustodial.toNumber(cdef.code(), Integer.class) : null);
     }
 
     /**
@@ -450,17 +475,17 @@ public abstract class BsServiceRank implements Entity, Serializable, Cloneable {
     /**
      * Determine the object is equal with this. <br />
      * If primary-keys or columns of the other are same as this one, returns true.
-     * @param other The other entity. (NullAllowed: if null, returns false fixedly)
+     * @param obj The object as other entity. (NullAllowed: if null, returns false fixedly)
      * @return Comparing result.
      */
-    public boolean equals(Object other) {
-        if (other == null || !(other instanceof BsServiceRank)) { return false; }
-        BsServiceRank otherEntity = (BsServiceRank)other;
-        if (!xSV(getServiceRankCode(), otherEntity.getServiceRankCode())) { return false; }
+    public boolean equals(Object obj) {
+        if (obj == null || !(obj instanceof BsServiceRank)) { return false; }
+        BsServiceRank other = (BsServiceRank)obj;
+        if (!xSV(getServiceRankCode(), other.getServiceRankCode())) { return false; }
         return true;
     }
-    protected boolean xSV(Object value1, Object value2) { // isSameValue()
-        return InternalUtil.isSameValue(value1, value2);
+    protected boolean xSV(Object v1, Object v2) {
+        return FunCustodial.isSameValue(v1, v2);
     }
 
     /**
@@ -468,13 +493,13 @@ public abstract class BsServiceRank implements Entity, Serializable, Cloneable {
      * @return The hash-code from primary-key or columns.
      */
     public int hashCode() {
-        int result = 17;
-        result = xCH(result, getTableDbName());
-        result = xCH(result, getServiceRankCode());
-        return result;
+        int hs = 17;
+        hs = xCH(hs, getTableDbName());
+        hs = xCH(hs, getServiceRankCode());
+        return hs;
     }
-    protected int xCH(int result, Object value) { // calculateHashcode()
-        return InternalUtil.calculateHashcode(result, value);
+    protected int xCH(int hs, Object vl) {
+        return FunCustodial.calculateHashcode(hs, vl);
     }
 
     /**
@@ -489,7 +514,7 @@ public abstract class BsServiceRank implements Entity, Serializable, Cloneable {
      * @return The display string of all columns and relation existences. (NotNull)
      */
     public String toString() {
-        return buildDisplayString(InternalUtil.toClassTitle(this), true, true);
+        return buildDisplayString(FunCustodial.toClassTitle(this), true, true);
     }
 
     /**
@@ -498,13 +523,13 @@ public abstract class BsServiceRank implements Entity, Serializable, Cloneable {
     public String toStringWithRelation() {
         StringBuilder sb = new StringBuilder();
         sb.append(toString());
-        String l = "\n  ";
-        if (_memberServiceList != null) { for (Entity e : _memberServiceList)
-        { if (e != null) { sb.append(l).append(xbRDS(e, "memberServiceList")); } } }
+        String li = "\n  ";
+        if (_memberServiceList != null) { for (Entity et : _memberServiceList)
+        { if (et != null) { sb.append(li).append(xbRDS(et, "memberServiceList")); } } }
         return sb.toString();
     }
-    protected String xbRDS(Entity e, String name) { // buildRelationDisplayString()
-        return e.buildDisplayString(name, true, true);
+    protected String xbRDS(Entity et, String name) { // buildRelationDisplayString()
+        return et.buildDisplayString(name, true, true);
     }
 
     /**
@@ -520,26 +545,26 @@ public abstract class BsServiceRank implements Entity, Serializable, Cloneable {
     }
     protected String buildColumnString() {
         StringBuilder sb = new StringBuilder();
-        String delimiter = ", ";
-        sb.append(delimiter).append(getServiceRankCode());
-        sb.append(delimiter).append(getServiceRankName());
-        sb.append(delimiter).append(getServicePointIncidence());
-        sb.append(delimiter).append(getNewAcceptableFlg());
-        sb.append(delimiter).append(getDescription());
-        sb.append(delimiter).append(getDisplayOrder());
-        if (sb.length() > delimiter.length()) {
-            sb.delete(0, delimiter.length());
+        String dm = ", ";
+        sb.append(dm).append(getServiceRankCode());
+        sb.append(dm).append(getServiceRankName());
+        sb.append(dm).append(getServicePointIncidence());
+        sb.append(dm).append(getNewAcceptableFlg());
+        sb.append(dm).append(getDescription());
+        sb.append(dm).append(getDisplayOrder());
+        if (sb.length() > dm.length()) {
+            sb.delete(0, dm.length());
         }
         sb.insert(0, "{").append("}");
         return sb.toString();
     }
     protected String buildRelationString() {
         StringBuilder sb = new StringBuilder();
-        String c = ",";
+        String cm = ",";
         if (_memberServiceList != null && !_memberServiceList.isEmpty())
-        { sb.append(c).append("memberServiceList"); }
-        if (sb.length() > c.length()) {
-            sb.delete(0, c.length()).insert(0, "(").append(")");
+        { sb.append(cm).append("memberServiceList"); }
+        if (sb.length() > cm.length()) {
+            sb.delete(0, cm.length()).insert(0, "(").append(")");
         }
         return sb.toString();
     }
@@ -679,10 +704,10 @@ public abstract class BsServiceRank implements Entity, Serializable, Cloneable {
     }
 
     protected String convertEmptyToNull(String value) {
-        return InternalUtil.convertEmptyToNull(value);
+        return FunCustodial.convertEmptyToNull(value);
     }
 
     protected void checkImplicitSet(String columnDbName, CDef.DefMeta meta, Object value) {
-        InternalUtil.checkImplicitSet(this, columnDbName, meta, value);
+        FunCustodial.checkImplicitSet(this, columnDbName, meta, value);
     }
 }

@@ -18,6 +18,8 @@ package org.dbflute.quickstage.dbflute.cbean.cq.bs;
 import java.util.Map;
 
 import org.seasar.dbflute.cbean.*;
+import org.seasar.dbflute.cbean.chelper.*;
+import org.seasar.dbflute.cbean.coption.*;
 import org.seasar.dbflute.cbean.cvalue.ConditionValue;
 import org.seasar.dbflute.cbean.sqlclause.SqlClause;
 import org.seasar.dbflute.exception.IllegalConditionBeanOperationException;
@@ -39,8 +41,8 @@ public class BsMemberAddressCQ extends AbstractBsMemberAddressCQ {
     // ===================================================================================
     //                                                                         Constructor
     //                                                                         ===========
-    public BsMemberAddressCQ(ConditionQuery childQuery, SqlClause sqlClause, String aliasName, int nestLevel) {
-        super(childQuery, sqlClause, aliasName, nestLevel);
+    public BsMemberAddressCQ(ConditionQuery referrerQuery, SqlClause sqlClause, String aliasName, int nestLevel) {
+        super(referrerQuery, sqlClause, aliasName, nestLevel);
     }
 
     // ===================================================================================
@@ -50,7 +52,7 @@ public class BsMemberAddressCQ extends AbstractBsMemberAddressCQ {
      * Prepare InlineView query. <br />
      * {select ... from ... left outer join (select * from MEMBER_ADDRESS) where FOO = [value] ...}
      * <pre>
-     * cb.query().queryMemberStatus().<span style="color: #FD4747">inline()</span>.setFoo...;
+     * cb.query().queryMemberStatus().<span style="color: #DD4747">inline()</span>.setFoo...;
      * </pre>
      * @return The condition-query for InlineView query. (NotNull)
      */
@@ -73,7 +75,7 @@ public class BsMemberAddressCQ extends AbstractBsMemberAddressCQ {
      * Prepare OnClause query. <br />
      * {select ... from ... left outer join MEMBER_ADDRESS on ... and FOO = [value] ...}
      * <pre>
-     * cb.query().queryMemberStatus().<span style="color: #FD4747">on()</span>.setFoo...;
+     * cb.query().queryMemberStatus().<span style="color: #DD4747">on()</span>.setFoo...;
      * </pre>
      * @return The condition-query for OnClause query. (NotNull)
      * @throws IllegalConditionBeanOperationException When this condition-query is base query.
@@ -86,7 +88,6 @@ public class BsMemberAddressCQ extends AbstractBsMemberAddressCQ {
     // ===================================================================================
     //                                                                               Query
     //                                                                               =====
-
     protected ConditionValue _memberAddressId;
     public ConditionValue getMemberAddressId() {
         if (_memberAddressId == null) { _memberAddressId = nCV(); }
@@ -133,14 +134,14 @@ public class BsMemberAddressCQ extends AbstractBsMemberAddressCQ {
 
     /** 
      * Add order-by as ascend. <br />
-     * (会員ID)MEMBER_ID: {UQ, IX, NotNull, INTEGER(10), FK to MEMBER}
+     * (会員ID)MEMBER_ID: {UQ+, IX, NotNull, INTEGER(10), FK to MEMBER}
      * @return this. (NotNull)
      */
     public BsMemberAddressCQ addOrderBy_MemberId_Asc() { regOBA("MEMBER_ID"); return this; }
 
     /**
      * Add order-by as descend. <br />
-     * (会員ID)MEMBER_ID: {UQ, IX, NotNull, INTEGER(10), FK to MEMBER}
+     * (会員ID)MEMBER_ID: {UQ+, IX, NotNull, INTEGER(10), FK to MEMBER}
      * @return this. (NotNull)
      */
     public BsMemberAddressCQ addOrderBy_MemberId_Desc() { regOBD("MEMBER_ID"); return this; }
@@ -154,14 +155,14 @@ public class BsMemberAddressCQ extends AbstractBsMemberAddressCQ {
 
     /** 
      * Add order-by as ascend. <br />
-     * (有効開始日)VALID_BEGIN_DATE: {UQ+, NotNull, DATE(8)}
+     * (有効開始日)VALID_BEGIN_DATE: {+UQ, NotNull, DATE(8)}
      * @return this. (NotNull)
      */
     public BsMemberAddressCQ addOrderBy_ValidBeginDate_Asc() { regOBA("VALID_BEGIN_DATE"); return this; }
 
     /**
      * Add order-by as descend. <br />
-     * (有効開始日)VALID_BEGIN_DATE: {UQ+, NotNull, DATE(8)}
+     * (有効開始日)VALID_BEGIN_DATE: {+UQ, NotNull, DATE(8)}
      * @return this. (NotNull)
      */
     public BsMemberAddressCQ addOrderBy_ValidBeginDate_Desc() { regOBD("VALID_BEGIN_DATE"); return this; }
@@ -360,9 +361,9 @@ public class BsMemberAddressCQ extends AbstractBsMemberAddressCQ {
      *     public void query(PurchaseCB subCB) {
      *         subCB.specify().columnPurchaseDatetime();
      *     }
-     * }, <span style="color: #FD4747">aliasName</span>);
+     * }, <span style="color: #DD4747">aliasName</span>);
      * <span style="color: #3F7E5E">// order by [alias-name] asc</span>
-     * cb.<span style="color: #FD4747">addSpecifiedDerivedOrderBy_Asc</span>(<span style="color: #FD4747">aliasName</span>);
+     * cb.<span style="color: #DD4747">addSpecifiedDerivedOrderBy_Asc</span>(<span style="color: #DD4747">aliasName</span>);
      * </pre>
      * @param aliasName The alias name specified at (Specify)DerivedReferrer. (NotNull)
      * @return this. (NotNull)
@@ -377,9 +378,9 @@ public class BsMemberAddressCQ extends AbstractBsMemberAddressCQ {
      *     public void query(PurchaseCB subCB) {
      *         subCB.specify().columnPurchaseDatetime();
      *     }
-     * }, <span style="color: #FD4747">aliasName</span>);
+     * }, <span style="color: #DD4747">aliasName</span>);
      * <span style="color: #3F7E5E">// order by [alias-name] desc</span>
-     * cb.<span style="color: #FD4747">addSpecifiedDerivedOrderBy_Desc</span>(<span style="color: #FD4747">aliasName</span>);
+     * cb.<span style="color: #DD4747">addSpecifiedDerivedOrderBy_Desc</span>(<span style="color: #DD4747">aliasName</span>);
      * </pre>
      * @param aliasName The alias name specified at (Specify)DerivedReferrer. (NotNull)
      * @return this. (NotNull)
@@ -390,7 +391,7 @@ public class BsMemberAddressCQ extends AbstractBsMemberAddressCQ {
     // ===================================================================================
     //                                                                         Union Query
     //                                                                         ===========
-    protected void reflectRelationOnUnionQuery(ConditionQuery bqs, ConditionQuery uqs) {
+    public void reflectRelationOnUnionQuery(ConditionQuery bqs, ConditionQuery uqs) {
         MemberAddressCQ bq = (MemberAddressCQ)bqs;
         MemberAddressCQ uq = (MemberAddressCQ)uqs;
         if (bq.hasConditionQueryMember()) {
@@ -541,5 +542,7 @@ public class BsMemberAddressCQ extends AbstractBsMemberAddressCQ {
     // very internal (for suppressing warn about 'Not Use Import')
     protected String xCB() { return MemberAddressCB.class.getName(); }
     protected String xCQ() { return MemberAddressCQ.class.getName(); }
+    protected String xCHp() { return HpCalculator.class.getName(); }
+    protected String xCOp() { return ConditionOption.class.getName(); }
     protected String xMap() { return Map.class.getName(); }
 }

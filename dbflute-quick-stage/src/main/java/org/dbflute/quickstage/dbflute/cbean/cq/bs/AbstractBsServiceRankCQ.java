@@ -37,8 +37,8 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
     // ===================================================================================
     //                                                                         Constructor
     //                                                                         ===========
-    public AbstractBsServiceRankCQ(ConditionQuery childQuery, SqlClause sqlClause, String aliasName, int nestLevel) {
-        super(childQuery, sqlClause, aliasName, nestLevel);
+    public AbstractBsServiceRankCQ(ConditionQuery referrerQuery, SqlClause sqlClause, String aliasName, int nestLevel) {
+        super(referrerQuery, sqlClause, aliasName, nestLevel);
     }
 
     // ===================================================================================
@@ -233,11 +233,11 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
     }
 
     /**
-     * Set up ExistsReferrer (co-related sub-query). <br />
+     * Set up ExistsReferrer (correlated sub-query). <br />
      * {exists (select SERVICE_RANK_CODE from MEMBER_SERVICE where ...)} <br />
      * (会員サービス)MEMBER_SERVICE by SERVICE_RANK_CODE, named 'memberServiceAsOne'.
      * <pre>
-     * cb.query().<span style="color: #FD4747">existsMemberServiceList</span>(new SubQuery&lt;MemberServiceCB&gt;() {
+     * cb.query().<span style="color: #DD4747">existsMemberServiceList</span>(new SubQuery&lt;MemberServiceCB&gt;() {
      *     public void query(MemberServiceCB subCB) {
      *         subCB.query().setXxx...
      *     }
@@ -247,18 +247,19 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
      */
     public void existsMemberServiceList(SubQuery<MemberServiceCB> subQuery) {
         assertObjectNotNull("subQuery", subQuery);
-        MemberServiceCB cb = new MemberServiceCB(); cb.xsetupForExistsReferrer(this); subQuery.query(cb);
-        String pp = keepServiceRankCode_ExistsReferrer_MemberServiceList(cb.query()); // for saving query-value.
+        MemberServiceCB cb = new MemberServiceCB(); cb.xsetupForExistsReferrer(this);
+        try { lock(); subQuery.query(cb); } finally { unlock(); }
+        String pp = keepServiceRankCode_ExistsReferrer_MemberServiceList(cb.query());
         registerExistsReferrer(cb.query(), "SERVICE_RANK_CODE", "SERVICE_RANK_CODE", pp, "memberServiceList");
     }
     public abstract String keepServiceRankCode_ExistsReferrer_MemberServiceList(MemberServiceCQ sq);
 
     /**
-     * Set up NotExistsReferrer (co-related sub-query). <br />
+     * Set up NotExistsReferrer (correlated sub-query). <br />
      * {not exists (select SERVICE_RANK_CODE from MEMBER_SERVICE where ...)} <br />
      * (会員サービス)MEMBER_SERVICE by SERVICE_RANK_CODE, named 'memberServiceAsOne'.
      * <pre>
-     * cb.query().<span style="color: #FD4747">notExistsMemberServiceList</span>(new SubQuery&lt;MemberServiceCB&gt;() {
+     * cb.query().<span style="color: #DD4747">notExistsMemberServiceList</span>(new SubQuery&lt;MemberServiceCB&gt;() {
      *     public void query(MemberServiceCB subCB) {
      *         subCB.query().setXxx...
      *     }
@@ -268,8 +269,9 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
      */
     public void notExistsMemberServiceList(SubQuery<MemberServiceCB> subQuery) {
         assertObjectNotNull("subQuery", subQuery);
-        MemberServiceCB cb = new MemberServiceCB(); cb.xsetupForExistsReferrer(this); subQuery.query(cb);
-        String pp = keepServiceRankCode_NotExistsReferrer_MemberServiceList(cb.query()); // for saving query-value.
+        MemberServiceCB cb = new MemberServiceCB(); cb.xsetupForExistsReferrer(this);
+        try { lock(); subQuery.query(cb); } finally { unlock(); }
+        String pp = keepServiceRankCode_NotExistsReferrer_MemberServiceList(cb.query());
         registerNotExistsReferrer(cb.query(), "SERVICE_RANK_CODE", "SERVICE_RANK_CODE", pp, "memberServiceList");
     }
     public abstract String keepServiceRankCode_NotExistsReferrer_MemberServiceList(MemberServiceCQ sq);
@@ -282,8 +284,9 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
      */
     public void inScopeMemberServiceList(SubQuery<MemberServiceCB> subQuery) {
         assertObjectNotNull("subQuery", subQuery);
-        MemberServiceCB cb = new MemberServiceCB(); cb.xsetupForInScopeRelation(this); subQuery.query(cb);
-        String pp = keepServiceRankCode_InScopeRelation_MemberServiceList(cb.query()); // for saving query-value.
+        MemberServiceCB cb = new MemberServiceCB(); cb.xsetupForInScopeRelation(this);
+        try { lock(); subQuery.query(cb); } finally { unlock(); }
+        String pp = keepServiceRankCode_InScopeRelation_MemberServiceList(cb.query());
         registerInScopeRelation(cb.query(), "SERVICE_RANK_CODE", "SERVICE_RANK_CODE", pp, "memberServiceList");
     }
     public abstract String keepServiceRankCode_InScopeRelation_MemberServiceList(MemberServiceCQ sq);
@@ -296,31 +299,33 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
      */
     public void notInScopeMemberServiceList(SubQuery<MemberServiceCB> subQuery) {
         assertObjectNotNull("subQuery", subQuery);
-        MemberServiceCB cb = new MemberServiceCB(); cb.xsetupForInScopeRelation(this); subQuery.query(cb);
-        String pp = keepServiceRankCode_NotInScopeRelation_MemberServiceList(cb.query()); // for saving query-value.
+        MemberServiceCB cb = new MemberServiceCB(); cb.xsetupForInScopeRelation(this);
+        try { lock(); subQuery.query(cb); } finally { unlock(); }
+        String pp = keepServiceRankCode_NotInScopeRelation_MemberServiceList(cb.query());
         registerNotInScopeRelation(cb.query(), "SERVICE_RANK_CODE", "SERVICE_RANK_CODE", pp, "memberServiceList");
     }
     public abstract String keepServiceRankCode_NotInScopeRelation_MemberServiceList(MemberServiceCQ sq);
 
     public void xsderiveMemberServiceList(String fn, SubQuery<MemberServiceCB> sq, String al, DerivedReferrerOption op) {
         assertObjectNotNull("subQuery", sq);
-        MemberServiceCB cb = new MemberServiceCB(); cb.xsetupForDerivedReferrer(this); sq.query(cb);
-        String pp = keepServiceRankCode_SpecifyDerivedReferrer_MemberServiceList(cb.query()); // for saving query-value.
+        MemberServiceCB cb = new MemberServiceCB(); cb.xsetupForDerivedReferrer(this);
+        try { lock(); sq.query(cb); } finally { unlock(); }
+        String pp = keepServiceRankCode_SpecifyDerivedReferrer_MemberServiceList(cb.query());
         registerSpecifyDerivedReferrer(fn, cb.query(), "SERVICE_RANK_CODE", "SERVICE_RANK_CODE", pp, "memberServiceList", al, op);
     }
     public abstract String keepServiceRankCode_SpecifyDerivedReferrer_MemberServiceList(MemberServiceCQ sq);
 
     /**
-     * Prepare for (Query)DerivedReferrer. <br />
+     * Prepare for (Query)DerivedReferrer (correlated sub-query). <br />
      * {FOO &lt;= (select max(BAR) from MEMBER_SERVICE where ...)} <br />
      * (会員サービス)MEMBER_SERVICE by SERVICE_RANK_CODE, named 'memberServiceAsOne'.
      * <pre>
-     * cb.query().<span style="color: #FD4747">derivedMemberServiceList()</span>.<span style="color: #FD4747">max</span>(new SubQuery&lt;MemberServiceCB&gt;() {
+     * cb.query().<span style="color: #DD4747">derivedMemberServiceList()</span>.<span style="color: #DD4747">max</span>(new SubQuery&lt;MemberServiceCB&gt;() {
      *     public void query(MemberServiceCB subCB) {
-     *         subCB.specify().<span style="color: #FD4747">columnFoo...</span> <span style="color: #3F7E5E">// derived column by function</span>
+     *         subCB.specify().<span style="color: #DD4747">columnFoo...</span> <span style="color: #3F7E5E">// derived column by function</span>
      *         subCB.query().setBar... <span style="color: #3F7E5E">// referrer condition</span>
      *     }
-     * }).<span style="color: #FD4747">greaterEqual</span>(123); <span style="color: #3F7E5E">// condition to derived column</span>
+     * }).<span style="color: #DD4747">greaterEqual</span>(123); <span style="color: #3F7E5E">// condition to derived column</span>
      * </pre>
      * @return The object to set up a function for referrer table. (NotNull)
      */
@@ -336,9 +341,9 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
     }
     public void xqderiveMemberServiceList(String fn, SubQuery<MemberServiceCB> sq, String rd, Object vl, DerivedReferrerOption op) {
         assertObjectNotNull("subQuery", sq);
-        MemberServiceCB cb = new MemberServiceCB(); cb.xsetupForDerivedReferrer(this); sq.query(cb);
-        String sqpp = keepServiceRankCode_QueryDerivedReferrer_MemberServiceList(cb.query()); // for saving query-value.
-        String prpp = keepServiceRankCode_QueryDerivedReferrer_MemberServiceListParameter(vl);
+        MemberServiceCB cb = new MemberServiceCB(); cb.xsetupForDerivedReferrer(this);
+        try { lock(); sq.query(cb); } finally { unlock(); }
+        String sqpp = keepServiceRankCode_QueryDerivedReferrer_MemberServiceList(cb.query()); String prpp = keepServiceRankCode_QueryDerivedReferrer_MemberServiceListParameter(vl);
         registerQueryDerivedReferrer(fn, cb.query(), "SERVICE_RANK_CODE", "SERVICE_RANK_CODE", sqpp, "memberServiceList", rd, vl, prpp, op);
     }
     public abstract String keepServiceRankCode_QueryDerivedReferrer_MemberServiceList(MemberServiceCQ sq);
@@ -459,7 +464,7 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
     /**
      * LikeSearch with various options. (versatile) {like '%xxx%' escape ...}. And NullOrEmptyIgnored, SeveralRegistered. <br />
      * (サービスランク名称)SERVICE_RANK_NAME: {NotNull, VARCHAR(50)} <br />
-     * <pre>e.g. setServiceRankName_LikeSearch("xxx", new <span style="color: #FD4747">LikeSearchOption</span>().likeContain());</pre>
+     * <pre>e.g. setServiceRankName_LikeSearch("xxx", new <span style="color: #DD4747">LikeSearchOption</span>().likeContain());</pre>
      * @param serviceRankName The value of serviceRankName as likeSearch. (NullAllowed: if null (or empty), no condition)
      * @param likeSearchOption The option of like-search. (NotNull)
      */
@@ -822,7 +827,7 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
     /**
      * LikeSearch with various options. (versatile) {like '%xxx%' escape ...}. And NullOrEmptyIgnored, SeveralRegistered. <br />
      * (説明)DESCRIPTION: {NotNull, VARCHAR(200)} <br />
-     * <pre>e.g. setDescription_LikeSearch("xxx", new <span style="color: #FD4747">LikeSearchOption</span>().likeContain());</pre>
+     * <pre>e.g. setDescription_LikeSearch("xxx", new <span style="color: #DD4747">LikeSearchOption</span>().likeContain());</pre>
      * @param description The value of description as likeSearch. (NullAllowed: if null (or empty), no condition)
      * @param likeSearchOption The option of like-search. (NotNull)
      */
@@ -955,7 +960,7 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
      * Prepare ScalarCondition as equal. <br />
      * {where FOO = (select max(BAR) from ...)
      * <pre>
-     * cb.query().<span style="color: #FD4747">scalar_Equal()</span>.max(new SubQuery&lt;ServiceRankCB&gt;() {
+     * cb.query().<span style="color: #DD4747">scalar_Equal()</span>.max(new SubQuery&lt;ServiceRankCB&gt;() {
      *     public void query(ServiceRankCB subCB) {
      *         subCB.specify().setXxx... <span style="color: #3F7E5E">// derived column for function</span>
      *         subCB.query().setYyy...
@@ -965,14 +970,14 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<ServiceRankCB> scalar_Equal() {
-        return xcreateSSQFunction(CK_EQ.getOperand());
+        return xcreateSSQFunction(CK_EQ.getOperand(), ServiceRankCB.class);
     }
 
     /**
      * Prepare ScalarCondition as equal. <br />
      * {where FOO &lt;&gt; (select max(BAR) from ...)
      * <pre>
-     * cb.query().<span style="color: #FD4747">scalar_NotEqual()</span>.max(new SubQuery&lt;ServiceRankCB&gt;() {
+     * cb.query().<span style="color: #DD4747">scalar_NotEqual()</span>.max(new SubQuery&lt;ServiceRankCB&gt;() {
      *     public void query(ServiceRankCB subCB) {
      *         subCB.specify().setXxx... <span style="color: #3F7E5E">// derived column for function</span>
      *         subCB.query().setYyy...
@@ -982,14 +987,14 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<ServiceRankCB> scalar_NotEqual() {
-        return xcreateSSQFunction(CK_NES.getOperand());
+        return xcreateSSQFunction(CK_NES.getOperand(), ServiceRankCB.class);
     }
 
     /**
      * Prepare ScalarCondition as greaterThan. <br />
      * {where FOO &gt; (select max(BAR) from ...)
      * <pre>
-     * cb.query().<span style="color: #FD4747">scalar_GreaterThan()</span>.max(new SubQuery&lt;ServiceRankCB&gt;() {
+     * cb.query().<span style="color: #DD4747">scalar_GreaterThan()</span>.max(new SubQuery&lt;ServiceRankCB&gt;() {
      *     public void query(ServiceRankCB subCB) {
      *         subCB.specify().setFoo... <span style="color: #3F7E5E">// derived column for function</span>
      *         subCB.query().setBar...
@@ -999,14 +1004,14 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<ServiceRankCB> scalar_GreaterThan() {
-        return xcreateSSQFunction(CK_GT.getOperand());
+        return xcreateSSQFunction(CK_GT.getOperand(), ServiceRankCB.class);
     }
 
     /**
      * Prepare ScalarCondition as lessThan. <br />
      * {where FOO &lt; (select max(BAR) from ...)
      * <pre>
-     * cb.query().<span style="color: #FD4747">scalar_LessThan()</span>.max(new SubQuery&lt;ServiceRankCB&gt;() {
+     * cb.query().<span style="color: #DD4747">scalar_LessThan()</span>.max(new SubQuery&lt;ServiceRankCB&gt;() {
      *     public void query(ServiceRankCB subCB) {
      *         subCB.specify().setFoo... <span style="color: #3F7E5E">// derived column for function</span>
      *         subCB.query().setBar...
@@ -1016,14 +1021,14 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<ServiceRankCB> scalar_LessThan() {
-        return xcreateSSQFunction(CK_LT.getOperand());
+        return xcreateSSQFunction(CK_LT.getOperand(), ServiceRankCB.class);
     }
 
     /**
      * Prepare ScalarCondition as greaterEqual. <br />
      * {where FOO &gt;= (select max(BAR) from ...)
      * <pre>
-     * cb.query().<span style="color: #FD4747">scalar_GreaterEqual()</span>.max(new SubQuery&lt;ServiceRankCB&gt;() {
+     * cb.query().<span style="color: #DD4747">scalar_GreaterEqual()</span>.max(new SubQuery&lt;ServiceRankCB&gt;() {
      *     public void query(ServiceRankCB subCB) {
      *         subCB.specify().setFoo... <span style="color: #3F7E5E">// derived column for function</span>
      *         subCB.query().setBar...
@@ -1033,14 +1038,14 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<ServiceRankCB> scalar_GreaterEqual() {
-        return xcreateSSQFunction(CK_GE.getOperand());
+        return xcreateSSQFunction(CK_GE.getOperand(), ServiceRankCB.class);
     }
 
     /**
      * Prepare ScalarCondition as lessEqual. <br />
      * {where FOO &lt;= (select max(BAR) from ...)
      * <pre>
-     * cb.query().<span style="color: #FD4747">scalar_LessEqual()</span>.max(new SubQuery&lt;ServiceRankCB&gt;() {
+     * cb.query().<span style="color: #DD4747">scalar_LessEqual()</span>.max(new SubQuery&lt;ServiceRankCB&gt;() {
      *     public void query(ServiceRankCB subCB) {
      *         subCB.specify().setFoo... <span style="color: #3F7E5E">// derived column for function</span>
      *         subCB.query().setBar...
@@ -1050,36 +1055,25 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<ServiceRankCB> scalar_LessEqual() {
-        return xcreateSSQFunction(CK_LE.getOperand());
+        return xcreateSSQFunction(CK_LE.getOperand(), ServiceRankCB.class);
     }
 
-    protected HpSSQFunction<ServiceRankCB> xcreateSSQFunction(final String rd) {
-        return new HpSSQFunction<ServiceRankCB>(new HpSSQSetupper<ServiceRankCB>() {
-            public void setup(String fn, SubQuery<ServiceRankCB> sq, HpSSQOption<ServiceRankCB> op) {
-                xscalarCondition(fn, sq, rd, op);
-            }
-        });
-    }
-
-    protected void xscalarCondition(String fn, SubQuery<ServiceRankCB> sq, String rd, HpSSQOption<ServiceRankCB> op) {
+    @SuppressWarnings("unchecked")
+    protected <CB extends ConditionBean> void xscalarCondition(String fn, SubQuery<CB> sq, String rd, HpSSQOption<CB> op) {
         assertObjectNotNull("subQuery", sq);
-        ServiceRankCB cb = xcreateScalarConditionCB(); sq.query(cb);
+        ServiceRankCB cb = xcreateScalarConditionCB(); sq.query((CB)cb);
         String pp = keepScalarCondition(cb.query()); // for saving query-value
-        op.setPartitionByCBean(xcreateScalarConditionPartitionByCB()); // for using partition-by
+        op.setPartitionByCBean((CB)xcreateScalarConditionPartitionByCB()); // for using partition-by
         registerScalarCondition(fn, cb.query(), pp, rd, op);
     }
     public abstract String keepScalarCondition(ServiceRankCQ sq);
 
     protected ServiceRankCB xcreateScalarConditionCB() {
-        ServiceRankCB cb = new ServiceRankCB();
-        cb.xsetupForScalarCondition(this);
-        return cb;
+        ServiceRankCB cb = newMyCB(); cb.xsetupForScalarCondition(this); return cb;
     }
 
     protected ServiceRankCB xcreateScalarConditionPartitionByCB() {
-        ServiceRankCB cb = new ServiceRankCB();
-        cb.xsetupForScalarConditionPartitionBy(this);
-        return cb;
+        ServiceRankCB cb = newMyCB(); cb.xsetupForScalarConditionPartitionBy(this); return cb;
     }
 
     // ===================================================================================
@@ -1087,30 +1081,25 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
     //                                                                       =============
     public void xsmyselfDerive(String fn, SubQuery<ServiceRankCB> sq, String al, DerivedReferrerOption op) {
         assertObjectNotNull("subQuery", sq);
-        ServiceRankCB cb = new ServiceRankCB(); cb.xsetupForDerivedReferrer(this); sq.query(cb);
+        ServiceRankCB cb = new ServiceRankCB(); cb.xsetupForDerivedReferrer(this);
+        try { lock(); sq.query(cb); } finally { unlock(); }
+        String pp = keepSpecifyMyselfDerived(cb.query());
         String pk = "SERVICE_RANK_CODE";
-        String pp = keepSpecifyMyselfDerived(cb.query()); // for saving query-value.
         registerSpecifyMyselfDerived(fn, cb.query(), pk, pk, pp, "myselfDerived", al, op);
     }
     public abstract String keepSpecifyMyselfDerived(ServiceRankCQ sq);
 
     /**
-     * Prepare for (Query)MyselfDerived (SubQuery).
+     * Prepare for (Query)MyselfDerived (correlated sub-query).
      * @return The object to set up a function for myself table. (NotNull)
      */
     public HpQDRFunction<ServiceRankCB> myselfDerived() {
-        return xcreateQDRFunctionMyselfDerived();
+        return xcreateQDRFunctionMyselfDerived(ServiceRankCB.class);
     }
-    protected HpQDRFunction<ServiceRankCB> xcreateQDRFunctionMyselfDerived() {
-        return new HpQDRFunction<ServiceRankCB>(new HpQDRSetupper<ServiceRankCB>() {
-            public void setup(String fn, SubQuery<ServiceRankCB> sq, String rd, Object vl, DerivedReferrerOption op) {
-                xqderiveMyselfDerived(fn, sq, rd, vl, op);
-            }
-        });
-    }
-    public void xqderiveMyselfDerived(String fn, SubQuery<ServiceRankCB> sq, String rd, Object vl, DerivedReferrerOption op) {
+    @SuppressWarnings("unchecked")
+    protected <CB extends ConditionBean> void xqderiveMyselfDerived(String fn, SubQuery<CB> sq, String rd, Object vl, DerivedReferrerOption op) {
         assertObjectNotNull("subQuery", sq);
-        ServiceRankCB cb = new ServiceRankCB(); cb.xsetupForDerivedReferrer(this); sq.query(cb);
+        ServiceRankCB cb = new ServiceRankCB(); cb.xsetupForDerivedReferrer(this); sq.query((CB)cb);
         String pk = "SERVICE_RANK_CODE";
         String sqpp = keepQueryMyselfDerived(cb.query()); // for saving query-value.
         String prpp = keepQueryMyselfDerivedParameter(vl);
@@ -1123,13 +1112,14 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
     //                                                                        MyselfExists
     //                                                                        ============
     /**
-     * Prepare for MyselfExists (SubQuery).
-     * @param subQuery The implementation of sub query. (NotNull)
+     * Prepare for MyselfExists (correlated sub-query).
+     * @param subQuery The implementation of sub-query. (NotNull)
      */
     public void myselfExists(SubQuery<ServiceRankCB> subQuery) {
         assertObjectNotNull("subQuery", subQuery);
-        ServiceRankCB cb = new ServiceRankCB(); cb.xsetupForMyselfExists(this); subQuery.query(cb);
-        String pp = keepMyselfExists(cb.query()); // for saving query-value.
+        ServiceRankCB cb = new ServiceRankCB(); cb.xsetupForMyselfExists(this);
+        try { lock(); subQuery.query(cb); } finally { unlock(); }
+        String pp = keepMyselfExists(cb.query());
         registerMyselfExists(cb.query(), pp);
     }
     public abstract String keepMyselfExists(ServiceRankCQ sq);
@@ -1138,22 +1128,56 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
     //                                                                       MyselfInScope
     //                                                                       =============
     /**
-     * Prepare for MyselfInScope (SubQuery).
-     * @param subQuery The implementation of sub query. (NotNull)
+     * Prepare for MyselfInScope (sub-query).
+     * @param subQuery The implementation of sub-query. (NotNull)
      */
     public void myselfInScope(SubQuery<ServiceRankCB> subQuery) {
         assertObjectNotNull("subQuery", subQuery);
-        ServiceRankCB cb = new ServiceRankCB(); cb.xsetupForMyselfInScope(this); subQuery.query(cb);
-        String pp = keepMyselfInScope(cb.query()); // for saving query-value.
+        ServiceRankCB cb = new ServiceRankCB(); cb.xsetupForMyselfInScope(this);
+        try { lock(); subQuery.query(cb); } finally { unlock(); }
+        String pp = keepMyselfInScope(cb.query());
         registerMyselfInScope(cb.query(), pp);
     }
     public abstract String keepMyselfInScope(ServiceRankCQ sq);
 
     // ===================================================================================
+    //                                                                          Compatible
+    //                                                                          ==========
+    /**
+     * Order along the list of manual values. #beforejava8 <br />
+     * This function with Union is unsupported! <br />
+     * The order values are bound (treated as bind parameter).
+     * <pre>
+     * MemberCB cb = new MemberCB();
+     * List&lt;CDef.MemberStatus&gt; orderValueList = new ArrayList&lt;CDef.MemberStatus&gt;();
+     * orderValueList.add(CDef.MemberStatus.Withdrawal);
+     * orderValueList.add(CDef.MemberStatus.Formalized);
+     * orderValueList.add(CDef.MemberStatus.Provisional);
+     * cb.query().addOrderBy_MemberStatusCode_Asc().<span style="color: #DD4747">withManualOrder(orderValueList)</span>;
+     * <span style="color: #3F7E5E">// order by </span>
+     * <span style="color: #3F7E5E">//   case</span>
+     * <span style="color: #3F7E5E">//     when MEMBER_STATUS_CODE = 'WDL' then 0</span>
+     * <span style="color: #3F7E5E">//     when MEMBER_STATUS_CODE = 'FML' then 1</span>
+     * <span style="color: #3F7E5E">//     when MEMBER_STATUS_CODE = 'PRV' then 2</span>
+     * <span style="color: #3F7E5E">//     else 3</span>
+     * <span style="color: #3F7E5E">//   end asc, ...</span>
+     * </pre>
+     * @param orderValueList The list of order values for manual ordering. (NotNull)
+     */
+    public void withManualOrder(List<? extends Object> orderValueList) { // is user public!
+        assertObjectNotNull("withManualOrder(orderValueList)", orderValueList);
+        final ManualOrderBean manualOrderBean = new ManualOrderBean();
+        manualOrderBean.acceptOrderValueList(orderValueList);
+        withManualOrder(manualOrderBean);
+    }
+
+    // ===================================================================================
     //                                                                       Very Internal
     //                                                                       =============
+    protected ServiceRankCB newMyCB() {
+        return new ServiceRankCB();
+    }
     // very internal (for suppressing warn about 'Not Use Import')
-    protected String xabCB() { return ServiceRankCB.class.getName(); }
     protected String xabCQ() { return ServiceRankCQ.class.getName(); }
     protected String xabLSO() { return LikeSearchOption.class.getName(); }
     protected String xabSSQS() { return HpSSQSetupper.class.getName(); }

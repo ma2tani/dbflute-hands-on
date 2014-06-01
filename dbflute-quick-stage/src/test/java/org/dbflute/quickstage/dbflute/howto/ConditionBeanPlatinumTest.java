@@ -34,7 +34,6 @@ import org.seasar.dbflute.cbean.UnionQuery;
 import org.seasar.dbflute.cbean.coption.LikeSearchOption;
 import org.seasar.dbflute.jdbc.StatementConfig;
 
-
 /**
  * ConditionBeanの上級編Example実装。
  * <pre>
@@ -449,7 +448,6 @@ public class ConditionBeanPlatinumTest extends UnitContainerTestCase {
      *   o などなど
      * </pre>
      */
-    @SuppressWarnings("unchecked")
     public void test_selectPage_union_existsSubQuery() {
         // ## Arrange ##
         int fetchSize = 3;

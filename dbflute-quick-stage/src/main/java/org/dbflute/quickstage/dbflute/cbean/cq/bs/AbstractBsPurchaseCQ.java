@@ -37,8 +37,8 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
     // ===================================================================================
     //                                                                         Constructor
     //                                                                         ===========
-    public AbstractBsPurchaseCQ(ConditionQuery childQuery, SqlClause sqlClause, String aliasName, int nestLevel) {
-        super(childQuery, sqlClause, aliasName, nestLevel);
+    public AbstractBsPurchaseCQ(ConditionQuery referrerQuery, SqlClause sqlClause, String aliasName, int nestLevel) {
+        super(referrerQuery, sqlClause, aliasName, nestLevel);
     }
 
     // ===================================================================================
@@ -162,6 +162,123 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
     }
 
     /**
+     * Set up ExistsReferrer (correlated sub-query). <br />
+     * {exists (select PURCHASE_ID from PURCHASE_PAYMENT where ...)} <br />
+     * (購入支払)PURCHASE_PAYMENT by PURCHASE_ID, named 'purchasePaymentAsOne'.
+     * <pre>
+     * cb.query().<span style="color: #DD4747">existsPurchasePaymentList</span>(new SubQuery&lt;PurchasePaymentCB&gt;() {
+     *     public void query(PurchasePaymentCB subCB) {
+     *         subCB.query().setXxx...
+     *     }
+     * });
+     * </pre>
+     * @param subQuery The sub-query of PurchasePaymentList for 'exists'. (NotNull)
+     */
+    public void existsPurchasePaymentList(SubQuery<PurchasePaymentCB> subQuery) {
+        assertObjectNotNull("subQuery", subQuery);
+        PurchasePaymentCB cb = new PurchasePaymentCB(); cb.xsetupForExistsReferrer(this);
+        try { lock(); subQuery.query(cb); } finally { unlock(); }
+        String pp = keepPurchaseId_ExistsReferrer_PurchasePaymentList(cb.query());
+        registerExistsReferrer(cb.query(), "PURCHASE_ID", "PURCHASE_ID", pp, "purchasePaymentList");
+    }
+    public abstract String keepPurchaseId_ExistsReferrer_PurchasePaymentList(PurchasePaymentCQ sq);
+
+    /**
+     * Set up NotExistsReferrer (correlated sub-query). <br />
+     * {not exists (select PURCHASE_ID from PURCHASE_PAYMENT where ...)} <br />
+     * (購入支払)PURCHASE_PAYMENT by PURCHASE_ID, named 'purchasePaymentAsOne'.
+     * <pre>
+     * cb.query().<span style="color: #DD4747">notExistsPurchasePaymentList</span>(new SubQuery&lt;PurchasePaymentCB&gt;() {
+     *     public void query(PurchasePaymentCB subCB) {
+     *         subCB.query().setXxx...
+     *     }
+     * });
+     * </pre>
+     * @param subQuery The sub-query of PurchaseId_NotExistsReferrer_PurchasePaymentList for 'not exists'. (NotNull)
+     */
+    public void notExistsPurchasePaymentList(SubQuery<PurchasePaymentCB> subQuery) {
+        assertObjectNotNull("subQuery", subQuery);
+        PurchasePaymentCB cb = new PurchasePaymentCB(); cb.xsetupForExistsReferrer(this);
+        try { lock(); subQuery.query(cb); } finally { unlock(); }
+        String pp = keepPurchaseId_NotExistsReferrer_PurchasePaymentList(cb.query());
+        registerNotExistsReferrer(cb.query(), "PURCHASE_ID", "PURCHASE_ID", pp, "purchasePaymentList");
+    }
+    public abstract String keepPurchaseId_NotExistsReferrer_PurchasePaymentList(PurchasePaymentCQ sq);
+
+    /**
+     * Set up InScopeRelation (sub-query). <br />
+     * {in (select PURCHASE_ID from PURCHASE_PAYMENT where ...)} <br />
+     * (購入支払)PURCHASE_PAYMENT by PURCHASE_ID, named 'purchasePaymentAsOne'.
+     * @param subQuery The sub-query of PurchasePaymentList for 'in-scope'. (NotNull)
+     */
+    public void inScopePurchasePaymentList(SubQuery<PurchasePaymentCB> subQuery) {
+        assertObjectNotNull("subQuery", subQuery);
+        PurchasePaymentCB cb = new PurchasePaymentCB(); cb.xsetupForInScopeRelation(this);
+        try { lock(); subQuery.query(cb); } finally { unlock(); }
+        String pp = keepPurchaseId_InScopeRelation_PurchasePaymentList(cb.query());
+        registerInScopeRelation(cb.query(), "PURCHASE_ID", "PURCHASE_ID", pp, "purchasePaymentList");
+    }
+    public abstract String keepPurchaseId_InScopeRelation_PurchasePaymentList(PurchasePaymentCQ sq);
+
+    /**
+     * Set up NotInScopeRelation (sub-query). <br />
+     * {not in (select PURCHASE_ID from PURCHASE_PAYMENT where ...)} <br />
+     * (購入支払)PURCHASE_PAYMENT by PURCHASE_ID, named 'purchasePaymentAsOne'.
+     * @param subQuery The sub-query of PurchasePaymentList for 'not in-scope'. (NotNull)
+     */
+    public void notInScopePurchasePaymentList(SubQuery<PurchasePaymentCB> subQuery) {
+        assertObjectNotNull("subQuery", subQuery);
+        PurchasePaymentCB cb = new PurchasePaymentCB(); cb.xsetupForInScopeRelation(this);
+        try { lock(); subQuery.query(cb); } finally { unlock(); }
+        String pp = keepPurchaseId_NotInScopeRelation_PurchasePaymentList(cb.query());
+        registerNotInScopeRelation(cb.query(), "PURCHASE_ID", "PURCHASE_ID", pp, "purchasePaymentList");
+    }
+    public abstract String keepPurchaseId_NotInScopeRelation_PurchasePaymentList(PurchasePaymentCQ sq);
+
+    public void xsderivePurchasePaymentList(String fn, SubQuery<PurchasePaymentCB> sq, String al, DerivedReferrerOption op) {
+        assertObjectNotNull("subQuery", sq);
+        PurchasePaymentCB cb = new PurchasePaymentCB(); cb.xsetupForDerivedReferrer(this);
+        try { lock(); sq.query(cb); } finally { unlock(); }
+        String pp = keepPurchaseId_SpecifyDerivedReferrer_PurchasePaymentList(cb.query());
+        registerSpecifyDerivedReferrer(fn, cb.query(), "PURCHASE_ID", "PURCHASE_ID", pp, "purchasePaymentList", al, op);
+    }
+    public abstract String keepPurchaseId_SpecifyDerivedReferrer_PurchasePaymentList(PurchasePaymentCQ sq);
+
+    /**
+     * Prepare for (Query)DerivedReferrer (correlated sub-query). <br />
+     * {FOO &lt;= (select max(BAR) from PURCHASE_PAYMENT where ...)} <br />
+     * (購入支払)PURCHASE_PAYMENT by PURCHASE_ID, named 'purchasePaymentAsOne'.
+     * <pre>
+     * cb.query().<span style="color: #DD4747">derivedPurchasePaymentList()</span>.<span style="color: #DD4747">max</span>(new SubQuery&lt;PurchasePaymentCB&gt;() {
+     *     public void query(PurchasePaymentCB subCB) {
+     *         subCB.specify().<span style="color: #DD4747">columnFoo...</span> <span style="color: #3F7E5E">// derived column by function</span>
+     *         subCB.query().setBar... <span style="color: #3F7E5E">// referrer condition</span>
+     *     }
+     * }).<span style="color: #DD4747">greaterEqual</span>(123); <span style="color: #3F7E5E">// condition to derived column</span>
+     * </pre>
+     * @return The object to set up a function for referrer table. (NotNull)
+     */
+    public HpQDRFunction<PurchasePaymentCB> derivedPurchasePaymentList() {
+        return xcreateQDRFunctionPurchasePaymentList();
+    }
+    protected HpQDRFunction<PurchasePaymentCB> xcreateQDRFunctionPurchasePaymentList() {
+        return new HpQDRFunction<PurchasePaymentCB>(new HpQDRSetupper<PurchasePaymentCB>() {
+            public void setup(String fn, SubQuery<PurchasePaymentCB> sq, String rd, Object vl, DerivedReferrerOption op) {
+                xqderivePurchasePaymentList(fn, sq, rd, vl, op);
+            }
+        });
+    }
+    public void xqderivePurchasePaymentList(String fn, SubQuery<PurchasePaymentCB> sq, String rd, Object vl, DerivedReferrerOption op) {
+        assertObjectNotNull("subQuery", sq);
+        PurchasePaymentCB cb = new PurchasePaymentCB(); cb.xsetupForDerivedReferrer(this);
+        try { lock(); sq.query(cb); } finally { unlock(); }
+        String sqpp = keepPurchaseId_QueryDerivedReferrer_PurchasePaymentList(cb.query()); String prpp = keepPurchaseId_QueryDerivedReferrer_PurchasePaymentListParameter(vl);
+        registerQueryDerivedReferrer(fn, cb.query(), "PURCHASE_ID", "PURCHASE_ID", sqpp, "purchasePaymentList", rd, vl, prpp, op);
+    }
+    public abstract String keepPurchaseId_QueryDerivedReferrer_PurchasePaymentList(PurchasePaymentCQ sq);
+    public abstract String keepPurchaseId_QueryDerivedReferrer_PurchasePaymentListParameter(Object vl);
+
+    /**
      * IsNull {is null}. And OnlyOnceRegistered. <br />
      * PURCHASE_ID: {PK, ID, NotNull, BIGINT(19)}
      */
@@ -178,7 +295,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
     
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
-     * (会員ID)MEMBER_ID: {UQ, IX, NotNull, INTEGER(10), FK to MEMBER}
+     * (会員ID)MEMBER_ID: {UQ+, IX+, NotNull, INTEGER(10), FK to MEMBER}
      * @param memberId The value of memberId as equal. (NullAllowed: if null, no condition)
      */
     public void setMemberId_Equal(Integer memberId) {
@@ -191,7 +308,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     /**
      * NotEqual(&lt;&gt;). And NullIgnored, OnlyOnceRegistered. <br />
-     * (会員ID)MEMBER_ID: {UQ, IX, NotNull, INTEGER(10), FK to MEMBER}
+     * (会員ID)MEMBER_ID: {UQ+, IX+, NotNull, INTEGER(10), FK to MEMBER}
      * @param memberId The value of memberId as notEqual. (NullAllowed: if null, no condition)
      */
     public void setMemberId_NotEqual(Integer memberId) {
@@ -204,7 +321,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     /**
      * GreaterThan(&gt;). And NullIgnored, OnlyOnceRegistered. <br />
-     * (会員ID)MEMBER_ID: {UQ, IX, NotNull, INTEGER(10), FK to MEMBER}
+     * (会員ID)MEMBER_ID: {UQ+, IX+, NotNull, INTEGER(10), FK to MEMBER}
      * @param memberId The value of memberId as greaterThan. (NullAllowed: if null, no condition)
      */
     public void setMemberId_GreaterThan(Integer memberId) {
@@ -213,7 +330,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     /**
      * LessThan(&lt;). And NullIgnored, OnlyOnceRegistered. <br />
-     * (会員ID)MEMBER_ID: {UQ, IX, NotNull, INTEGER(10), FK to MEMBER}
+     * (会員ID)MEMBER_ID: {UQ+, IX+, NotNull, INTEGER(10), FK to MEMBER}
      * @param memberId The value of memberId as lessThan. (NullAllowed: if null, no condition)
      */
     public void setMemberId_LessThan(Integer memberId) {
@@ -222,7 +339,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     /**
      * GreaterEqual(&gt;=). And NullIgnored, OnlyOnceRegistered. <br />
-     * (会員ID)MEMBER_ID: {UQ, IX, NotNull, INTEGER(10), FK to MEMBER}
+     * (会員ID)MEMBER_ID: {UQ+, IX+, NotNull, INTEGER(10), FK to MEMBER}
      * @param memberId The value of memberId as greaterEqual. (NullAllowed: if null, no condition)
      */
     public void setMemberId_GreaterEqual(Integer memberId) {
@@ -231,7 +348,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     /**
      * LessEqual(&lt;=). And NullIgnored, OnlyOnceRegistered. <br />
-     * (会員ID)MEMBER_ID: {UQ, IX, NotNull, INTEGER(10), FK to MEMBER}
+     * (会員ID)MEMBER_ID: {UQ+, IX+, NotNull, INTEGER(10), FK to MEMBER}
      * @param memberId The value of memberId as lessEqual. (NullAllowed: if null, no condition)
      */
     public void setMemberId_LessEqual(Integer memberId) {
@@ -242,7 +359,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      * RangeOf with various options. (versatile) <br />
      * {(default) minNumber &lt;= column &lt;= maxNumber} <br />
      * And NullIgnored, OnlyOnceRegistered. <br />
-     * (会員ID)MEMBER_ID: {UQ, IX, NotNull, INTEGER(10), FK to MEMBER}
+     * (会員ID)MEMBER_ID: {UQ+, IX+, NotNull, INTEGER(10), FK to MEMBER}
      * @param minNumber The min number of memberId. (NullAllowed: if null, no from-condition)
      * @param maxNumber The max number of memberId. (NullAllowed: if null, no to-condition)
      * @param rangeOfOption The option of range-of. (NotNull)
@@ -253,7 +370,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     /**
      * InScope {in (1, 2)}. And NullIgnored, NullElementIgnored, SeveralRegistered. <br />
-     * (会員ID)MEMBER_ID: {UQ, IX, NotNull, INTEGER(10), FK to MEMBER}
+     * (会員ID)MEMBER_ID: {UQ+, IX+, NotNull, INTEGER(10), FK to MEMBER}
      * @param memberIdList The collection of memberId as inScope. (NullAllowed: if null (or empty), no condition)
      */
     public void setMemberId_InScope(Collection<Integer> memberIdList) {
@@ -266,7 +383,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     /**
      * NotInScope {not in (1, 2)}. And NullIgnored, NullElementIgnored, SeveralRegistered. <br />
-     * (会員ID)MEMBER_ID: {UQ, IX, NotNull, INTEGER(10), FK to MEMBER}
+     * (会員ID)MEMBER_ID: {UQ+, IX+, NotNull, INTEGER(10), FK to MEMBER}
      * @param memberIdList The collection of memberId as notInScope. (NullAllowed: if null (or empty), no condition)
      */
     public void setMemberId_NotInScope(Collection<Integer> memberIdList) {
@@ -285,8 +402,9 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      */
     public void inScopeMember(SubQuery<MemberCB> subQuery) {
         assertObjectNotNull("subQuery", subQuery);
-        MemberCB cb = new MemberCB(); cb.xsetupForInScopeRelation(this); subQuery.query(cb);
-        String pp = keepMemberId_InScopeRelation_Member(cb.query()); // for saving query-value.
+        MemberCB cb = new MemberCB(); cb.xsetupForInScopeRelation(this);
+        try { lock(); subQuery.query(cb); } finally { unlock(); }
+        String pp = keepMemberId_InScopeRelation_Member(cb.query());
         registerInScopeRelation(cb.query(), "MEMBER_ID", "MEMBER_ID", pp, "member");
     }
     public abstract String keepMemberId_InScopeRelation_Member(MemberCQ sq);
@@ -299,8 +417,9 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      */
     public void notInScopeMember(SubQuery<MemberCB> subQuery) {
         assertObjectNotNull("subQuery", subQuery);
-        MemberCB cb = new MemberCB(); cb.xsetupForInScopeRelation(this); subQuery.query(cb);
-        String pp = keepMemberId_NotInScopeRelation_Member(cb.query()); // for saving query-value.
+        MemberCB cb = new MemberCB(); cb.xsetupForInScopeRelation(this);
+        try { lock(); subQuery.query(cb); } finally { unlock(); }
+        String pp = keepMemberId_NotInScopeRelation_Member(cb.query());
         registerNotInScopeRelation(cb.query(), "MEMBER_ID", "MEMBER_ID", pp, "member");
     }
     public abstract String keepMemberId_NotInScopeRelation_Member(MemberCQ sq);
@@ -310,7 +429,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
     
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
-     * (商品ID)PRODUCT_ID: {UQ+, IX, NotNull, INTEGER(10), FK to PRODUCT}
+     * (商品ID)PRODUCT_ID: {+UQ, IX+, NotNull, INTEGER(10), FK to PRODUCT}
      * @param productId The value of productId as equal. (NullAllowed: if null, no condition)
      */
     public void setProductId_Equal(Integer productId) {
@@ -323,7 +442,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     /**
      * NotEqual(&lt;&gt;). And NullIgnored, OnlyOnceRegistered. <br />
-     * (商品ID)PRODUCT_ID: {UQ+, IX, NotNull, INTEGER(10), FK to PRODUCT}
+     * (商品ID)PRODUCT_ID: {+UQ, IX+, NotNull, INTEGER(10), FK to PRODUCT}
      * @param productId The value of productId as notEqual. (NullAllowed: if null, no condition)
      */
     public void setProductId_NotEqual(Integer productId) {
@@ -336,7 +455,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     /**
      * GreaterThan(&gt;). And NullIgnored, OnlyOnceRegistered. <br />
-     * (商品ID)PRODUCT_ID: {UQ+, IX, NotNull, INTEGER(10), FK to PRODUCT}
+     * (商品ID)PRODUCT_ID: {+UQ, IX+, NotNull, INTEGER(10), FK to PRODUCT}
      * @param productId The value of productId as greaterThan. (NullAllowed: if null, no condition)
      */
     public void setProductId_GreaterThan(Integer productId) {
@@ -345,7 +464,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     /**
      * LessThan(&lt;). And NullIgnored, OnlyOnceRegistered. <br />
-     * (商品ID)PRODUCT_ID: {UQ+, IX, NotNull, INTEGER(10), FK to PRODUCT}
+     * (商品ID)PRODUCT_ID: {+UQ, IX+, NotNull, INTEGER(10), FK to PRODUCT}
      * @param productId The value of productId as lessThan. (NullAllowed: if null, no condition)
      */
     public void setProductId_LessThan(Integer productId) {
@@ -354,7 +473,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     /**
      * GreaterEqual(&gt;=). And NullIgnored, OnlyOnceRegistered. <br />
-     * (商品ID)PRODUCT_ID: {UQ+, IX, NotNull, INTEGER(10), FK to PRODUCT}
+     * (商品ID)PRODUCT_ID: {+UQ, IX+, NotNull, INTEGER(10), FK to PRODUCT}
      * @param productId The value of productId as greaterEqual. (NullAllowed: if null, no condition)
      */
     public void setProductId_GreaterEqual(Integer productId) {
@@ -363,7 +482,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     /**
      * LessEqual(&lt;=). And NullIgnored, OnlyOnceRegistered. <br />
-     * (商品ID)PRODUCT_ID: {UQ+, IX, NotNull, INTEGER(10), FK to PRODUCT}
+     * (商品ID)PRODUCT_ID: {+UQ, IX+, NotNull, INTEGER(10), FK to PRODUCT}
      * @param productId The value of productId as lessEqual. (NullAllowed: if null, no condition)
      */
     public void setProductId_LessEqual(Integer productId) {
@@ -374,7 +493,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      * RangeOf with various options. (versatile) <br />
      * {(default) minNumber &lt;= column &lt;= maxNumber} <br />
      * And NullIgnored, OnlyOnceRegistered. <br />
-     * (商品ID)PRODUCT_ID: {UQ+, IX, NotNull, INTEGER(10), FK to PRODUCT}
+     * (商品ID)PRODUCT_ID: {+UQ, IX+, NotNull, INTEGER(10), FK to PRODUCT}
      * @param minNumber The min number of productId. (NullAllowed: if null, no from-condition)
      * @param maxNumber The max number of productId. (NullAllowed: if null, no to-condition)
      * @param rangeOfOption The option of range-of. (NotNull)
@@ -385,7 +504,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     /**
      * InScope {in (1, 2)}. And NullIgnored, NullElementIgnored, SeveralRegistered. <br />
-     * (商品ID)PRODUCT_ID: {UQ+, IX, NotNull, INTEGER(10), FK to PRODUCT}
+     * (商品ID)PRODUCT_ID: {+UQ, IX+, NotNull, INTEGER(10), FK to PRODUCT}
      * @param productIdList The collection of productId as inScope. (NullAllowed: if null (or empty), no condition)
      */
     public void setProductId_InScope(Collection<Integer> productIdList) {
@@ -398,7 +517,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     /**
      * NotInScope {not in (1, 2)}. And NullIgnored, NullElementIgnored, SeveralRegistered. <br />
-     * (商品ID)PRODUCT_ID: {UQ+, IX, NotNull, INTEGER(10), FK to PRODUCT}
+     * (商品ID)PRODUCT_ID: {+UQ, IX+, NotNull, INTEGER(10), FK to PRODUCT}
      * @param productIdList The collection of productId as notInScope. (NullAllowed: if null (or empty), no condition)
      */
     public void setProductId_NotInScope(Collection<Integer> productIdList) {
@@ -417,8 +536,9 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      */
     public void inScopeProduct(SubQuery<ProductCB> subQuery) {
         assertObjectNotNull("subQuery", subQuery);
-        ProductCB cb = new ProductCB(); cb.xsetupForInScopeRelation(this); subQuery.query(cb);
-        String pp = keepProductId_InScopeRelation_Product(cb.query()); // for saving query-value.
+        ProductCB cb = new ProductCB(); cb.xsetupForInScopeRelation(this);
+        try { lock(); subQuery.query(cb); } finally { unlock(); }
+        String pp = keepProductId_InScopeRelation_Product(cb.query());
         registerInScopeRelation(cb.query(), "PRODUCT_ID", "PRODUCT_ID", pp, "product");
     }
     public abstract String keepProductId_InScopeRelation_Product(ProductCQ sq);
@@ -431,8 +551,9 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      */
     public void notInScopeProduct(SubQuery<ProductCB> subQuery) {
         assertObjectNotNull("subQuery", subQuery);
-        ProductCB cb = new ProductCB(); cb.xsetupForInScopeRelation(this); subQuery.query(cb);
-        String pp = keepProductId_NotInScopeRelation_Product(cb.query()); // for saving query-value.
+        ProductCB cb = new ProductCB(); cb.xsetupForInScopeRelation(this);
+        try { lock(); subQuery.query(cb); } finally { unlock(); }
+        String pp = keepProductId_NotInScopeRelation_Product(cb.query());
         registerNotInScopeRelation(cb.query(), "PRODUCT_ID", "PRODUCT_ID", pp, "product");
     }
     public abstract String keepProductId_NotInScopeRelation_Product(ProductCQ sq);
@@ -442,7 +563,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
-     * (購入日時)PURCHASE_DATETIME: {UQ+, IX, NotNull, TIMESTAMP(23, 10)}
+     * (購入日時)PURCHASE_DATETIME: {+UQ, IX+, NotNull, TIMESTAMP(23, 10)}
      * @param purchaseDatetime The value of purchaseDatetime as equal. (NullAllowed: if null, no condition)
      */
     public void setPurchaseDatetime_Equal(java.sql.Timestamp purchaseDatetime) {
@@ -451,7 +572,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     /**
      * GreaterThan(&gt;). And NullIgnored, OnlyOnceRegistered. <br />
-     * (購入日時)PURCHASE_DATETIME: {UQ+, IX, NotNull, TIMESTAMP(23, 10)}
+     * (購入日時)PURCHASE_DATETIME: {+UQ, IX+, NotNull, TIMESTAMP(23, 10)}
      * @param purchaseDatetime The value of purchaseDatetime as greaterThan. (NullAllowed: if null, no condition)
      */
     public void setPurchaseDatetime_GreaterThan(java.sql.Timestamp purchaseDatetime) {
@@ -460,7 +581,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     /**
      * LessThan(&lt;). And NullIgnored, OnlyOnceRegistered. <br />
-     * (購入日時)PURCHASE_DATETIME: {UQ+, IX, NotNull, TIMESTAMP(23, 10)}
+     * (購入日時)PURCHASE_DATETIME: {+UQ, IX+, NotNull, TIMESTAMP(23, 10)}
      * @param purchaseDatetime The value of purchaseDatetime as lessThan. (NullAllowed: if null, no condition)
      */
     public void setPurchaseDatetime_LessThan(java.sql.Timestamp purchaseDatetime) {
@@ -469,7 +590,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     /**
      * GreaterEqual(&gt;=). And NullIgnored, OnlyOnceRegistered. <br />
-     * (購入日時)PURCHASE_DATETIME: {UQ+, IX, NotNull, TIMESTAMP(23, 10)}
+     * (購入日時)PURCHASE_DATETIME: {+UQ, IX+, NotNull, TIMESTAMP(23, 10)}
      * @param purchaseDatetime The value of purchaseDatetime as greaterEqual. (NullAllowed: if null, no condition)
      */
     public void setPurchaseDatetime_GreaterEqual(java.sql.Timestamp purchaseDatetime) {
@@ -478,7 +599,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     /**
      * LessEqual(&lt;=). And NullIgnored, OnlyOnceRegistered. <br />
-     * (購入日時)PURCHASE_DATETIME: {UQ+, IX, NotNull, TIMESTAMP(23, 10)}
+     * (購入日時)PURCHASE_DATETIME: {+UQ, IX+, NotNull, TIMESTAMP(23, 10)}
      * @param purchaseDatetime The value of purchaseDatetime as lessEqual. (NullAllowed: if null, no condition)
      */
     public void setPurchaseDatetime_LessEqual(java.sql.Timestamp purchaseDatetime) {
@@ -488,8 +609,8 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
     /**
      * FromTo with various options. (versatile) {(default) fromDatetime &lt;= column &lt;= toDatetime} <br />
      * And NullIgnored, OnlyOnceRegistered. <br />
-     * (購入日時)PURCHASE_DATETIME: {UQ+, IX, NotNull, TIMESTAMP(23, 10)}
-     * <pre>e.g. setPurchaseDatetime_FromTo(fromDate, toDate, new <span style="color: #FD4747">FromToOption</span>().compareAsDate());</pre>
+     * (購入日時)PURCHASE_DATETIME: {+UQ, IX+, NotNull, TIMESTAMP(23, 10)}
+     * <pre>e.g. setPurchaseDatetime_FromTo(fromDate, toDate, new <span style="color: #DD4747">FromToOption</span>().compareAsDate());</pre>
      * @param fromDatetime The from-datetime(yyyy/MM/dd HH:mm:ss.SSS) of purchaseDatetime. (NullAllowed: if null, no from-condition)
      * @param toDatetime The to-datetime(yyyy/MM/dd HH:mm:ss.SSS) of purchaseDatetime. (NullAllowed: if null, no to-condition)
      * @param fromToOption The option of from-to. (NotNull)
@@ -501,10 +622,10 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
     /**
      * DateFromTo. (Date means yyyy/MM/dd) {fromDate &lt;= column &lt; toDate + 1 day} <br />
      * And NullIgnored, OnlyOnceRegistered. <br />
-     * (購入日時)PURCHASE_DATETIME: {UQ+, IX, NotNull, TIMESTAMP(23, 10)}
+     * (購入日時)PURCHASE_DATETIME: {+UQ, IX+, NotNull, TIMESTAMP(23, 10)}
      * <pre>
      * e.g. from:{2007/04/10 08:24:53} to:{2007/04/16 14:36:29}
-     *  column &gt;= '2007/04/10 00:00:00' and column <span style="color: #FD4747">&lt; '2007/04/17 00:00:00'</span>
+     *  column &gt;= '2007/04/10 00:00:00' and column <span style="color: #DD4747">&lt; '2007/04/17 00:00:00'</span>
      * </pre>
      * @param fromDate The from-date(yyyy/MM/dd) of purchaseDatetime. (NullAllowed: if null, no from-condition)
      * @param toDate The to-date(yyyy/MM/dd) of purchaseDatetime. (NullAllowed: if null, no to-condition)
@@ -910,7 +1031,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      * FromTo with various options. (versatile) {(default) fromDatetime &lt;= column &lt;= toDatetime} <br />
      * And NullIgnored, OnlyOnceRegistered. <br />
      * REGISTER_DATETIME: {NotNull, TIMESTAMP(23, 10)}
-     * <pre>e.g. setRegisterDatetime_FromTo(fromDate, toDate, new <span style="color: #FD4747">FromToOption</span>().compareAsDate());</pre>
+     * <pre>e.g. setRegisterDatetime_FromTo(fromDate, toDate, new <span style="color: #DD4747">FromToOption</span>().compareAsDate());</pre>
      * @param fromDatetime The from-datetime(yyyy/MM/dd HH:mm:ss.SSS) of registerDatetime. (NullAllowed: if null, no from-condition)
      * @param toDatetime The to-datetime(yyyy/MM/dd HH:mm:ss.SSS) of registerDatetime. (NullAllowed: if null, no to-condition)
      * @param fromToOption The option of from-to. (NotNull)
@@ -925,7 +1046,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      * REGISTER_DATETIME: {NotNull, TIMESTAMP(23, 10)}
      * <pre>
      * e.g. from:{2007/04/10 08:24:53} to:{2007/04/16 14:36:29}
-     *  column &gt;= '2007/04/10 00:00:00' and column <span style="color: #FD4747">&lt; '2007/04/17 00:00:00'</span>
+     *  column &gt;= '2007/04/10 00:00:00' and column <span style="color: #DD4747">&lt; '2007/04/17 00:00:00'</span>
      * </pre>
      * @param fromDate The from-date(yyyy/MM/dd) of registerDatetime. (NullAllowed: if null, no from-condition)
      * @param toDate The to-date(yyyy/MM/dd) of registerDatetime. (NullAllowed: if null, no to-condition)
@@ -1037,7 +1158,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
     /**
      * LikeSearch with various options. (versatile) {like '%xxx%' escape ...}. And NullOrEmptyIgnored, SeveralRegistered. <br />
      * REGISTER_USER: {NotNull, VARCHAR(200)} <br />
-     * <pre>e.g. setRegisterUser_LikeSearch("xxx", new <span style="color: #FD4747">LikeSearchOption</span>().likeContain());</pre>
+     * <pre>e.g. setRegisterUser_LikeSearch("xxx", new <span style="color: #DD4747">LikeSearchOption</span>().likeContain());</pre>
      * @param registerUser The value of registerUser as likeSearch. (NullAllowed: if null (or empty), no condition)
      * @param likeSearchOption The option of like-search. (NotNull)
      */
@@ -1108,7 +1229,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      * FromTo with various options. (versatile) {(default) fromDatetime &lt;= column &lt;= toDatetime} <br />
      * And NullIgnored, OnlyOnceRegistered. <br />
      * UPDATE_DATETIME: {NotNull, TIMESTAMP(23, 10)}
-     * <pre>e.g. setUpdateDatetime_FromTo(fromDate, toDate, new <span style="color: #FD4747">FromToOption</span>().compareAsDate());</pre>
+     * <pre>e.g. setUpdateDatetime_FromTo(fromDate, toDate, new <span style="color: #DD4747">FromToOption</span>().compareAsDate());</pre>
      * @param fromDatetime The from-datetime(yyyy/MM/dd HH:mm:ss.SSS) of updateDatetime. (NullAllowed: if null, no from-condition)
      * @param toDatetime The to-datetime(yyyy/MM/dd HH:mm:ss.SSS) of updateDatetime. (NullAllowed: if null, no to-condition)
      * @param fromToOption The option of from-to. (NotNull)
@@ -1123,7 +1244,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      * UPDATE_DATETIME: {NotNull, TIMESTAMP(23, 10)}
      * <pre>
      * e.g. from:{2007/04/10 08:24:53} to:{2007/04/16 14:36:29}
-     *  column &gt;= '2007/04/10 00:00:00' and column <span style="color: #FD4747">&lt; '2007/04/17 00:00:00'</span>
+     *  column &gt;= '2007/04/10 00:00:00' and column <span style="color: #DD4747">&lt; '2007/04/17 00:00:00'</span>
      * </pre>
      * @param fromDate The from-date(yyyy/MM/dd) of updateDatetime. (NullAllowed: if null, no from-condition)
      * @param toDate The to-date(yyyy/MM/dd) of updateDatetime. (NullAllowed: if null, no to-condition)
@@ -1235,7 +1356,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
     /**
      * LikeSearch with various options. (versatile) {like '%xxx%' escape ...}. And NullOrEmptyIgnored, SeveralRegistered. <br />
      * UPDATE_USER: {NotNull, VARCHAR(200)} <br />
-     * <pre>e.g. setUpdateUser_LikeSearch("xxx", new <span style="color: #FD4747">LikeSearchOption</span>().likeContain());</pre>
+     * <pre>e.g. setUpdateUser_LikeSearch("xxx", new <span style="color: #DD4747">LikeSearchOption</span>().likeContain());</pre>
      * @param updateUser The value of updateUser as likeSearch. (NullAllowed: if null (or empty), no condition)
      * @param likeSearchOption The option of like-search. (NotNull)
      */
@@ -1368,7 +1489,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      * Prepare ScalarCondition as equal. <br />
      * {where FOO = (select max(BAR) from ...)
      * <pre>
-     * cb.query().<span style="color: #FD4747">scalar_Equal()</span>.max(new SubQuery&lt;PurchaseCB&gt;() {
+     * cb.query().<span style="color: #DD4747">scalar_Equal()</span>.max(new SubQuery&lt;PurchaseCB&gt;() {
      *     public void query(PurchaseCB subCB) {
      *         subCB.specify().setXxx... <span style="color: #3F7E5E">// derived column for function</span>
      *         subCB.query().setYyy...
@@ -1378,14 +1499,14 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<PurchaseCB> scalar_Equal() {
-        return xcreateSSQFunction(CK_EQ.getOperand());
+        return xcreateSSQFunction(CK_EQ.getOperand(), PurchaseCB.class);
     }
 
     /**
      * Prepare ScalarCondition as equal. <br />
      * {where FOO &lt;&gt; (select max(BAR) from ...)
      * <pre>
-     * cb.query().<span style="color: #FD4747">scalar_NotEqual()</span>.max(new SubQuery&lt;PurchaseCB&gt;() {
+     * cb.query().<span style="color: #DD4747">scalar_NotEqual()</span>.max(new SubQuery&lt;PurchaseCB&gt;() {
      *     public void query(PurchaseCB subCB) {
      *         subCB.specify().setXxx... <span style="color: #3F7E5E">// derived column for function</span>
      *         subCB.query().setYyy...
@@ -1395,14 +1516,14 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<PurchaseCB> scalar_NotEqual() {
-        return xcreateSSQFunction(CK_NES.getOperand());
+        return xcreateSSQFunction(CK_NES.getOperand(), PurchaseCB.class);
     }
 
     /**
      * Prepare ScalarCondition as greaterThan. <br />
      * {where FOO &gt; (select max(BAR) from ...)
      * <pre>
-     * cb.query().<span style="color: #FD4747">scalar_GreaterThan()</span>.max(new SubQuery&lt;PurchaseCB&gt;() {
+     * cb.query().<span style="color: #DD4747">scalar_GreaterThan()</span>.max(new SubQuery&lt;PurchaseCB&gt;() {
      *     public void query(PurchaseCB subCB) {
      *         subCB.specify().setFoo... <span style="color: #3F7E5E">// derived column for function</span>
      *         subCB.query().setBar...
@@ -1412,14 +1533,14 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<PurchaseCB> scalar_GreaterThan() {
-        return xcreateSSQFunction(CK_GT.getOperand());
+        return xcreateSSQFunction(CK_GT.getOperand(), PurchaseCB.class);
     }
 
     /**
      * Prepare ScalarCondition as lessThan. <br />
      * {where FOO &lt; (select max(BAR) from ...)
      * <pre>
-     * cb.query().<span style="color: #FD4747">scalar_LessThan()</span>.max(new SubQuery&lt;PurchaseCB&gt;() {
+     * cb.query().<span style="color: #DD4747">scalar_LessThan()</span>.max(new SubQuery&lt;PurchaseCB&gt;() {
      *     public void query(PurchaseCB subCB) {
      *         subCB.specify().setFoo... <span style="color: #3F7E5E">// derived column for function</span>
      *         subCB.query().setBar...
@@ -1429,14 +1550,14 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<PurchaseCB> scalar_LessThan() {
-        return xcreateSSQFunction(CK_LT.getOperand());
+        return xcreateSSQFunction(CK_LT.getOperand(), PurchaseCB.class);
     }
 
     /**
      * Prepare ScalarCondition as greaterEqual. <br />
      * {where FOO &gt;= (select max(BAR) from ...)
      * <pre>
-     * cb.query().<span style="color: #FD4747">scalar_GreaterEqual()</span>.max(new SubQuery&lt;PurchaseCB&gt;() {
+     * cb.query().<span style="color: #DD4747">scalar_GreaterEqual()</span>.max(new SubQuery&lt;PurchaseCB&gt;() {
      *     public void query(PurchaseCB subCB) {
      *         subCB.specify().setFoo... <span style="color: #3F7E5E">// derived column for function</span>
      *         subCB.query().setBar...
@@ -1446,14 +1567,14 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<PurchaseCB> scalar_GreaterEqual() {
-        return xcreateSSQFunction(CK_GE.getOperand());
+        return xcreateSSQFunction(CK_GE.getOperand(), PurchaseCB.class);
     }
 
     /**
      * Prepare ScalarCondition as lessEqual. <br />
      * {where FOO &lt;= (select max(BAR) from ...)
      * <pre>
-     * cb.query().<span style="color: #FD4747">scalar_LessEqual()</span>.max(new SubQuery&lt;PurchaseCB&gt;() {
+     * cb.query().<span style="color: #DD4747">scalar_LessEqual()</span>.max(new SubQuery&lt;PurchaseCB&gt;() {
      *     public void query(PurchaseCB subCB) {
      *         subCB.specify().setFoo... <span style="color: #3F7E5E">// derived column for function</span>
      *         subCB.query().setBar...
@@ -1463,36 +1584,25 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<PurchaseCB> scalar_LessEqual() {
-        return xcreateSSQFunction(CK_LE.getOperand());
+        return xcreateSSQFunction(CK_LE.getOperand(), PurchaseCB.class);
     }
 
-    protected HpSSQFunction<PurchaseCB> xcreateSSQFunction(final String rd) {
-        return new HpSSQFunction<PurchaseCB>(new HpSSQSetupper<PurchaseCB>() {
-            public void setup(String fn, SubQuery<PurchaseCB> sq, HpSSQOption<PurchaseCB> op) {
-                xscalarCondition(fn, sq, rd, op);
-            }
-        });
-    }
-
-    protected void xscalarCondition(String fn, SubQuery<PurchaseCB> sq, String rd, HpSSQOption<PurchaseCB> op) {
+    @SuppressWarnings("unchecked")
+    protected <CB extends ConditionBean> void xscalarCondition(String fn, SubQuery<CB> sq, String rd, HpSSQOption<CB> op) {
         assertObjectNotNull("subQuery", sq);
-        PurchaseCB cb = xcreateScalarConditionCB(); sq.query(cb);
+        PurchaseCB cb = xcreateScalarConditionCB(); sq.query((CB)cb);
         String pp = keepScalarCondition(cb.query()); // for saving query-value
-        op.setPartitionByCBean(xcreateScalarConditionPartitionByCB()); // for using partition-by
+        op.setPartitionByCBean((CB)xcreateScalarConditionPartitionByCB()); // for using partition-by
         registerScalarCondition(fn, cb.query(), pp, rd, op);
     }
     public abstract String keepScalarCondition(PurchaseCQ sq);
 
     protected PurchaseCB xcreateScalarConditionCB() {
-        PurchaseCB cb = new PurchaseCB();
-        cb.xsetupForScalarCondition(this);
-        return cb;
+        PurchaseCB cb = newMyCB(); cb.xsetupForScalarCondition(this); return cb;
     }
 
     protected PurchaseCB xcreateScalarConditionPartitionByCB() {
-        PurchaseCB cb = new PurchaseCB();
-        cb.xsetupForScalarConditionPartitionBy(this);
-        return cb;
+        PurchaseCB cb = newMyCB(); cb.xsetupForScalarConditionPartitionBy(this); return cb;
     }
 
     // ===================================================================================
@@ -1500,30 +1610,25 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
     //                                                                       =============
     public void xsmyselfDerive(String fn, SubQuery<PurchaseCB> sq, String al, DerivedReferrerOption op) {
         assertObjectNotNull("subQuery", sq);
-        PurchaseCB cb = new PurchaseCB(); cb.xsetupForDerivedReferrer(this); sq.query(cb);
+        PurchaseCB cb = new PurchaseCB(); cb.xsetupForDerivedReferrer(this);
+        try { lock(); sq.query(cb); } finally { unlock(); }
+        String pp = keepSpecifyMyselfDerived(cb.query());
         String pk = "PURCHASE_ID";
-        String pp = keepSpecifyMyselfDerived(cb.query()); // for saving query-value.
         registerSpecifyMyselfDerived(fn, cb.query(), pk, pk, pp, "myselfDerived", al, op);
     }
     public abstract String keepSpecifyMyselfDerived(PurchaseCQ sq);
 
     /**
-     * Prepare for (Query)MyselfDerived (SubQuery).
+     * Prepare for (Query)MyselfDerived (correlated sub-query).
      * @return The object to set up a function for myself table. (NotNull)
      */
     public HpQDRFunction<PurchaseCB> myselfDerived() {
-        return xcreateQDRFunctionMyselfDerived();
+        return xcreateQDRFunctionMyselfDerived(PurchaseCB.class);
     }
-    protected HpQDRFunction<PurchaseCB> xcreateQDRFunctionMyselfDerived() {
-        return new HpQDRFunction<PurchaseCB>(new HpQDRSetupper<PurchaseCB>() {
-            public void setup(String fn, SubQuery<PurchaseCB> sq, String rd, Object vl, DerivedReferrerOption op) {
-                xqderiveMyselfDerived(fn, sq, rd, vl, op);
-            }
-        });
-    }
-    public void xqderiveMyselfDerived(String fn, SubQuery<PurchaseCB> sq, String rd, Object vl, DerivedReferrerOption op) {
+    @SuppressWarnings("unchecked")
+    protected <CB extends ConditionBean> void xqderiveMyselfDerived(String fn, SubQuery<CB> sq, String rd, Object vl, DerivedReferrerOption op) {
         assertObjectNotNull("subQuery", sq);
-        PurchaseCB cb = new PurchaseCB(); cb.xsetupForDerivedReferrer(this); sq.query(cb);
+        PurchaseCB cb = new PurchaseCB(); cb.xsetupForDerivedReferrer(this); sq.query((CB)cb);
         String pk = "PURCHASE_ID";
         String sqpp = keepQueryMyselfDerived(cb.query()); // for saving query-value.
         String prpp = keepQueryMyselfDerivedParameter(vl);
@@ -1536,13 +1641,14 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
     //                                                                        MyselfExists
     //                                                                        ============
     /**
-     * Prepare for MyselfExists (SubQuery).
-     * @param subQuery The implementation of sub query. (NotNull)
+     * Prepare for MyselfExists (correlated sub-query).
+     * @param subQuery The implementation of sub-query. (NotNull)
      */
     public void myselfExists(SubQuery<PurchaseCB> subQuery) {
         assertObjectNotNull("subQuery", subQuery);
-        PurchaseCB cb = new PurchaseCB(); cb.xsetupForMyselfExists(this); subQuery.query(cb);
-        String pp = keepMyselfExists(cb.query()); // for saving query-value.
+        PurchaseCB cb = new PurchaseCB(); cb.xsetupForMyselfExists(this);
+        try { lock(); subQuery.query(cb); } finally { unlock(); }
+        String pp = keepMyselfExists(cb.query());
         registerMyselfExists(cb.query(), pp);
     }
     public abstract String keepMyselfExists(PurchaseCQ sq);
@@ -1551,22 +1657,56 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
     //                                                                       MyselfInScope
     //                                                                       =============
     /**
-     * Prepare for MyselfInScope (SubQuery).
-     * @param subQuery The implementation of sub query. (NotNull)
+     * Prepare for MyselfInScope (sub-query).
+     * @param subQuery The implementation of sub-query. (NotNull)
      */
     public void myselfInScope(SubQuery<PurchaseCB> subQuery) {
         assertObjectNotNull("subQuery", subQuery);
-        PurchaseCB cb = new PurchaseCB(); cb.xsetupForMyselfInScope(this); subQuery.query(cb);
-        String pp = keepMyselfInScope(cb.query()); // for saving query-value.
+        PurchaseCB cb = new PurchaseCB(); cb.xsetupForMyselfInScope(this);
+        try { lock(); subQuery.query(cb); } finally { unlock(); }
+        String pp = keepMyselfInScope(cb.query());
         registerMyselfInScope(cb.query(), pp);
     }
     public abstract String keepMyselfInScope(PurchaseCQ sq);
 
     // ===================================================================================
+    //                                                                          Compatible
+    //                                                                          ==========
+    /**
+     * Order along the list of manual values. #beforejava8 <br />
+     * This function with Union is unsupported! <br />
+     * The order values are bound (treated as bind parameter).
+     * <pre>
+     * MemberCB cb = new MemberCB();
+     * List&lt;CDef.MemberStatus&gt; orderValueList = new ArrayList&lt;CDef.MemberStatus&gt;();
+     * orderValueList.add(CDef.MemberStatus.Withdrawal);
+     * orderValueList.add(CDef.MemberStatus.Formalized);
+     * orderValueList.add(CDef.MemberStatus.Provisional);
+     * cb.query().addOrderBy_MemberStatusCode_Asc().<span style="color: #DD4747">withManualOrder(orderValueList)</span>;
+     * <span style="color: #3F7E5E">// order by </span>
+     * <span style="color: #3F7E5E">//   case</span>
+     * <span style="color: #3F7E5E">//     when MEMBER_STATUS_CODE = 'WDL' then 0</span>
+     * <span style="color: #3F7E5E">//     when MEMBER_STATUS_CODE = 'FML' then 1</span>
+     * <span style="color: #3F7E5E">//     when MEMBER_STATUS_CODE = 'PRV' then 2</span>
+     * <span style="color: #3F7E5E">//     else 3</span>
+     * <span style="color: #3F7E5E">//   end asc, ...</span>
+     * </pre>
+     * @param orderValueList The list of order values for manual ordering. (NotNull)
+     */
+    public void withManualOrder(List<? extends Object> orderValueList) { // is user public!
+        assertObjectNotNull("withManualOrder(orderValueList)", orderValueList);
+        final ManualOrderBean manualOrderBean = new ManualOrderBean();
+        manualOrderBean.acceptOrderValueList(orderValueList);
+        withManualOrder(manualOrderBean);
+    }
+
+    // ===================================================================================
     //                                                                       Very Internal
     //                                                                       =============
+    protected PurchaseCB newMyCB() {
+        return new PurchaseCB();
+    }
     // very internal (for suppressing warn about 'Not Use Import')
-    protected String xabCB() { return PurchaseCB.class.getName(); }
     protected String xabCQ() { return PurchaseCQ.class.getName(); }
     protected String xabLSO() { return LikeSearchOption.class.getName(); }
     protected String xabSSQS() { return HpSSQSetupper.class.getName(); }

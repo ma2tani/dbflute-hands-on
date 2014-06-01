@@ -95,6 +95,9 @@ public abstract class BsWithdrawalReason implements Entity, Serializable, Clonea
     // -----------------------------------------------------
     //                                              Internal
     //                                              --------
+    /** The unique-driven properties for this entity. (NotNull) */
+    protected final EntityUniqueDrivenProperties __uniqueDrivenProperties = newUniqueDrivenProperties();
+
     /** The modified properties for this entity. (NotNull) */
     protected final EntityModifiedProperties __modifiedProperties = newModifiedProperties();
 
@@ -137,6 +140,28 @@ public abstract class BsWithdrawalReason implements Entity, Serializable, Clonea
     public boolean hasPrimaryKeyValue() {
         if (getWithdrawalReasonCode() == null) { return false; }
         return true;
+    }
+
+    /**
+     * To be unique by the unique column. <br />
+     * You can update the entity by the key when entity update (NOT batch update).
+     * @param displayOrder : UQ, NotNull, INTEGER(10). (NotNull)
+     */
+    public void uniqueBy(Integer displayOrder) {
+        __uniqueDrivenProperties.clear();
+        __uniqueDrivenProperties.addPropertyName("displayOrder");
+        setDisplayOrder(displayOrder);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Set<String> myuniqueDrivenProperties() {
+        return __uniqueDrivenProperties.getPropertyNames();
+    }
+
+    protected EntityUniqueDrivenProperties newUniqueDrivenProperties() {
+        return new EntityUniqueDrivenProperties();
     }
 
     // ===================================================================================
@@ -329,17 +354,17 @@ public abstract class BsWithdrawalReason implements Entity, Serializable, Clonea
     /**
      * Determine the object is equal with this. <br />
      * If primary-keys or columns of the other are same as this one, returns true.
-     * @param other The other entity. (NullAllowed: if null, returns false fixedly)
+     * @param obj The object as other entity. (NullAllowed: if null, returns false fixedly)
      * @return Comparing result.
      */
-    public boolean equals(Object other) {
-        if (other == null || !(other instanceof BsWithdrawalReason)) { return false; }
-        BsWithdrawalReason otherEntity = (BsWithdrawalReason)other;
-        if (!xSV(getWithdrawalReasonCode(), otherEntity.getWithdrawalReasonCode())) { return false; }
+    public boolean equals(Object obj) {
+        if (obj == null || !(obj instanceof BsWithdrawalReason)) { return false; }
+        BsWithdrawalReason other = (BsWithdrawalReason)obj;
+        if (!xSV(getWithdrawalReasonCode(), other.getWithdrawalReasonCode())) { return false; }
         return true;
     }
-    protected boolean xSV(Object value1, Object value2) { // isSameValue()
-        return InternalUtil.isSameValue(value1, value2);
+    protected boolean xSV(Object v1, Object v2) {
+        return FunCustodial.isSameValue(v1, v2);
     }
 
     /**
@@ -347,13 +372,13 @@ public abstract class BsWithdrawalReason implements Entity, Serializable, Clonea
      * @return The hash-code from primary-key or columns.
      */
     public int hashCode() {
-        int result = 17;
-        result = xCH(result, getTableDbName());
-        result = xCH(result, getWithdrawalReasonCode());
-        return result;
+        int hs = 17;
+        hs = xCH(hs, getTableDbName());
+        hs = xCH(hs, getWithdrawalReasonCode());
+        return hs;
     }
-    protected int xCH(int result, Object value) { // calculateHashcode()
-        return InternalUtil.calculateHashcode(result, value);
+    protected int xCH(int hs, Object vl) {
+        return FunCustodial.calculateHashcode(hs, vl);
     }
 
     /**
@@ -368,7 +393,7 @@ public abstract class BsWithdrawalReason implements Entity, Serializable, Clonea
      * @return The display string of all columns and relation existences. (NotNull)
      */
     public String toString() {
-        return buildDisplayString(InternalUtil.toClassTitle(this), true, true);
+        return buildDisplayString(FunCustodial.toClassTitle(this), true, true);
     }
 
     /**
@@ -377,13 +402,13 @@ public abstract class BsWithdrawalReason implements Entity, Serializable, Clonea
     public String toStringWithRelation() {
         StringBuilder sb = new StringBuilder();
         sb.append(toString());
-        String l = "\n  ";
-        if (_memberWithdrawalList != null) { for (Entity e : _memberWithdrawalList)
-        { if (e != null) { sb.append(l).append(xbRDS(e, "memberWithdrawalList")); } } }
+        String li = "\n  ";
+        if (_memberWithdrawalList != null) { for (Entity et : _memberWithdrawalList)
+        { if (et != null) { sb.append(li).append(xbRDS(et, "memberWithdrawalList")); } } }
         return sb.toString();
     }
-    protected String xbRDS(Entity e, String name) { // buildRelationDisplayString()
-        return e.buildDisplayString(name, true, true);
+    protected String xbRDS(Entity et, String name) { // buildRelationDisplayString()
+        return et.buildDisplayString(name, true, true);
     }
 
     /**
@@ -399,23 +424,23 @@ public abstract class BsWithdrawalReason implements Entity, Serializable, Clonea
     }
     protected String buildColumnString() {
         StringBuilder sb = new StringBuilder();
-        String delimiter = ", ";
-        sb.append(delimiter).append(getWithdrawalReasonCode());
-        sb.append(delimiter).append(getWithdrawalReasonText());
-        sb.append(delimiter).append(getDisplayOrder());
-        if (sb.length() > delimiter.length()) {
-            sb.delete(0, delimiter.length());
+        String dm = ", ";
+        sb.append(dm).append(getWithdrawalReasonCode());
+        sb.append(dm).append(getWithdrawalReasonText());
+        sb.append(dm).append(getDisplayOrder());
+        if (sb.length() > dm.length()) {
+            sb.delete(0, dm.length());
         }
         sb.insert(0, "{").append("}");
         return sb.toString();
     }
     protected String buildRelationString() {
         StringBuilder sb = new StringBuilder();
-        String c = ",";
+        String cm = ",";
         if (_memberWithdrawalList != null && !_memberWithdrawalList.isEmpty())
-        { sb.append(c).append("memberWithdrawalList"); }
-        if (sb.length() > c.length()) {
-            sb.delete(0, c.length()).insert(0, "(").append(")");
+        { sb.append(cm).append("memberWithdrawalList"); }
+        if (sb.length() > cm.length()) {
+            sb.delete(0, cm.length()).insert(0, "(").append(")");
         }
         return sb.toString();
     }
@@ -491,6 +516,6 @@ public abstract class BsWithdrawalReason implements Entity, Serializable, Clonea
     }
 
     protected String convertEmptyToNull(String value) {
-        return InternalUtil.convertEmptyToNull(value);
+        return FunCustodial.convertEmptyToNull(value);
     }
 }

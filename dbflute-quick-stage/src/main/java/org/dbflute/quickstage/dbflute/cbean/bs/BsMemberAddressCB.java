@@ -93,10 +93,25 @@ public class BsMemberAddressCB extends AbstractConditionBean {
     // ===================================================================================
     //                                                                 PrimaryKey Handling
     //                                                                 ===================
+    /**
+     * Accept the query condition of primary key as equal.
+     * @param memberAddressId (会員住所ID): PK, ID, NotNull, INTEGER(10). (NotNull)
+     */
     public void acceptPrimaryKey(Integer memberAddressId) {
         assertObjectNotNull("memberAddressId", memberAddressId);
         BsMemberAddressCB cb = this;
-        cb.query().setMemberAddressId_Equal(memberAddressId);
+        cb.query().setMemberAddressId_Equal(memberAddressId);;
+    }
+
+    /**
+     * Accept the query condition of unique key as equal.
+     * @param memberId (会員ID): UQ+, IX, NotNull, INTEGER(10), FK to MEMBER. (NotNull)
+     * @param validBeginDate (有効開始日): +UQ, NotNull, DATE(8). (NotNull)
+     */
+    public void acceptUniqueOf(Integer memberId, java.util.Date validBeginDate) {
+        assertObjectNotNull("memberId", memberId);assertObjectNotNull("validBeginDate", validBeginDate);
+        BsMemberAddressCB cb = this;
+        cb.query().setMemberId_Equal(memberId);;cb.query().setValidBeginDate_Equal(validBeginDate);;
     }
 
     public ConditionBean addOrderBy_PK_Asc() {
@@ -139,7 +154,7 @@ public class BsMemberAddressCB extends AbstractConditionBean {
      * cb.query().setBirthdate_IsNull();    <span style="color: #3F7E5E">// is null</span>
      * cb.query().setBirthdate_IsNotNull(); <span style="color: #3F7E5E">// is not null</span>
      * 
-     * <span style="color: #3F7E5E">// ExistsReferrer: (co-related sub-query)</span>
+     * <span style="color: #3F7E5E">// ExistsReferrer: (correlated sub-query)</span>
      * <span style="color: #3F7E5E">// {where exists (select PURCHASE_ID from PURCHASE where ...)}</span>
      * cb.query().existsPurchaseList(new SubQuery&lt;PurchaseCB&gt;() {
      *     public void query(PurchaseCB subCB) {
@@ -157,7 +172,7 @@ public class BsMemberAddressCB extends AbstractConditionBean {
      * });
      * cb.query().notInScopeMemberStatus...
      * 
-     * <span style="color: #3F7E5E">// (Query)DerivedReferrer: (co-related sub-query)</span>
+     * <span style="color: #3F7E5E">// (Query)DerivedReferrer: (correlated sub-query)</span>
      * cb.query().derivedPurchaseList().max(new SubQuery&lt;PurchaseCB&gt;() {
      *     public void query(PurchaseCB subCB) {
      *         subCB.specify().columnPurchasePrice(); <span style="color: #3F7E5E">// derived column for function</span>
@@ -224,7 +239,7 @@ public class BsMemberAddressCB extends AbstractConditionBean {
      * You don't need to call SetupSelect in union-query,
      * because it inherits calls before. (Don't call SetupSelect after here)
      * <pre>
-     * cb.query().<span style="color: #FD4747">union</span>(new UnionQuery&lt;MemberAddressCB&gt;() {
+     * cb.query().<span style="color: #DD4747">union</span>(new UnionQuery&lt;MemberAddressCB&gt;() {
      *     public void query(MemberAddressCB unionCB) {
      *         unionCB.query().setXxx...
      *     }
@@ -233,8 +248,8 @@ public class BsMemberAddressCB extends AbstractConditionBean {
      * @param unionQuery The query of 'union'. (NotNull)
      */
     public void union(UnionQuery<MemberAddressCB> unionQuery) {
-        final MemberAddressCB cb = new MemberAddressCB();
-        cb.xsetupForUnion(this); xsyncUQ(cb); unionQuery.query(cb); xsaveUCB(cb);
+        final MemberAddressCB cb = new MemberAddressCB(); cb.xsetupForUnion(this); xsyncUQ(cb); 
+        try { lock(); unionQuery.query(cb); } finally { unlock(); } xsaveUCB(cb);
         final MemberAddressCQ cq = cb.query(); query().xsetUnionQuery(cq);
     }
 
@@ -243,7 +258,7 @@ public class BsMemberAddressCB extends AbstractConditionBean {
      * You don't need to call SetupSelect in union-query,
      * because it inherits calls before. (Don't call SetupSelect after here)
      * <pre>
-     * cb.query().<span style="color: #FD4747">unionAll</span>(new UnionQuery&lt;MemberAddressCB&gt;() {
+     * cb.query().<span style="color: #DD4747">unionAll</span>(new UnionQuery&lt;MemberAddressCB&gt;() {
      *     public void query(MemberAddressCB unionCB) {
      *         unionCB.query().setXxx...
      *     }
@@ -252,8 +267,8 @@ public class BsMemberAddressCB extends AbstractConditionBean {
      * @param unionQuery The query of 'union all'. (NotNull)
      */
     public void unionAll(UnionQuery<MemberAddressCB> unionQuery) {
-        final MemberAddressCB cb = new MemberAddressCB();
-        cb.xsetupForUnion(this); xsyncUQ(cb); unionQuery.query(cb); xsaveUCB(cb);
+        final MemberAddressCB cb = new MemberAddressCB(); cb.xsetupForUnion(this); xsyncUQ(cb);
+        try { lock(); unionQuery.query(cb); } finally { unlock(); } xsaveUCB(cb);
         final MemberAddressCQ cq = cb.query(); query().xsetUnionAllQuery(cq);
     }
 
@@ -270,14 +285,15 @@ public class BsMemberAddressCB extends AbstractConditionBean {
      * (会員)MEMBER by my MEMBER_ID, named 'member'.
      * <pre>
      * MemberAddressCB cb = new MemberAddressCB();
-     * cb.<span style="color: #FD4747">setupSelect_Member()</span>; <span style="color: #3F7E5E">// ...().with[nested-relation]()</span>
+     * cb.<span style="color: #DD4747">setupSelect_Member()</span>; <span style="color: #3F7E5E">// ...().with[nested-relation]()</span>
      * cb.query().setFoo...(value);
      * MemberAddress memberAddress = memberAddressBhv.selectEntityWithDeletedCheck(cb);
-     * ... = memberAddress.<span style="color: #FD4747">getMember()</span>; <span style="color: #3F7E5E">// you can get by using SetupSelect</span>
+     * ... = memberAddress.<span style="color: #DD4747">getMember()</span>; <span style="color: #3F7E5E">// you can get by using SetupSelect</span>
      * </pre>
      * @return The set-upper of nested relation. {setupSelect...().with[nested-relation]} (NotNull)
      */
     public MemberNss setupSelect_Member() {
+        assertSetupSelectPurpose("member");
         if (hasSpecifiedColumn()) { // if reverse call
             specify().columnMemberId();
         }
@@ -286,31 +302,24 @@ public class BsMemberAddressCB extends AbstractConditionBean {
         { _nssMember = new MemberNss(query().queryMember()); }
         return _nssMember;
     }
-    protected RegionNss _nssRegion;
-    public RegionNss getNssRegion() {
-        if (_nssRegion == null) { _nssRegion = new RegionNss(null); }
-        return _nssRegion;
-    }
+
     /**
      * Set up relation columns to select clause. <br />
      * (地域)REGION by my REGION_ID, named 'region'.
      * <pre>
      * MemberAddressCB cb = new MemberAddressCB();
-     * cb.<span style="color: #FD4747">setupSelect_Region()</span>; <span style="color: #3F7E5E">// ...().with[nested-relation]()</span>
+     * cb.<span style="color: #DD4747">setupSelect_Region()</span>; <span style="color: #3F7E5E">// ...().with[nested-relation]()</span>
      * cb.query().setFoo...(value);
      * MemberAddress memberAddress = memberAddressBhv.selectEntityWithDeletedCheck(cb);
-     * ... = memberAddress.<span style="color: #FD4747">getRegion()</span>; <span style="color: #3F7E5E">// you can get by using SetupSelect</span>
+     * ... = memberAddress.<span style="color: #DD4747">getRegion()</span>; <span style="color: #3F7E5E">// you can get by using SetupSelect</span>
      * </pre>
-     * @return The set-upper of nested relation. {setupSelect...().with[nested-relation]} (NotNull)
      */
-    public RegionNss setupSelect_Region() {
+    public void setupSelect_Region() {
+        assertSetupSelectPurpose("region");
         if (hasSpecifiedColumn()) { // if reverse call
             specify().columnRegionId();
         }
         doSetupSelect(new SsCall() { public ConditionQuery qf() { return query().queryRegion(); } });
-        if (_nssRegion == null || !_nssRegion.hasConditionQuery())
-        { _nssRegion = new RegionNss(query().queryRegion()); }
-        return _nssRegion;
     }
 
     // [DBFlute-0.7.4]
@@ -366,12 +375,12 @@ public class BsMemberAddressCB extends AbstractConditionBean {
          */
         public HpSpecifiedColumn columnMemberAddressId() { return doColumn("MEMBER_ADDRESS_ID"); }
         /**
-         * (会員ID)MEMBER_ID: {UQ, IX, NotNull, INTEGER(10), FK to MEMBER}
+         * (会員ID)MEMBER_ID: {UQ+, IX, NotNull, INTEGER(10), FK to MEMBER}
          * @return The information object of specified column. (NotNull)
          */
         public HpSpecifiedColumn columnMemberId() { return doColumn("MEMBER_ID"); }
         /**
-         * (有効開始日)VALID_BEGIN_DATE: {UQ+, NotNull, DATE(8)}
+         * (有効開始日)VALID_BEGIN_DATE: {+UQ, NotNull, DATE(8)}
          * @return The information object of specified column. (NotNull)
          */
         public HpSpecifiedColumn columnValidBeginDate() { return doColumn("VALID_BEGIN_DATE"); }
@@ -487,19 +496,19 @@ public class BsMemberAddressCB extends AbstractConditionBean {
 
     // [DBFlute-0.9.5.3]
     // ===================================================================================
-    //                                                                         ColumnQuery
-    //                                                                         ===========
+    //                                                                        Column Query
+    //                                                                        ============
     /**
      * Set up column-query. {column1 = column2}
      * <pre>
      * <span style="color: #3F7E5E">// where FOO &lt; BAR</span>
-     * cb.<span style="color: #FD4747">columnQuery</span>(new SpecifyQuery&lt;MemberAddressCB&gt;() {
+     * cb.<span style="color: #DD4747">columnQuery</span>(new SpecifyQuery&lt;MemberAddressCB&gt;() {
      *     public void query(MemberAddressCB cb) {
-     *         cb.specify().<span style="color: #FD4747">columnFoo()</span>; <span style="color: #3F7E5E">// left column</span>
+     *         cb.specify().<span style="color: #DD4747">columnFoo()</span>; <span style="color: #3F7E5E">// left column</span>
      *     }
      * }).lessThan(new SpecifyQuery&lt;MemberAddressCB&gt;() {
      *     public void query(MemberAddressCB cb) {
-     *         cb.specify().<span style="color: #FD4747">columnBar()</span>; <span style="color: #3F7E5E">// right column</span>
+     *         cb.specify().<span style="color: #DD4747">columnBar()</span>; <span style="color: #3F7E5E">// right column</span>
      *     }
      * }); <span style="color: #3F7E5E">// you can calculate for right column like '}).plus(3);'</span>
      * </pre>
@@ -540,14 +549,14 @@ public class BsMemberAddressCB extends AbstractConditionBean {
 
     // [DBFlute-0.9.6.3]
     // ===================================================================================
-    //                                                                        OrScopeQuery
-    //                                                                        ============
+    //                                                                       OrScope Query
+    //                                                                       =============
     /**
      * Set up the query for or-scope. <br />
      * (Same-column-and-same-condition-key conditions are allowed in or-scope)
      * <pre>
      * <span style="color: #3F7E5E">// where (FOO = '...' or BAR = '...')</span>
-     * cb.<span style="color: #FD4747">orScopeQuery</span>(new OrQuery&lt;MemberAddressCB&gt;() {
+     * cb.<span style="color: #DD4747">orScopeQuery</span>(new OrQuery&lt;MemberAddressCB&gt;() {
      *     public void query(MemberAddressCB orCB) {
      *         orCB.query().setFOO_Equal...
      *         orCB.query().setBAR_Equal...
@@ -560,15 +569,20 @@ public class BsMemberAddressCB extends AbstractConditionBean {
         xorSQ((MemberAddressCB)this, orQuery);
     }
 
+    @Override
+    protected HpCBPurpose xhandleOrSQPurposeChange() {
+        return null; // means no check
+    }
+
     /**
      * Set up the and-part of or-scope. <br />
      * (However nested or-scope query and as-or-split of like-search in and-part are unsupported)
      * <pre>
      * <span style="color: #3F7E5E">// where (FOO = '...' or (BAR = '...' and QUX = '...'))</span>
-     * cb.<span style="color: #FD4747">orScopeQuery</span>(new OrQuery&lt;MemberAddressCB&gt;() {
+     * cb.<span style="color: #DD4747">orScopeQuery</span>(new OrQuery&lt;MemberAddressCB&gt;() {
      *     public void query(MemberAddressCB orCB) {
      *         orCB.query().setFOO_Equal...
-     *         orCB.<span style="color: #FD4747">orScopeQueryAndPart</span>(new AndQuery&lt;MemberAddressCB&gt;() {
+     *         orCB.<span style="color: #DD4747">orScopeQueryAndPart</span>(new AndQuery&lt;MemberAddressCB&gt;() {
      *             public void query(MemberAddressCB andCB) {
      *                 andCB.query().setBar_...
      *                 andCB.query().setQux_...

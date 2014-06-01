@@ -21,6 +21,8 @@ import org.seasar.dbflute.*;
 import org.seasar.dbflute.bhv.*;
 import org.seasar.dbflute.cbean.*;
 import org.seasar.dbflute.dbmeta.DBMeta;
+import org.seasar.dbflute.exception.*;
+import org.seasar.dbflute.optional.*;
 import org.seasar.dbflute.outsidesql.executor.*;
 import org.dbflute.quickstage.dbflute.exbhv.*;
 import org.dbflute.quickstage.dbflute.exentity.*;
@@ -49,13 +51,13 @@ import org.dbflute.quickstage.dbflute.cbean.*;
  *     MEMBER, PRODUCT, SUMMARY_PRODUCT
  *
  * [referrer table]
- *     
+ *     PURCHASE_PAYMENT
  *
  * [foreign property]
  *     member, product, summaryProduct
  *
  * [referrer property]
- *     
+ *     purchasePaymentList
  * </pre>
  * @author DBFlute(AutoGenerator)
  */
@@ -106,7 +108,7 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * <pre>
      * PurchaseCB cb = new PurchaseCB();
      * cb.query().setFoo...(value);
-     * int count = purchaseBhv.<span style="color: #FD4747">selectCount</span>(cb);
+     * int count = purchaseBhv.<span style="color: #DD4747">selectCount</span>(cb);
      * </pre>
      * @param cb The condition-bean of Purchase. (NotNull)
      * @return The count for the condition. (NotMinus)
@@ -134,12 +136,14 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
     //                                                                       Entity Select
     //                                                                       =============
     /**
-     * Select the entity by the condition-bean.
+     * Select the entity by the condition-bean. #beforejava8 <br />
+     * <span style="color: #AD4747; font-size: 120%">The return might be null if no data, so you should have null check.</span> <br />
+     * <span style="color: #AD4747; font-size: 120%">If the data always exists as your business rule, use selectEntityWithDeletedCheck().</span>
      * <pre>
      * PurchaseCB cb = new PurchaseCB();
      * cb.query().setFoo...(value);
-     * Purchase purchase = purchaseBhv.<span style="color: #FD4747">selectEntity</span>(cb);
-     * if (purchase != null) {
+     * Purchase purchase = purchaseBhv.<span style="color: #DD4747">selectEntity</span>(cb);
+     * if (purchase != null) { <span style="color: #3F7E5E">// null check</span>
      *     ... = purchase.get...();
      * } else {
      *     ...
@@ -147,17 +151,21 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * </pre>
      * @param cb The condition-bean of Purchase. (NotNull)
      * @return The entity selected by the condition. (NullAllowed: if no data, it returns null)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
+     * @exception EntityDuplicatedException When the entity has been duplicated.
+     * @exception SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
      */
     public Purchase selectEntity(PurchaseCB cb) {
         return doSelectEntity(cb, Purchase.class);
     }
 
-    protected <ENTITY extends Purchase> ENTITY doSelectEntity(final PurchaseCB cb, Class<ENTITY> tp) {
-        assertCBStateValid(cb);
+    protected <ENTITY extends Purchase> ENTITY doSelectEntity(PurchaseCB cb, Class<ENTITY> tp) {
+        assertCBStateValid(cb); assertObjectNotNull("entityType", tp);
         return helpSelectEntityInternally(cb, tp, new InternalSelectEntityCallback<ENTITY, PurchaseCB>() {
-            public List<ENTITY> callbackSelectList(PurchaseCB cb, Class<ENTITY> tp) { return doSelectList(cb, tp); } });
+            public List<ENTITY> callbackSelectList(PurchaseCB lcb, Class<ENTITY> ltp) { return doSelectList(lcb, ltp); } });
+    }
+
+    protected <ENTITY extends Purchase> OptionalEntity<ENTITY> doSelectOptionalEntity(PurchaseCB cb, Class<ENTITY> tp) {
+        return createOptionalEntity(doSelectEntity(cb, tp), cb);
     }
 
     @Override
@@ -166,27 +174,28 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
     }
 
     /**
-     * Select the entity by the condition-bean with deleted check.
+     * Select the entity by the condition-bean with deleted check. <br />
+     * <span style="color: #AD4747; font-size: 120%">If the data always exists as your business rule, this method is good.</span>
      * <pre>
      * PurchaseCB cb = new PurchaseCB();
      * cb.query().setFoo...(value);
-     * Purchase purchase = purchaseBhv.<span style="color: #FD4747">selectEntityWithDeletedCheck</span>(cb);
+     * Purchase purchase = purchaseBhv.<span style="color: #DD4747">selectEntityWithDeletedCheck</span>(cb);
      * ... = purchase.get...(); <span style="color: #3F7E5E">// the entity always be not null</span>
      * </pre>
      * @param cb The condition-bean of Purchase. (NotNull)
      * @return The entity selected by the condition. (NotNull: if no data, throws exception)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted. (not found)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
+     * @exception EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @exception EntityDuplicatedException When the entity has been duplicated.
+     * @exception SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
      */
     public Purchase selectEntityWithDeletedCheck(PurchaseCB cb) {
         return doSelectEntityWithDeletedCheck(cb, Purchase.class);
     }
 
-    protected <ENTITY extends Purchase> ENTITY doSelectEntityWithDeletedCheck(final PurchaseCB cb, Class<ENTITY> tp) {
-        assertCBStateValid(cb);
+    protected <ENTITY extends Purchase> ENTITY doSelectEntityWithDeletedCheck(PurchaseCB cb, Class<ENTITY> tp) {
+        assertCBStateValid(cb); assertObjectNotNull("entityType", tp);
         return helpSelectEntityWithDeletedCheckInternally(cb, tp, new InternalSelectEntityWithDeletedCheckCallback<ENTITY, PurchaseCB>() {
-            public List<ENTITY> callbackSelectList(PurchaseCB cb, Class<ENTITY> tp) { return doSelectList(cb, tp); } });
+            public List<ENTITY> callbackSelectList(PurchaseCB lcb, Class<ENTITY> ltp) { return doSelectList(lcb, ltp); } });
     }
 
     @Override
@@ -196,39 +205,66 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
 
     /**
      * Select the entity by the primary-key value.
-     * @param purchaseId The one of primary key. (NotNull)
+     * @param purchaseId : PK, ID, NotNull, BIGINT(19). (NotNull)
      * @return The entity selected by the PK. (NullAllowed: if no data, it returns null)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
+     * @exception EntityDuplicatedException When the entity has been duplicated.
+     * @exception SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
      */
     public Purchase selectByPKValue(Long purchaseId) {
-        return doSelectByPKValue(purchaseId, Purchase.class);
+        return doSelectByPK(purchaseId, Purchase.class);
     }
 
-    protected <ENTITY extends Purchase> ENTITY doSelectByPKValue(Long purchaseId, Class<ENTITY> entityType) {
-        return doSelectEntity(buildPKCB(purchaseId), entityType);
+    protected <ENTITY extends Purchase> ENTITY doSelectByPK(Long purchaseId, Class<ENTITY> entityType) {
+        return doSelectEntity(xprepareCBAsPK(purchaseId), entityType);
+    }
+
+    protected <ENTITY extends Purchase> OptionalEntity<ENTITY> doSelectOptionalByPK(Long purchaseId, Class<ENTITY> entityType) {
+        return createOptionalEntity(doSelectByPK(purchaseId, entityType), purchaseId);
     }
 
     /**
      * Select the entity by the primary-key value with deleted check.
-     * @param purchaseId The one of primary key. (NotNull)
+     * @param purchaseId : PK, ID, NotNull, BIGINT(19). (NotNull)
      * @return The entity selected by the PK. (NotNull: if no data, throws exception)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted. (not found)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
+     * @exception EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @exception EntityDuplicatedException When the entity has been duplicated.
+     * @exception SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
      */
     public Purchase selectByPKValueWithDeletedCheck(Long purchaseId) {
-        return doSelectByPKValueWithDeletedCheck(purchaseId, Purchase.class);
+        return doSelectByPKWithDeletedCheck(purchaseId, Purchase.class);
     }
 
-    protected <ENTITY extends Purchase> ENTITY doSelectByPKValueWithDeletedCheck(Long purchaseId, Class<ENTITY> entityType) {
-        return doSelectEntityWithDeletedCheck(buildPKCB(purchaseId), entityType);
+    protected <ENTITY extends Purchase> ENTITY doSelectByPKWithDeletedCheck(Long purchaseId, Class<ENTITY> entityType) {
+        return doSelectEntityWithDeletedCheck(xprepareCBAsPK(purchaseId), entityType);
     }
 
-    private PurchaseCB buildPKCB(Long purchaseId) {
+    protected PurchaseCB xprepareCBAsPK(Long purchaseId) {
         assertObjectNotNull("purchaseId", purchaseId);
-        PurchaseCB cb = newMyConditionBean();
-        cb.query().setPurchaseId_Equal(purchaseId);
+        PurchaseCB cb = newMyConditionBean(); cb.acceptPrimaryKey(purchaseId);
+        return cb;
+    }
+
+    /**
+     * Select the entity by the unique-key value.
+     * @param memberId (会員ID): UQ+, IX+, NotNull, INTEGER(10), FK to MEMBER. (NotNull)
+     * @param productId (商品ID): +UQ, IX+, NotNull, INTEGER(10), FK to PRODUCT. (NotNull)
+     * @param purchaseDatetime (購入日時): +UQ, IX+, NotNull, TIMESTAMP(23, 10). (NotNull)
+     * @return The optional entity selected by the unique key. (NotNull: if no data, empty entity)
+     * @exception EntityAlreadyDeletedException When get(), required() of return value is called and the value is null, which means entity has already been deleted (not found).
+     * @exception EntityDuplicatedException When the entity has been duplicated.
+     * @exception SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
+     */
+    public OptionalEntity<Purchase> selectByUniqueOf(Integer memberId, Integer productId, java.sql.Timestamp purchaseDatetime) {
+        return doSelectByUniqueOf(memberId, productId, purchaseDatetime, Purchase.class);
+    }
+
+    protected <ENTITY extends Purchase> OptionalEntity<ENTITY> doSelectByUniqueOf(Integer memberId, Integer productId, java.sql.Timestamp purchaseDatetime, Class<ENTITY> entityType) {
+        return createOptionalEntity(doSelectEntity(xprepareCBAsUniqueOf(memberId, productId, purchaseDatetime), entityType), memberId, productId, purchaseDatetime);
+    }
+
+    protected PurchaseCB xprepareCBAsUniqueOf(Integer memberId, Integer productId, java.sql.Timestamp purchaseDatetime) {
+        assertObjectNotNull("memberId", memberId);assertObjectNotNull("productId", productId);assertObjectNotNull("purchaseDatetime", purchaseDatetime);
+        PurchaseCB cb = newMyConditionBean(); cb.acceptUniqueOf(memberId, productId, purchaseDatetime);
         return cb;
     }
 
@@ -241,14 +277,14 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * PurchaseCB cb = new PurchaseCB();
      * cb.query().setFoo...(value);
      * cb.query().addOrderBy_Bar...();
-     * ListResultBean&lt;Purchase&gt; purchaseList = purchaseBhv.<span style="color: #FD4747">selectList</span>(cb);
+     * ListResultBean&lt;Purchase&gt; purchaseList = purchaseBhv.<span style="color: #DD4747">selectList</span>(cb);
      * for (Purchase purchase : purchaseList) {
      *     ... = purchase.get...();
      * }
      * </pre>
      * @param cb The condition-bean of Purchase. (NotNull)
      * @return The result bean of selected list. (NotNull: if no data, returns empty list)
-     * @exception org.seasar.dbflute.exception.DangerousResultSizeException When the result size is over the specified safety size.
+     * @exception DangerousResultSizeException When the result size is over the specified safety size.
      */
     public ListResultBean<Purchase> selectList(PurchaseCB cb) {
         return doSelectList(cb, Purchase.class);
@@ -258,7 +294,7 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
         assertCBStateValid(cb); assertObjectNotNull("entityType", tp);
         assertSpecifyDerivedReferrerEntityProperty(cb, tp);
         return helpSelectListInternally(cb, tp, new InternalSelectListCallback<ENTITY, PurchaseCB>() {
-            public List<ENTITY> callbackSelectList(PurchaseCB cb, Class<ENTITY> tp) { return delegateSelectList(cb, tp); } });
+            public List<ENTITY> callbackSelectList(PurchaseCB lcb, Class<ENTITY> ltp) { return delegateSelectList(lcb, ltp); } });
     }
 
     @Override
@@ -276,8 +312,8 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * PurchaseCB cb = new PurchaseCB();
      * cb.query().setFoo...(value);
      * cb.query().addOrderBy_Bar...();
-     * cb.<span style="color: #FD4747">paging</span>(20, 3); <span style="color: #3F7E5E">// 20 records per a page and current page number is 3</span>
-     * PagingResultBean&lt;Purchase&gt; page = purchaseBhv.<span style="color: #FD4747">selectPage</span>(cb);
+     * cb.<span style="color: #DD4747">paging</span>(20, 3); <span style="color: #3F7E5E">// 20 records per a page and current page number is 3</span>
+     * PagingResultBean&lt;Purchase&gt; page = purchaseBhv.<span style="color: #DD4747">selectPage</span>(cb);
      * int allRecordCount = page.getAllRecordCount();
      * int allPageCount = page.getAllPageCount();
      * boolean isExistPrePage = page.isExistPrePage();
@@ -289,7 +325,7 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * </pre>
      * @param cb The condition-bean of Purchase. (NotNull)
      * @return The result bean of selected page. (NotNull: if no data, returns bean as empty list)
-     * @exception org.seasar.dbflute.exception.DangerousResultSizeException When the result size is over the specified safety size.
+     * @exception DangerousResultSizeException When the result size is over the specified safety size.
      */
     public PagingResultBean<Purchase> selectPage(PurchaseCB cb) {
         return doSelectPage(cb, Purchase.class);
@@ -316,7 +352,7 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * <pre>
      * PurchaseCB cb = new PurchaseCB();
      * cb.query().setFoo...(value);
-     * purchaseBhv.<span style="color: #FD4747">selectCursor</span>(cb, new EntityRowHandler&lt;Purchase&gt;() {
+     * purchaseBhv.<span style="color: #DD4747">selectCursor</span>(cb, new EntityRowHandler&lt;Purchase&gt;() {
      *     public void handle(Purchase entity) {
      *         ... = entity.getFoo...();
      *     }
@@ -345,9 +381,9 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * Select the scalar value derived by a function from uniquely-selected records. <br />
      * You should call a function method after this method called like as follows:
      * <pre>
-     * purchaseBhv.<span style="color: #FD4747">scalarSelect</span>(Date.class).max(new ScalarQuery() {
+     * purchaseBhv.<span style="color: #DD4747">scalarSelect</span>(Date.class).max(new ScalarQuery() {
      *     public void query(PurchaseCB cb) {
-     *         cb.specify().<span style="color: #FD4747">columnFooDatetime()</span>; <span style="color: #3F7E5E">// required for a function</span>
+     *         cb.specify().<span style="color: #DD4747">columnFooDatetime()</span>; <span style="color: #3F7E5E">// required for a function</span>
      *         cb.query().setBarName_PrefixSearch("S");
      *     }
      * });
@@ -384,6 +420,117 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
     }
 
     // ===================================================================================
+    //                                                                       Load Referrer
+    //                                                                       =============
+    /**
+     * Load referrer of purchasePaymentList by the set-upper of referrer. <br />
+     * (購入支払)PURCHASE_PAYMENT by PURCHASE_ID, named 'purchasePaymentList'.
+     * <pre>
+     * purchaseBhv.<span style="color: #DD4747">loadPurchasePaymentList</span>(purchaseList, new ConditionBeanSetupper&lt;PurchasePaymentCB&gt;() {
+     *     public void setup(PurchasePaymentCB cb) {
+     *         cb.setupSelect...();
+     *         cb.query().setFoo...(value);
+     *         cb.query().addOrderBy_Bar...();
+     *     }
+     * }); <span style="color: #3F7E5E">// you can load nested referrer from here</span>
+     * <span style="color: #3F7E5E">//}).withNestedList(referrerList -&gt {</span>
+     * <span style="color: #3F7E5E">//    ...</span>
+     * <span style="color: #3F7E5E">//});</span>
+     * for (Purchase purchase : purchaseList) {
+     *     ... = purchase.<span style="color: #DD4747">getPurchasePaymentList()</span>;
+     * }
+     * </pre>
+     * About internal policy, the value of primary key (and others too) is treated as case-insensitive. <br />
+     * The condition-bean, which the set-upper provides, has settings before callback as follows:
+     * <pre>
+     * cb.query().setPurchaseId_InScope(pkList);
+     * cb.query().addOrderBy_PurchaseId_Asc();
+     * </pre>
+     * @param purchaseList The entity list of purchase. (NotNull)
+     * @param setupper The callback to set up referrer condition-bean for loading referrer. (NotNull)
+     * @return The callback interface which you can load nested referrer by calling withNestedReferrer(). (NotNull)
+     */
+    public NestedReferrerLoader<PurchasePayment> loadPurchasePaymentList(List<Purchase> purchaseList, ConditionBeanSetupper<PurchasePaymentCB> setupper) {
+        xassLRArg(purchaseList, setupper);
+        return doLoadPurchasePaymentList(purchaseList, new LoadReferrerOption<PurchasePaymentCB, PurchasePayment>().xinit(setupper));
+    }
+
+    /**
+     * Load referrer of purchasePaymentList by the set-upper of referrer. <br />
+     * (購入支払)PURCHASE_PAYMENT by PURCHASE_ID, named 'purchasePaymentList'.
+     * <pre>
+     * purchaseBhv.<span style="color: #DD4747">loadPurchasePaymentList</span>(purchaseList, new ConditionBeanSetupper&lt;PurchasePaymentCB&gt;() {
+     *     public void setup(PurchasePaymentCB cb) {
+     *         cb.setupSelect...();
+     *         cb.query().setFoo...(value);
+     *         cb.query().addOrderBy_Bar...();
+     *     }
+     * }); <span style="color: #3F7E5E">// you can load nested referrer from here</span>
+     * <span style="color: #3F7E5E">//}).withNestedList(referrerList -&gt {</span>
+     * <span style="color: #3F7E5E">//    ...</span>
+     * <span style="color: #3F7E5E">//});</span>
+     * ... = purchase.<span style="color: #DD4747">getPurchasePaymentList()</span>;
+     * </pre>
+     * About internal policy, the value of primary key (and others too) is treated as case-insensitive. <br />
+     * The condition-bean, which the set-upper provides, has settings before callback as follows:
+     * <pre>
+     * cb.query().setPurchaseId_InScope(pkList);
+     * cb.query().addOrderBy_PurchaseId_Asc();
+     * </pre>
+     * @param purchase The entity of purchase. (NotNull)
+     * @param setupper The callback to set up referrer condition-bean for loading referrer. (NotNull)
+     * @return The callback interface which you can load nested referrer by calling withNestedReferrer(). (NotNull)
+     */
+    public NestedReferrerLoader<PurchasePayment> loadPurchasePaymentList(Purchase purchase, ConditionBeanSetupper<PurchasePaymentCB> setupper) {
+        xassLRArg(purchase, setupper);
+        return doLoadPurchasePaymentList(xnewLRLs(purchase), new LoadReferrerOption<PurchasePaymentCB, PurchasePayment>().xinit(setupper));
+    }
+
+    /**
+     * {Refer to overload method that has an argument of the list of entity.} #beforejava8
+     * @param purchase The entity of purchase. (NotNull)
+     * @param loadReferrerOption The option of load-referrer. (NotNull)
+     * @return The callback interface which you can load nested referrer by calling withNestedReferrer(). (NotNull)
+     */
+    public NestedReferrerLoader<PurchasePayment> loadPurchasePaymentList(Purchase purchase, LoadReferrerOption<PurchasePaymentCB, PurchasePayment> loadReferrerOption) {
+        xassLRArg(purchase, loadReferrerOption);
+        return loadPurchasePaymentList(xnewLRLs(purchase), loadReferrerOption);
+    }
+
+    /**
+     * {Refer to overload method that has an argument of condition-bean setupper.} #beforejava8
+     * @param purchaseList The entity list of purchase. (NotNull)
+     * @param loadReferrerOption The option of load-referrer. (NotNull)
+     * @return The callback interface which you can load nested referrer by calling withNestedReferrer(). (NotNull)
+     */
+    @SuppressWarnings("unchecked")
+    public NestedReferrerLoader<PurchasePayment> loadPurchasePaymentList(List<Purchase> purchaseList, LoadReferrerOption<PurchasePaymentCB, PurchasePayment> loadReferrerOption) {
+        xassLRArg(purchaseList, loadReferrerOption);
+        if (purchaseList.isEmpty()) { return (NestedReferrerLoader<PurchasePayment>)EMPTY_LOADER; }
+        return doLoadPurchasePaymentList(purchaseList, loadReferrerOption);
+    }
+
+    protected NestedReferrerLoader<PurchasePayment> doLoadPurchasePaymentList(List<Purchase> purchaseList, LoadReferrerOption<PurchasePaymentCB, PurchasePayment> option) {
+        final PurchasePaymentBhv referrerBhv = xgetBSFLR().select(PurchasePaymentBhv.class);
+        return helpLoadReferrerInternally(purchaseList, option, new InternalLoadReferrerCallback<Purchase, Long, PurchasePaymentCB, PurchasePayment>() {
+            public Long getPKVal(Purchase et)
+            { return et.getPurchaseId(); }
+            public void setRfLs(Purchase et, List<PurchasePayment> ls)
+            { et.setPurchasePaymentList(ls); }
+            public PurchasePaymentCB newMyCB() { return referrerBhv.newMyConditionBean(); }
+            public void qyFKIn(PurchasePaymentCB cb, List<Long> ls)
+            { cb.query().setPurchaseId_InScope(ls); }
+            public void qyOdFKAsc(PurchasePaymentCB cb) { cb.query().addOrderBy_PurchaseId_Asc(); }
+            public void spFKCol(PurchasePaymentCB cb) { cb.specify().columnPurchaseId(); }
+            public List<PurchasePayment> selRfLs(PurchasePaymentCB cb) { return referrerBhv.selectList(cb); }
+            public Long getFKVal(PurchasePayment re) { return re.getPurchaseId(); }
+            public void setlcEt(PurchasePayment re, Purchase le)
+            { re.setPurchase(le); }
+            public String getRfPrNm() { return "purchasePaymentList"; }
+        });
+    }
+
+    // ===================================================================================
     //                                                                   Pull out Relation
     //                                                                   =================
     /**
@@ -393,7 +540,8 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      */
     public List<Member> pulloutMember(List<Purchase> purchaseList) {
         return helpPulloutInternally(purchaseList, new InternalPulloutCallback<Purchase, Member>() {
-            public Member getFr(Purchase et) { return et.getMember(); }
+            public Member getFr(Purchase et)
+            { return et.getMember(); }
             public boolean hasRf() { return true; }
             public void setRfLs(Member et, List<Purchase> ls)
             { et.setPurchaseList(ls); }
@@ -406,7 +554,8 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      */
     public List<Product> pulloutProduct(List<Purchase> purchaseList) {
         return helpPulloutInternally(purchaseList, new InternalPulloutCallback<Purchase, Product>() {
-            public Product getFr(Purchase et) { return et.getProduct(); }
+            public Product getFr(Purchase et)
+            { return et.getProduct(); }
             public boolean hasRf() { return true; }
             public void setRfLs(Product et, List<Purchase> ls)
             { et.setPurchaseList(ls); }
@@ -419,7 +568,8 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      */
     public List<SummaryProduct> pulloutSummaryProduct(List<Purchase> purchaseList) {
         return helpPulloutInternally(purchaseList, new InternalPulloutCallback<Purchase, SummaryProduct>() {
-            public SummaryProduct getFr(Purchase et) { return et.getSummaryProduct(); }
+            public SummaryProduct getFr(Purchase et)
+            { return et.getSummaryProduct(); }
             public boolean hasRf() { return true; }
             public void setRfLs(SummaryProduct et, List<Purchase> ls)
             { et.setPurchaseList(ls); }
@@ -453,12 +603,12 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * <span style="color: #3F7E5E">// you don't need to set values of common columns</span>
      * <span style="color: #3F7E5E">//purchase.setRegisterUser(value);</span>
      * <span style="color: #3F7E5E">//purchase.set...;</span>
-     * purchaseBhv.<span style="color: #FD4747">insert</span>(purchase);
+     * purchaseBhv.<span style="color: #DD4747">insert</span>(purchase);
      * ... = purchase.getPK...(); <span style="color: #3F7E5E">// if auto-increment, you can get the value after</span>
      * </pre>
      * <p>While, when the entity is created by select, all columns are registered.</p>
      * @param purchase The entity of insert target. (NotNull, PrimaryKeyNullAllowed: when auto-increment)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
+     * @exception EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
     public void insert(Purchase purchase) {
         doInsert(purchase, null);
@@ -494,17 +644,17 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * <span style="color: #3F7E5E">//purchase.setRegisterUser(value);</span>
      * <span style="color: #3F7E5E">//purchase.set...;</span>
      * <span style="color: #3F7E5E">// if exclusive control, the value of exclusive control column is required</span>
-     * purchase.<span style="color: #FD4747">setVersionNo</span>(value);
+     * purchase.<span style="color: #DD4747">setVersionNo</span>(value);
      * try {
-     *     purchaseBhv.<span style="color: #FD4747">update</span>(purchase);
+     *     purchaseBhv.<span style="color: #DD4747">update</span>(purchase);
      * } catch (EntityAlreadyUpdatedException e) { <span style="color: #3F7E5E">// if concurrent update</span>
      *     ...
      * }
      * </pre>
      * @param purchase The entity of update target. (NotNull, PrimaryKeyNotNull, ConcurrencyColumnRequired)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyUpdatedException When the entity has already been updated.
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
+     * @exception EntityAlreadyUpdatedException When the entity has already been updated.
+     * @exception EntityDuplicatedException When the entity has been duplicated.
+     * @exception EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
     public void update(final Purchase purchase) {
         doUpdate(purchase, null);
@@ -558,12 +708,12 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * <span style="color: #3F7E5E">// you don't need to set a value of exclusive control column</span>
      * <span style="color: #3F7E5E">// (auto-increment for version number is valid though non-exclusive control)</span>
      * <span style="color: #3F7E5E">//purchase.setVersionNo(value);</span>
-     * purchaseBhv.<span style="color: #FD4747">updateNonstrict</span>(purchase);
+     * purchaseBhv.<span style="color: #DD4747">updateNonstrict</span>(purchase);
      * </pre>
      * @param purchase The entity of update target. (NotNull, PrimaryKeyNotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted. (not found)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
+     * @exception EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @exception EntityDuplicatedException When the entity has been duplicated.
+     * @exception EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
     public void updateNonstrict(final Purchase purchase) {
         doUpdateNonstrict(purchase, null);
@@ -585,11 +735,11 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
     /**
      * Insert or update the entity modified-only. (DefaultConstraintsEnabled, ExclusiveControl) <br />
      * if (the entity has no PK) { insert() } else { update(), but no data, insert() } <br />
-     * <p><span style="color: #FD4747; font-size: 120%">Attention, you cannot update by unique keys instead of PK.</span></p>
+     * <p><span style="color: #DD4747; font-size: 120%">Attention, you cannot update by unique keys instead of PK.</span></p>
      * @param purchase The entity of insert or update target. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyUpdatedException When the entity has already been updated.
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
+     * @exception EntityAlreadyUpdatedException When the entity has already been updated.
+     * @exception EntityDuplicatedException When the entity has been duplicated.
+     * @exception EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
     public void insertOrUpdate(Purchase purchase) {
         doInesrtOrUpdate(purchase, null, null);
@@ -617,11 +767,11 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
     /**
      * Insert or update the entity non-strictly modified-only. (DefaultConstraintsEnabled, NonExclusiveControl) <br />
      * if (the entity has no PK) { insert() } else { update(), but no data, insert() }
-     * <p><span style="color: #FD4747; font-size: 120%">Attention, you cannot update by unique keys instead of PK.</span></p>
+     * <p><span style="color: #DD4747; font-size: 120%">Attention, you cannot update by unique keys instead of PK.</span></p>
      * @param purchase The entity of insert or update target. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted. (not found)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
+     * @exception EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @exception EntityDuplicatedException When the entity has been duplicated.
+     * @exception EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
     public void insertOrUpdateNonstrict(Purchase purchase) {
         doInesrtOrUpdateNonstrict(purchase, null, null);
@@ -650,16 +800,16 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * Purchase purchase = new Purchase();
      * purchase.setPK...(value); <span style="color: #3F7E5E">// required</span>
      * <span style="color: #3F7E5E">// if exclusive control, the value of exclusive control column is required</span>
-     * purchase.<span style="color: #FD4747">setVersionNo</span>(value);
+     * purchase.<span style="color: #DD4747">setVersionNo</span>(value);
      * try {
-     *     purchaseBhv.<span style="color: #FD4747">delete</span>(purchase);
+     *     purchaseBhv.<span style="color: #DD4747">delete</span>(purchase);
      * } catch (EntityAlreadyUpdatedException e) { <span style="color: #3F7E5E">// if concurrent update</span>
      *     ...
      * }
      * </pre>
      * @param purchase The entity of delete target. (NotNull, PrimaryKeyNotNull, ConcurrencyColumnRequired)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyUpdatedException When the entity has already been updated.
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
+     * @exception EntityAlreadyUpdatedException When the entity has already been updated.
+     * @exception EntityDuplicatedException When the entity has been duplicated.
      */
     public void delete(Purchase purchase) {
         doDelete(purchase, null);
@@ -691,11 +841,11 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * <span style="color: #3F7E5E">// you don't need to set a value of exclusive control column</span>
      * <span style="color: #3F7E5E">// (auto-increment for version number is valid though non-exclusive control)</span>
      * <span style="color: #3F7E5E">//purchase.setVersionNo(value);</span>
-     * purchaseBhv.<span style="color: #FD4747">deleteNonstrict</span>(purchase);
+     * purchaseBhv.<span style="color: #DD4747">deleteNonstrict</span>(purchase);
      * </pre>
      * @param purchase The entity of delete target. (NotNull, PrimaryKeyNotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted. (not found)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
+     * @exception EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @exception EntityDuplicatedException When the entity has been duplicated.
      */
     public void deleteNonstrict(Purchase purchase) {
         doDeleteNonstrict(purchase, null);
@@ -716,11 +866,11 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * <span style="color: #3F7E5E">// you don't need to set a value of exclusive control column</span>
      * <span style="color: #3F7E5E">// (auto-increment for version number is valid though non-exclusive control)</span>
      * <span style="color: #3F7E5E">//purchase.setVersionNo(value);</span>
-     * purchaseBhv.<span style="color: #FD4747">deleteNonstrictIgnoreDeleted</span>(purchase);
+     * purchaseBhv.<span style="color: #DD4747">deleteNonstrictIgnoreDeleted</span>(purchase);
      * <span style="color: #3F7E5E">// if the target entity doesn't exist, no exception</span>
      * </pre>
      * @param purchase The entity of delete target. (NotNull, PrimaryKeyNotNull)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
+     * @exception EntityDuplicatedException When the entity has been duplicated.
      */
     public void deleteNonstrictIgnoreDeleted(Purchase purchase) {
         doDeleteNonstrictIgnoreDeleted(purchase, null);
@@ -745,7 +895,7 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
     /**
      * Batch-insert the entity list modified-only of same-set columns. (DefaultConstraintsEnabled) <br />
      * This method uses executeBatch() of java.sql.PreparedStatement. <br />
-     * <p><span style="color: #FD4747; font-size: 120%">The columns of least common multiple are registered like this:</span></p>
+     * <p><span style="color: #DD4747; font-size: 120%">The columns of least common multiple are registered like this:</span></p>
      * <pre>
      * for (... : ...) {
      *     Purchase purchase = new Purchase();
@@ -758,7 +908,7 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      *     <span style="color: #3F7E5E">// columns not-called in all entities are registered as null or default value</span>
      *     purchaseList.add(purchase);
      * }
-     * purchaseBhv.<span style="color: #FD4747">batchInsert</span>(purchaseList);
+     * purchaseBhv.<span style="color: #DD4747">batchInsert</span>(purchaseList);
      * </pre>
      * <p>While, when the entities are created by select, all columns are registered.</p>
      * <p>And if the table has an identity, entities after the process don't have incremented values.
@@ -792,7 +942,7 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
     /**
      * Batch-update the entity list modified-only of same-set columns. (ExclusiveControl) <br />
      * This method uses executeBatch() of java.sql.PreparedStatement. <br />
-     * <span style="color: #FD4747; font-size: 120%">You should specify same-set columns to all entities like this:</span>
+     * <span style="color: #DD4747; font-size: 120%">You should specify same-set columns to all entities like this:</span>
      * <pre>
      * for (... : ...) {
      *     Purchase purchase = new Purchase();
@@ -807,11 +957,11 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      *     <span style="color: #3F7E5E">// (others are not updated: their values are kept)</span>
      *     purchaseList.add(purchase);
      * }
-     * purchaseBhv.<span style="color: #FD4747">batchUpdate</span>(purchaseList);
+     * purchaseBhv.<span style="color: #DD4747">batchUpdate</span>(purchaseList);
      * </pre>
      * @param purchaseList The list of the entity. (NotNull, EmptyAllowed, PrimaryKeyNotNull)
      * @return The array of updated count. (NotNull, EmptyAllowed)
-     * @exception org.seasar.dbflute.exception.BatchEntityAlreadyUpdatedException When the entity has already been updated. This exception extends EntityAlreadyUpdatedException.
+     * @exception BatchEntityAlreadyUpdatedException When the entity has already been updated. This exception extends EntityAlreadyUpdatedException.
      */
     public int[] batchUpdate(List<Purchase> purchaseList) {
         UpdateOption<PurchaseCB> op = createPlainUpdateOption();
@@ -840,16 +990,16 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * This method uses executeBatch() of java.sql.PreparedStatement.
      * <pre>
      * <span style="color: #3F7E5E">// e.g. update two columns only</span>
-     * purchaseBhv.<span style="color: #FD4747">batchUpdate</span>(purchaseList, new SpecifyQuery<PurchaseCB>() {
+     * purchaseBhv.<span style="color: #DD4747">batchUpdate</span>(purchaseList, new SpecifyQuery<PurchaseCB>() {
      *     public void specify(PurchaseCB cb) { <span style="color: #3F7E5E">// the two only updated</span>
-     *         cb.specify().<span style="color: #FD4747">columnFooStatusCode()</span>; <span style="color: #3F7E5E">// should be modified in any entities</span>
-     *         cb.specify().<span style="color: #FD4747">columnBarDate()</span>; <span style="color: #3F7E5E">// should be modified in any entities</span>
+     *         cb.specify().<span style="color: #DD4747">columnFooStatusCode()</span>; <span style="color: #3F7E5E">// should be modified in any entities</span>
+     *         cb.specify().<span style="color: #DD4747">columnBarDate()</span>; <span style="color: #3F7E5E">// should be modified in any entities</span>
      *     }
      * });
      * <span style="color: #3F7E5E">// e.g. update every column in the table</span>
-     * purchaseBhv.<span style="color: #FD4747">batchUpdate</span>(purchaseList, new SpecifyQuery<PurchaseCB>() {
+     * purchaseBhv.<span style="color: #DD4747">batchUpdate</span>(purchaseList, new SpecifyQuery<PurchaseCB>() {
      *     public void specify(PurchaseCB cb) { <span style="color: #3F7E5E">// all columns are updated</span>
-     *         cb.specify().<span style="color: #FD4747">columnEveryColumn()</span>; <span style="color: #3F7E5E">// no check of modified properties</span>
+     *         cb.specify().<span style="color: #DD4747">columnEveryColumn()</span>; <span style="color: #3F7E5E">// no check of modified properties</span>
      *     }
      * });
      * </pre>
@@ -861,7 +1011,7 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * @param purchaseList The list of the entity. (NotNull, EmptyAllowed, PrimaryKeyNotNull)
      * @param updateColumnSpec The specification of update columns. (NotNull)
      * @return The array of updated count. (NotNull, EmptyAllowed)
-     * @exception org.seasar.dbflute.exception.BatchEntityAlreadyUpdatedException When the entity has already been updated. This exception extends EntityAlreadyUpdatedException.
+     * @exception BatchEntityAlreadyUpdatedException When the entity has already been updated. This exception extends EntityAlreadyUpdatedException.
      */
     public int[] batchUpdate(List<Purchase> purchaseList, SpecifyQuery<PurchaseCB> updateColumnSpec) {
         return doBatchUpdate(purchaseList, createSpecifiedUpdateOption(updateColumnSpec));
@@ -870,7 +1020,7 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
     /**
      * Batch-update the entity list non-strictly modified-only of same-set columns. (NonExclusiveControl) <br />
      * This method uses executeBatch() of java.sql.PreparedStatement. <br />
-     * <span style="color: #FD4747; font-size: 140%">You should specify same-set columns to all entities like this:</span>
+     * <span style="color: #DD4747; font-size: 140%">You should specify same-set columns to all entities like this:</span>
      * <pre>
      * for (... : ...) {
      *     Purchase purchase = new Purchase();
@@ -885,11 +1035,11 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      *     <span style="color: #3F7E5E">// (others are not updated: their values are kept)</span>
      *     purchaseList.add(purchase);
      * }
-     * purchaseBhv.<span style="color: #FD4747">batchUpdate</span>(purchaseList);
+     * purchaseBhv.<span style="color: #DD4747">batchUpdate</span>(purchaseList);
      * </pre>
      * @param purchaseList The list of the entity. (NotNull, EmptyAllowed, PrimaryKeyNotNull)
      * @return The array of updated count. (NotNull, EmptyAllowed)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @exception EntityAlreadyDeletedException When the entity has already been deleted. (not found)
      */
     public int[] batchUpdateNonstrict(List<Purchase> purchaseList) {
         UpdateOption<PurchaseCB> option = createPlainUpdateOption();
@@ -907,16 +1057,16 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * This method uses executeBatch() of java.sql.PreparedStatement.
      * <pre>
      * <span style="color: #3F7E5E">// e.g. update two columns only</span>
-     * purchaseBhv.<span style="color: #FD4747">batchUpdateNonstrict</span>(purchaseList, new SpecifyQuery<PurchaseCB>() {
+     * purchaseBhv.<span style="color: #DD4747">batchUpdateNonstrict</span>(purchaseList, new SpecifyQuery<PurchaseCB>() {
      *     public void specify(PurchaseCB cb) { <span style="color: #3F7E5E">// the two only updated</span>
-     *         cb.specify().<span style="color: #FD4747">columnFooStatusCode()</span>; <span style="color: #3F7E5E">// should be modified in any entities</span>
-     *         cb.specify().<span style="color: #FD4747">columnBarDate()</span>; <span style="color: #3F7E5E">// should be modified in any entities</span>
+     *         cb.specify().<span style="color: #DD4747">columnFooStatusCode()</span>; <span style="color: #3F7E5E">// should be modified in any entities</span>
+     *         cb.specify().<span style="color: #DD4747">columnBarDate()</span>; <span style="color: #3F7E5E">// should be modified in any entities</span>
      *     }
      * });
      * <span style="color: #3F7E5E">// e.g. update every column in the table</span>
-     * purchaseBhv.<span style="color: #FD4747">batchUpdateNonstrict</span>(purchaseList, new SpecifyQuery<PurchaseCB>() {
+     * purchaseBhv.<span style="color: #DD4747">batchUpdateNonstrict</span>(purchaseList, new SpecifyQuery<PurchaseCB>() {
      *     public void specify(PurchaseCB cb) { <span style="color: #3F7E5E">// all columns are updated</span>
-     *         cb.specify().<span style="color: #FD4747">columnEveryColumn()</span>; <span style="color: #3F7E5E">// no check of modified properties</span>
+     *         cb.specify().<span style="color: #DD4747">columnEveryColumn()</span>; <span style="color: #3F7E5E">// no check of modified properties</span>
      *     }
      * });
      * </pre>
@@ -927,7 +1077,7 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * @param purchaseList The list of the entity. (NotNull, EmptyAllowed, PrimaryKeyNotNull)
      * @param updateColumnSpec The specification of update columns. (NotNull)
      * @return The array of updated count. (NotNull, EmptyAllowed)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @exception EntityAlreadyDeletedException When the entity has already been deleted. (not found)
      */
     public int[] batchUpdateNonstrict(List<Purchase> purchaseList, SpecifyQuery<PurchaseCB> updateColumnSpec) {
         return doBatchUpdateNonstrict(purchaseList, createSpecifiedUpdateOption(updateColumnSpec));
@@ -944,7 +1094,7 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * This method uses executeBatch() of java.sql.PreparedStatement.
      * @param purchaseList The list of the entity. (NotNull, EmptyAllowed, PrimaryKeyNotNull)
      * @return The array of deleted count. (NotNull, EmptyAllowed)
-     * @exception org.seasar.dbflute.exception.BatchEntityAlreadyUpdatedException When the entity has already been updated. This exception extends EntityAlreadyUpdatedException.
+     * @exception BatchEntityAlreadyUpdatedException When the entity has already been updated. This exception extends EntityAlreadyUpdatedException.
      */
     public int[] batchDelete(List<Purchase> purchaseList) {
         return doBatchDelete(purchaseList, null);
@@ -967,7 +1117,7 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * This method uses executeBatch() of java.sql.PreparedStatement.
      * @param purchaseList The list of the entity. (NotNull, EmptyAllowed, PrimaryKeyNotNull)
      * @return The array of deleted count. (NotNull, EmptyAllowed)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @exception EntityAlreadyDeletedException When the entity has already been deleted. (not found)
      */
     public int[] batchDeleteNonstrict(List<Purchase> purchaseList) {
         return doBatchDeleteNonstrict(purchaseList, null);
@@ -991,7 +1141,7 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
     /**
      * Insert the several entities by query (modified-only for fixed value).
      * <pre>
-     * purchaseBhv.<span style="color: #FD4747">queryInsert</span>(new QueryInsertSetupper&lt;Purchase, PurchaseCB&gt;() {
+     * purchaseBhv.<span style="color: #DD4747">queryInsert</span>(new QueryInsertSetupper&lt;Purchase, PurchaseCB&gt;() {
      *     public ConditionBean setup(purchase entity, PurchaseCB intoCB) {
      *         FooCB cb = FooCB();
      *         cb.setupSelect_Bar();
@@ -1053,12 +1203,12 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * <span style="color: #3F7E5E">//purchase.setVersionNo(value);</span>
      * PurchaseCB cb = new PurchaseCB();
      * cb.query().setFoo...(value);
-     * purchaseBhv.<span style="color: #FD4747">queryUpdate</span>(purchase, cb);
+     * purchaseBhv.<span style="color: #DD4747">queryUpdate</span>(purchase, cb);
      * </pre>
      * @param purchase The entity that contains update values. (NotNull, PrimaryKeyNullAllowed)
      * @param cb The condition-bean of Purchase. (NotNull)
      * @return The updated count.
-     * @exception org.seasar.dbflute.exception.NonQueryUpdateNotAllowedException When the query has no condition.
+     * @exception NonQueryUpdateNotAllowedException When the query has no condition.
      */
     public int queryUpdate(Purchase purchase, PurchaseCB cb) {
         return doQueryUpdate(purchase, cb, null);
@@ -1081,11 +1231,11 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * <pre>
      * PurchaseCB cb = new PurchaseCB();
      * cb.query().setFoo...(value);
-     * purchaseBhv.<span style="color: #FD4747">queryDelete</span>(purchase, cb);
+     * purchaseBhv.<span style="color: #DD4747">queryDelete</span>(purchase, cb);
      * </pre>
      * @param cb The condition-bean of Purchase. (NotNull)
      * @return The deleted count.
-     * @exception org.seasar.dbflute.exception.NonQueryDeleteNotAllowedException When the query has no condition.
+     * @exception NonQueryDeleteNotAllowedException When the query has no condition.
      */
     public int queryDelete(PurchaseCB cb) {
         return doQueryDelete(cb, null);
@@ -1121,12 +1271,12 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * InsertOption<PurchaseCB> option = new InsertOption<PurchaseCB>();
      * <span style="color: #3F7E5E">// you can insert by your values for common columns</span>
      * option.disableCommonColumnAutoSetup();
-     * purchaseBhv.<span style="color: #FD4747">varyingInsert</span>(purchase, option);
+     * purchaseBhv.<span style="color: #DD4747">varyingInsert</span>(purchase, option);
      * ... = purchase.getPK...(); <span style="color: #3F7E5E">// if auto-increment, you can get the value after</span>
      * </pre>
      * @param purchase The entity of insert target. (NotNull, PrimaryKeyNullAllowed: when auto-increment)
      * @param option The option of insert for varying requests. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
+     * @exception EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
     public void varyingInsert(Purchase purchase, InsertOption<PurchaseCB> option) {
         assertInsertOptionNotNull(option);
@@ -1142,25 +1292,25 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * purchase.setPK...(value); <span style="color: #3F7E5E">// required</span>
      * purchase.setOther...(value); <span style="color: #3F7E5E">// you should set only modified columns</span>
      * <span style="color: #3F7E5E">// if exclusive control, the value of exclusive control column is required</span>
-     * purchase.<span style="color: #FD4747">setVersionNo</span>(value);
+     * purchase.<span style="color: #DD4747">setVersionNo</span>(value);
      * try {
      *     <span style="color: #3F7E5E">// you can update by self calculation values</span>
      *     UpdateOption&lt;PurchaseCB&gt; option = new UpdateOption&lt;PurchaseCB&gt;();
      *     option.self(new SpecifyQuery&lt;PurchaseCB&gt;() {
      *         public void specify(PurchaseCB cb) {
-     *             cb.specify().<span style="color: #FD4747">columnXxxCount()</span>;
+     *             cb.specify().<span style="color: #DD4747">columnXxxCount()</span>;
      *         }
      *     }).plus(1); <span style="color: #3F7E5E">// XXX_COUNT = XXX_COUNT + 1</span>
-     *     purchaseBhv.<span style="color: #FD4747">varyingUpdate</span>(purchase, option);
+     *     purchaseBhv.<span style="color: #DD4747">varyingUpdate</span>(purchase, option);
      * } catch (EntityAlreadyUpdatedException e) { <span style="color: #3F7E5E">// if concurrent update</span>
      *     ...
      * }
      * </pre>
      * @param purchase The entity of update target. (NotNull, PrimaryKeyNotNull, ConcurrencyColumnRequired)
      * @param option The option of update for varying requests. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyUpdatedException When the entity has already been updated.
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
+     * @exception EntityAlreadyUpdatedException When the entity has already been updated.
+     * @exception EntityDuplicatedException When the entity has been duplicated.
+     * @exception EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
     public void varyingUpdate(Purchase purchase, UpdateOption<PurchaseCB> option) {
         assertUpdateOptionNotNull(option);
@@ -1182,16 +1332,16 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * UpdateOption&lt;PurchaseCB&gt; option = new UpdateOption&lt;PurchaseCB&gt;();
      * option.self(new SpecifyQuery&lt;PurchaseCB&gt;() {
      *     public void specify(PurchaseCB cb) {
-     *         cb.specify().<span style="color: #FD4747">columnFooCount()</span>;
+     *         cb.specify().<span style="color: #DD4747">columnFooCount()</span>;
      *     }
      * }).plus(1); <span style="color: #3F7E5E">// FOO_COUNT = FOO_COUNT + 1</span>
-     * purchaseBhv.<span style="color: #FD4747">varyingUpdateNonstrict</span>(purchase, option);
+     * purchaseBhv.<span style="color: #DD4747">varyingUpdateNonstrict</span>(purchase, option);
      * </pre>
      * @param purchase The entity of update target. (NotNull, PrimaryKeyNotNull)
      * @param option The option of update for varying requests. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted. (not found)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
+     * @exception EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @exception EntityDuplicatedException When the entity has been duplicated.
+     * @exception EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
     public void varyingUpdateNonstrict(Purchase purchase, UpdateOption<PurchaseCB> option) {
         assertUpdateOptionNotNull(option);
@@ -1204,9 +1354,9 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * @param purchase The entity of insert or update target. (NotNull)
      * @param insertOption The option of insert for varying requests. (NotNull)
      * @param updateOption The option of update for varying requests. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyUpdatedException When the entity has already been updated.
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
+     * @exception EntityAlreadyUpdatedException When the entity has already been updated.
+     * @exception EntityDuplicatedException When the entity has been duplicated.
+     * @exception EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
     public void varyingInsertOrUpdate(Purchase purchase, InsertOption<PurchaseCB> insertOption, UpdateOption<PurchaseCB> updateOption) {
         assertInsertOptionNotNull(insertOption); assertUpdateOptionNotNull(updateOption);
@@ -1219,9 +1369,9 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * @param purchase The entity of insert or update target. (NotNull)
      * @param insertOption The option of insert for varying requests. (NotNull)
      * @param updateOption The option of update for varying requests. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted. (not found)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
-     * @exception org.seasar.dbflute.exception.EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
+     * @exception EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @exception EntityDuplicatedException When the entity has been duplicated.
+     * @exception EntityAlreadyExistsException When the entity already exists. (unique constraint violation)
      */
     public void varyingInsertOrUpdateNonstrict(Purchase purchase, InsertOption<PurchaseCB> insertOption, UpdateOption<PurchaseCB> updateOption) {
         assertInsertOptionNotNull(insertOption); assertUpdateOptionNotNull(updateOption);
@@ -1234,8 +1384,8 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * Other specifications are same as delete(entity).
      * @param purchase The entity of delete target. (NotNull, PrimaryKeyNotNull, ConcurrencyColumnRequired)
      * @param option The option of update for varying requests. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyUpdatedException When the entity has already been updated.
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
+     * @exception EntityAlreadyUpdatedException When the entity has already been updated.
+     * @exception EntityDuplicatedException When the entity has been duplicated.
      */
     public void varyingDelete(Purchase purchase, DeleteOption<PurchaseCB> option) {
         assertDeleteOptionNotNull(option);
@@ -1248,8 +1398,8 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * Other specifications are same as deleteNonstrict(entity).
      * @param purchase The entity of delete target. (NotNull, PrimaryKeyNotNull, ConcurrencyColumnRequired)
      * @param option The option of update for varying requests. (NotNull)
-     * @exception org.seasar.dbflute.exception.EntityAlreadyDeletedException When the entity has already been deleted. (not found)
-     * @exception org.seasar.dbflute.exception.EntityDuplicatedException When the entity has been duplicated.
+     * @exception EntityAlreadyDeletedException When the entity has already been deleted. (not found)
+     * @exception EntityDuplicatedException When the entity has been duplicated.
      */
     public void varyingDeleteNonstrict(Purchase purchase, DeleteOption<PurchaseCB> option) {
         assertDeleteOptionNotNull(option);
@@ -1362,16 +1512,16 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * UpdateOption&lt;PurchaseCB&gt; option = new UpdateOption&lt;PurchaseCB&gt;();
      * option.self(new SpecifyQuery&lt;PurchaseCB&gt;() {
      *     public void specify(PurchaseCB cb) {
-     *         cb.specify().<span style="color: #FD4747">columnFooCount()</span>;
+     *         cb.specify().<span style="color: #DD4747">columnFooCount()</span>;
      *     }
      * }).plus(1); <span style="color: #3F7E5E">// FOO_COUNT = FOO_COUNT + 1</span>
-     * purchaseBhv.<span style="color: #FD4747">varyingQueryUpdate</span>(purchase, cb, option);
+     * purchaseBhv.<span style="color: #DD4747">varyingQueryUpdate</span>(purchase, cb, option);
      * </pre>
      * @param purchase The entity that contains update values. (NotNull) {PrimaryKeyNotRequired}
      * @param cb The condition-bean of Purchase. (NotNull)
      * @param option The option of update for varying requests. (NotNull)
      * @return The updated count.
-     * @exception org.seasar.dbflute.exception.NonQueryUpdateNotAllowedException When the query has no condition (if not allowed).
+     * @exception NonQueryUpdateNotAllowedException When the query has no condition (if not allowed).
      */
     public int varyingQueryUpdate(Purchase purchase, PurchaseCB cb, UpdateOption<PurchaseCB> option) {
         assertUpdateOptionNotNull(option);
@@ -1385,7 +1535,7 @@ public abstract class BsPurchaseBhv extends AbstractBehaviorWritable {
      * @param cb The condition-bean of Purchase. (NotNull)
      * @param option The option of delete for varying requests. (NotNull)
      * @return The deleted count.
-     * @exception org.seasar.dbflute.exception.NonQueryDeleteNotAllowedException When the query has no condition (if not allowed).
+     * @exception NonQueryDeleteNotAllowedException When the query has no condition (if not allowed).
      */
     public int varyingQueryDelete(PurchaseCB cb, DeleteOption<PurchaseCB> option) {
         assertDeleteOptionNotNull(option);
