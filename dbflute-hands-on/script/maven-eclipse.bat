@@ -2,10 +2,6 @@
 cd %~p0
 cd ..
 
-:: adding eclipse maven variable M2_REPO
-:: ignored when you already set it up
-cmd /c mvn -e eclipse:add-maven-repo
-
 :: creating eclipse settings
 cmd /c mvn -e eclipse:eclipse
 
