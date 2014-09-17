@@ -109,7 +109,7 @@ public abstract class UnitContainerTestCase extends ContainerTestCase {
         }
 
         HandyDate handyDate = new HandyDate(adjustedMember.getFormalizedDatetime());
-        Timestamp movedDatetime = handyDate.addDay(7).moveToDayTerminal().getTimestamp();
+        Timestamp movedDatetime = handyDate.addDay(7).moveToDayTerminal().moveToSecondJust().getTimestamp();
         for (Purchase purchase : updatedPurchaseList) {
             purchase.setPurchaseDatetime(movedDatetime);
         }
