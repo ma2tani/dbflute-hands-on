@@ -12,9 +12,9 @@
 
 	<properties>
 		<seasar.version>2.4.46</seasar.version>
-		<dbflute.version>1.1.0-pilotA-SNAPSHOT</dbflute.version>
+		<dbflute.version>1.0.0</dbflute.version>
 		<mysql.jdbc.version>5.1.33</mysql.jdbc.version>
-		<utflute.version>0.5.0-pilotA-SNAPSHOT</utflute.version>
+		<utflute.version>0.4.8</utflute.version>
 	</properties>
 
 	<url>http://dbflute.seasar.org/ja/tutorial/handson/index.html</url>
@@ -34,8 +34,8 @@
 				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<configuration>
-						<source>1.8</source>
-						<target>1.8</target>
+						<source>1.6</source>
+						<target>1.6</target>
 						<encoding>UTF-8</encoding>
 					</configuration>
 				</plugin>
@@ -95,21 +95,11 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.seasar.uruma</groupId>
-				<artifactId>maven-eclipath-plugin</artifactId>
-				<version>0.0.10</version>
-				<configuration>
-					<downloadJavadocs>false</downloadJavadocs>
-					<autoRefresh>true</autoRefresh>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.seasar.dbflute</groupId>
-				<artifactId>maven-dbflute-plugin</artifactId>
-				<version>0.3.0</version>
+				<artifactId>dbflute-maven-plugin</artifactId>
+				<version>1.0.0</version>
 				<configuration>
-					<dbfluteVersion>${dbflute.version}</dbfluteVersion>
-					<schemaName>exampledb</schemaName>
+					<clientProject>exampledb</clientProject>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -185,7 +175,7 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.dbflute</groupId>
+			<groupId>org.seasar.dbflute</groupId>
 			<artifactId>dbflute-runtime</artifactId>
 			<version>${dbflute.version}</version>
 		</dependency>
@@ -234,7 +224,7 @@
 		<!-- |   test   | -->
 		<!-- ============ -->
         <dependency>
-            <groupId>org.dbflute.utflute</groupId>
+            <groupId>org.seasar.dbflute</groupId>
             <artifactId>utflute-seasar</artifactId>
             <version>${utflute.version}</version>
             <scope>test</scope>
