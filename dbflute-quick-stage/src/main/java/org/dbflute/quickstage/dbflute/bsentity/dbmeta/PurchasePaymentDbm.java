@@ -21,9 +21,9 @@ import java.util.Map;
 import org.seasar.dbflute.DBDef;
 import org.seasar.dbflute.Entity;
 import org.seasar.dbflute.dbmeta.AbstractDBMeta;
-import org.seasar.dbflute.dbmeta.PropertyGateway;
 import org.seasar.dbflute.dbmeta.info.*;
 import org.seasar.dbflute.dbmeta.name.*;
+import org.seasar.dbflute.dbmeta.property.PropertyGateway;
 import org.dbflute.quickstage.dbflute.allcommon.*;
 import org.dbflute.quickstage.dbflute.exentity.*;
 
@@ -84,7 +84,12 @@ public class PurchasePaymentDbm extends AbstractDBMeta {
         public void write(Entity et, Object vl) {
             ColumnInfo col = columnPaymentMethodCode();
             ccls(col, vl);
-            ((PurchasePayment)et).setPaymentMethodCodeAsPaymentMethod((CDef.PaymentMethod)gcls(col, vl));
+            CDef.PaymentMethod cls = (CDef.PaymentMethod)gcls(col, vl);
+            if (cls != null) {
+                ((PurchasePayment)et).setPaymentMethodCodeAsPaymentMethod(cls);
+            } else {
+                ((PurchasePayment)et).mynativeMappingPaymentMethodCode((String)vl);
+            }
         }
     }
     public static class EpgRegisterDatetime implements PropertyGateway {
@@ -138,7 +143,7 @@ public class PurchasePaymentDbm extends AbstractDBMeta {
     // ===================================================================================
     //                                                                         Column Info
     //                                                                         ===========
-    protected final ColumnInfo _columnPurchasePaymentId = cci("PURCHASE_PAYMENT_ID", "PURCHASE_PAYMENT_ID", null, "購入支払ID", Long.class, "purchasePaymentId", null, true, true, true, "BIGINT", 19, 0, "NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_F9E5CC7A_9AD9_4322_A260_E1B74D098527", false, null, "連番", null, null, null);
+    protected final ColumnInfo _columnPurchasePaymentId = cci("PURCHASE_PAYMENT_ID", "PURCHASE_PAYMENT_ID", null, "購入支払ID", Long.class, "purchasePaymentId", null, true, true, true, "BIGINT", 19, 0, "NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_17EC9BC8_927B_48F3_8628_ADA72AF81936", false, null, "連番", null, null, null);
     protected final ColumnInfo _columnPurchaseId = cci("PURCHASE_ID", "PURCHASE_ID", null, "購入ID", Long.class, "purchaseId", null, false, false, true, "BIGINT", 19, 0, null, false, null, "支払い対象の購入へのID", "purchase", null, null);
     protected final ColumnInfo _columnPaymentAmount = cci("PAYMENT_AMOUNT", "PAYMENT_AMOUNT", null, "支払金額", java.math.BigDecimal.class, "paymentAmount", null, false, false, true, "DECIMAL", 10, 2, null, false, null, "支払った金額。さて、小数点なのはなぜでしょう？", null, null, null);
     protected final ColumnInfo _columnPaymentDatetime = cci("PAYMENT_DATETIME", "PAYMENT_DATETIME", null, "支払日時", java.sql.Timestamp.class, "paymentDatetime", null, false, false, true, "TIMESTAMP", 23, 10, null, false, null, "支払ったときの日時", null, null, null);
@@ -268,7 +273,7 @@ public class PurchasePaymentDbm extends AbstractDBMeta {
     // ===================================================================================
     //                                                                     Object Instance
     //                                                                     ===============
-    public Entity newEntity() { return newMyEntity(); }
+    public PurchasePayment newEntity() { return new PurchasePayment(); }
     public PurchasePayment newMyEntity() { return new PurchasePayment(); }
 
     // ===================================================================================

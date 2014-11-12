@@ -131,13 +131,13 @@ public abstract class BsMemberNamePmb implements ListHandlingPmb<MemberBhv, Stri
     }
 
     @SuppressWarnings("unchecked")
-    protected <ELEMENT> ArrayList<ELEMENT> newArrayList(ELEMENT... elements) {
+    protected <ELEMENT> ArrayList<ELEMENT> newArrayList(ELEMENT... elements) { // might be called by option handling
         Object obj = DfCollectionUtil.newArrayList(elements);
         return (ArrayList<ELEMENT>)obj; // to avoid the warning between JDK6 and JDK7
     }
 
     @SuppressWarnings("unchecked")
-    protected <NUMBER extends Number> NUMBER toNumber(Object obj, Class<NUMBER> type) {
+    protected <NUMBER extends Number> NUMBER toNumber(Object obj, Class<NUMBER> type) { // might be called by option handling
         return (NUMBER)DfTypeUtil.toNumber(obj, type);
     }
 
@@ -183,12 +183,12 @@ public abstract class BsMemberNamePmb implements ListHandlingPmb<MemberBhv, Stri
         sb.append(xbuildColumnString());
         return sb.toString();
     }
-    private String xbuildColumnString() {
-        final String c = ", ";
+    protected String xbuildColumnString() {
+        final String dm = ", ";
         final StringBuilder sb = new StringBuilder();
-        sb.append(c).append(_memberId);
-        sb.append(c).append(_memberName);
-        if (sb.length() > 0) { sb.delete(0, c.length()); }
+        sb.append(dm).append(_memberId);
+        sb.append(dm).append(_memberName);
+        if (sb.length() > 0) { sb.delete(0, dm.length()); }
         sb.insert(0, "{").append("}");
         return sb.toString();
     }
@@ -198,7 +198,7 @@ public abstract class BsMemberNamePmb implements ListHandlingPmb<MemberBhv, Stri
     //                                                                            ========
     /**
      * [get] memberId <br />
-     * @return The value of memberId. (Nullable, NotEmptyString(when String): if empty string, returns null)
+     * @return The value of memberId. (NullAllowed, NotEmptyString(when String): if empty string, returns null)
      */
     public Integer getMemberId() {
         return _memberId;
@@ -214,7 +214,7 @@ public abstract class BsMemberNamePmb implements ListHandlingPmb<MemberBhv, Stri
 
     /**
      * [get] memberName:likePrefix <br />
-     * @return The value of memberName. (Nullable, NotEmptyString(when String): if empty string, returns null)
+     * @return The value of memberName. (NullAllowed, NotEmptyString(when String): if empty string, returns null)
      */
     public String getMemberName() {
         return filterStringParameter(_memberName);
@@ -236,5 +236,4 @@ public abstract class BsMemberNamePmb implements ListHandlingPmb<MemberBhv, Stri
     public LikeSearchOption getMemberNameInternalLikeSearchOption() {
         return _memberNameInternalLikeSearchOption;
     }
-
 }

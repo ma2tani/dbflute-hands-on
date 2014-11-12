@@ -15,13 +15,15 @@
 ##
 ${database.allClassCopyright}package ${glPackageBaseCommon};
 
-import scala.collection.JavaConverters._
+import scala.collection.immutable;
+import scala.collection.JavaConverters._;
 
 import java.util._;
 
 import org.seasar.dbflute.jdbc.Classification;
 import org.seasar.dbflute.jdbc.ClassificationCodeType;
 import org.seasar.dbflute.jdbc.ClassificationMeta;
+import org.seasar.dbflute.jdbc.ClassificationUndefinedHandlingType;
 
 /**
  * The definition of classification.
@@ -200,6 +202,10 @@ object ${glCDef} {
 #end
     sealed abstract class DefMeta(val name: String) extends ClassificationMeta {
 
+        def classificationName(): String = {
+            return this.name; // same as definition name
+        }
+
         def codeOf(code: Object): Classification = {
 #foreach ($classificationName in $database.classificationNameList)
             if ("${classificationName}".equals(this.name)) { return ${glCDef}.${classificationName}.codeOf(code).asInstanceOf[${glCDef}.${classificationName}]; }
@@ -236,10 +242,18 @@ object ${glCDef} {
 #foreach ($classificationName in $database.classificationNameList)
 #set ($classificationTop = $database.getClassificationTop($classificationName))
 #if ($classificationTop.hasCodeType())
-            if ("${classificationName}".equals(name)) { return ClassificationCodeType.${classificationTop.codeType}; }
+            if ("${classificationName}".equals(this.name)) { return ClassificationCodeType.${classificationTop.codeType}; }
 #end
 #end
             return ClassificationCodeType.String; // as default
+        }
+
+        def undefinedHandlingType(): ClassificationUndefinedHandlingType = {
+#foreach ($classificationName in $database.classificationNameList)
+#set ($classificationTop = $database.getClassificationTop($classificationName))
+            if ("${classificationName}".equals(this.name)) { return ClassificationUndefinedHandlingType.${classificationTop.undefinedHandlingType}; }
+#end
+            return ClassificationUndefinedHandlingType.LOGGING; // as default
         }
     }
 
@@ -257,8 +271,7 @@ object ${glCDef} {
     // ===================================================================================
     //                                                                        Scala Helper
     //                                                                        ============
-    protected def toScalaList[ENTITY](javaList: Collection[ENTITY]): scala.collection.immutable.List[ENTITY] = {
-         // #pending easy convert for now
-        return scala.collection.immutable.List.fromArray(javaList.toArray()).asInstanceOf[scala.collection.immutable.List[ENTITY]];
+    protected def toScalaList[ENTITY](javaList: Collection[ENTITY]): immutable.List[ENTITY] = {
+        return javaList.toArray.toList.asInstanceOf[immutable.List[ENTITY]];
     }
 }

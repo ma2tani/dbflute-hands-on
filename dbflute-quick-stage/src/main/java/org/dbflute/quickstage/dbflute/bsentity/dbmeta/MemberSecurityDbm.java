@@ -21,9 +21,9 @@ import java.util.Map;
 import org.seasar.dbflute.DBDef;
 import org.seasar.dbflute.Entity;
 import org.seasar.dbflute.dbmeta.AbstractDBMeta;
-import org.seasar.dbflute.dbmeta.PropertyGateway;
 import org.seasar.dbflute.dbmeta.info.*;
 import org.seasar.dbflute.dbmeta.name.*;
+import org.seasar.dbflute.dbmeta.property.PropertyGateway;
 import org.dbflute.quickstage.dbflute.allcommon.*;
 import org.dbflute.quickstage.dbflute.exentity.*;
 
@@ -277,7 +277,7 @@ public class MemberSecurityDbm extends AbstractDBMeta {
     // ===================================================================================
     //                                                                     Object Instance
     //                                                                     ===============
-    public Entity newEntity() { return newMyEntity(); }
+    public MemberSecurity newEntity() { return new MemberSecurity(); }
     public MemberSecurity newMyEntity() { return new MemberSecurity(); }
 
     // ===================================================================================

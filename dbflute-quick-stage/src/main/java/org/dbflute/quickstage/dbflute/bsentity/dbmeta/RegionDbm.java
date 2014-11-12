@@ -21,9 +21,9 @@ import java.util.Map;
 import org.seasar.dbflute.DBDef;
 import org.seasar.dbflute.Entity;
 import org.seasar.dbflute.dbmeta.AbstractDBMeta;
-import org.seasar.dbflute.dbmeta.PropertyGateway;
 import org.seasar.dbflute.dbmeta.info.*;
 import org.seasar.dbflute.dbmeta.name.*;
+import org.seasar.dbflute.dbmeta.property.PropertyGateway;
 import org.dbflute.quickstage.dbflute.allcommon.*;
 import org.dbflute.quickstage.dbflute.exentity.*;
 
@@ -61,7 +61,12 @@ public class RegionDbm extends AbstractDBMeta {
         public void write(Entity et, Object vl) {
             ColumnInfo col = columnRegionId();
             ccls(col, vl);
-            ((Region)et).setRegionIdAsRegion((CDef.Region)gcls(col, vl));
+            CDef.Region cls = (CDef.Region)gcls(col, vl);
+            if (cls != null) {
+                ((Region)et).setRegionIdAsRegion(cls);
+            } else {
+                ((Region)et).mynativeMappingRegionId(ctn(vl, Integer.class));
+            }
         }
     }
     public static class EpgRegionName implements PropertyGateway {
@@ -162,7 +167,7 @@ public class RegionDbm extends AbstractDBMeta {
     // ===================================================================================
     //                                                                     Object Instance
     //                                                                     ===============
-    public Entity newEntity() { return newMyEntity(); }
+    public Region newEntity() { return new Region(); }
     public Region newMyEntity() { return new Region(); }
 
     // ===================================================================================

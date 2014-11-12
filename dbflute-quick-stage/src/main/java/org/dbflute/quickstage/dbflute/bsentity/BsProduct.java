@@ -15,13 +15,11 @@
  */
 package org.dbflute.quickstage.dbflute.bsentity;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Set;
 
 import org.seasar.dbflute.dbmeta.DBMeta;
-import org.seasar.dbflute.Entity;
+import org.seasar.dbflute.dbmeta.AbstractEntity;
 import org.dbflute.quickstage.dbflute.allcommon.EntityDefinedCommonColumn;
 import org.dbflute.quickstage.dbflute.allcommon.DBMetaInstanceHandler;
 import org.dbflute.quickstage.dbflute.allcommon.CDef;
@@ -85,7 +83,7 @@ import org.dbflute.quickstage.dbflute.exentity.*;
  * </pre>
  * @author DBFlute(AutoGenerator)
  */
-public abstract class BsProduct implements EntityDefinedCommonColumn, Serializable, Cloneable {
+public abstract class BsProduct extends AbstractEntity implements EntityDefinedCommonColumn {
 
     // ===================================================================================
     //                                                                          Definition
@@ -135,17 +133,8 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
     // -----------------------------------------------------
     //                                              Internal
     //                                              --------
-    /** The unique-driven properties for this entity. (NotNull) */
-    protected final EntityUniqueDrivenProperties __uniqueDrivenProperties = newUniqueDrivenProperties();
-
-    /** The modified properties for this entity. (NotNull) */
-    protected final EntityModifiedProperties __modifiedProperties = newModifiedProperties();
-
     /** Is common column auto set up effective? */
     protected boolean __canCommonColumnAutoSetup = true;
-
-    /** Is the entity created by DBFlute select process? */
-    protected boolean __createdBySelect;
 
     // ===================================================================================
     //                                                                          Table Name
@@ -194,17 +183,6 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
         __uniqueDrivenProperties.clear();
         __uniqueDrivenProperties.addPropertyName("productHandleCode");
         setProductHandleCode(productHandleCode);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Set<String> myuniqueDrivenProperties() {
-        return __uniqueDrivenProperties.getPropertyNames();
-    }
-
-    protected EntityUniqueDrivenProperties newUniqueDrivenProperties() {
-        return new EntityUniqueDrivenProperties();
     }
 
     // ===================================================================================
@@ -295,16 +273,13 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
     }
 
     // ===================================================================================
-    //                                                           Classification Name/Alias
-    //                                                           =========================
-    // ===================================================================================
     //                                                                    Foreign Property
     //                                                                    ================
     /** (商品カテゴリ)PRODUCT_CATEGORY by my PRODUCT_CATEGORY_CODE, named 'productCategory'. */
     protected ProductCategory _productCategory;
 
     /**
-     * (商品カテゴリ)PRODUCT_CATEGORY by my PRODUCT_CATEGORY_CODE, named 'productCategory'.
+     * [get] (商品カテゴリ)PRODUCT_CATEGORY by my PRODUCT_CATEGORY_CODE, named 'productCategory'.
      * @return The entity of foreign property 'productCategory'. (NullAllowed: when e.g. null FK column, no setupSelect)
      */
     public ProductCategory getProductCategory() {
@@ -312,7 +287,7 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
     }
 
     /**
-     * (商品カテゴリ)PRODUCT_CATEGORY by my PRODUCT_CATEGORY_CODE, named 'productCategory'.
+     * [set] (商品カテゴリ)PRODUCT_CATEGORY by my PRODUCT_CATEGORY_CODE, named 'productCategory'.
      * @param productCategory The entity of foreign property 'productCategory'. (NullAllowed)
      */
     public void setProductCategory(ProductCategory productCategory) {
@@ -323,7 +298,7 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
     protected ProductStatus _productStatus;
 
     /**
-     * (商品ステータス)PRODUCT_STATUS by my PRODUCT_STATUS_CODE, named 'productStatus'.
+     * [get] (商品ステータス)PRODUCT_STATUS by my PRODUCT_STATUS_CODE, named 'productStatus'.
      * @return The entity of foreign property 'productStatus'. (NullAllowed: when e.g. null FK column, no setupSelect)
      */
     public ProductStatus getProductStatus() {
@@ -331,7 +306,7 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
     }
 
     /**
-     * (商品ステータス)PRODUCT_STATUS by my PRODUCT_STATUS_CODE, named 'productStatus'.
+     * [set] (商品ステータス)PRODUCT_STATUS by my PRODUCT_STATUS_CODE, named 'productStatus'.
      * @param productStatus The entity of foreign property 'productStatus'. (NullAllowed)
      */
     public void setProductStatus(ProductStatus productStatus) {
@@ -345,7 +320,7 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
     protected List<Purchase> _purchaseList;
 
     /**
-     * (購入)PURCHASE by PRODUCT_ID, named 'purchaseList'.
+     * [get] (購入)PURCHASE by PRODUCT_ID, named 'purchaseList'.
      * @return The entity list of referrer property 'purchaseList'. (NotNull: even if no loading, returns empty list)
      */
     public List<Purchase> getPurchaseList() {
@@ -354,7 +329,7 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
     }
 
     /**
-     * (購入)PURCHASE by PRODUCT_ID, named 'purchaseList'.
+     * [set] (購入)PURCHASE by PRODUCT_ID, named 'purchaseList'.
      * @param purchaseList The entity list of referrer property 'purchaseList'. (NullAllowed)
      */
     public void setPurchaseList(List<Purchase> purchaseList) {
@@ -363,51 +338,6 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
 
     protected <ELEMENT> List<ELEMENT> newReferrerList() {
         return new ArrayList<ELEMENT>();
-    }
-
-    // ===================================================================================
-    //                                                                 Modified Properties
-    //                                                                 ===================
-    /**
-     * {@inheritDoc}
-     */
-    public Set<String> modifiedProperties() {
-        return __modifiedProperties.getPropertyNames();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void clearModifiedInfo() {
-        __modifiedProperties.clear();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean hasModification() {
-        return !__modifiedProperties.isEmpty();
-    }
-
-    protected EntityModifiedProperties newModifiedProperties() {
-        return new EntityModifiedProperties();
-    }
-
-    // ===================================================================================
-    //                                                                     Birthplace Mark
-    //                                                                     ===============
-    /**
-     * {@inheritDoc}
-     */
-    public void markAsSelect() {
-        __createdBySelect = true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean createdBySelect() {
-        return __createdBySelect;
     }
 
     // ===================================================================================
@@ -437,124 +367,76 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
     // ===================================================================================
     //                                                                      Basic Override
     //                                                                      ==============
-    /**
-     * Determine the object is equal with this. <br />
-     * If primary-keys or columns of the other are same as this one, returns true.
-     * @param obj The object as other entity. (NullAllowed: if null, returns false fixedly)
-     * @return Comparing result.
-     */
-    public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof BsProduct)) { return false; }
-        BsProduct other = (BsProduct)obj;
-        if (!xSV(getProductId(), other.getProductId())) { return false; }
-        return true;
-    }
-    protected boolean xSV(Object v1, Object v2) {
-        return FunCustodial.isSameValue(v1, v2);
+    @Override
+    protected boolean doEquals(Object obj) {
+        if (obj instanceof BsProduct) {
+            BsProduct other = (BsProduct)obj;
+            if (!xSV(_productId, other._productId)) { return false; }
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    /**
-     * Calculate the hash-code from primary-keys or columns.
-     * @return The hash-code from primary-key or columns.
-     */
-    public int hashCode() {
-        int hs = 17;
+    @Override
+    protected int doHashCode(int initial) {
+        int hs = initial;
         hs = xCH(hs, getTableDbName());
-        hs = xCH(hs, getProductId());
+        hs = xCH(hs, _productId);
         return hs;
     }
-    protected int xCH(int hs, Object vl) {
-        return FunCustodial.calculateHashcode(hs, vl);
-    }
 
-    /**
-     * {@inheritDoc}
-     */
-    public int instanceHash() {
-        return super.hashCode();
-    }
-
-    /**
-     * Convert to display string of entity's data. (no relation data)
-     * @return The display string of all columns and relation existences. (NotNull)
-     */
-    public String toString() {
-        return buildDisplayString(FunCustodial.toClassTitle(this), true, true);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String toStringWithRelation() {
+    @Override
+    protected String doBuildStringWithRelation(String li) {
         StringBuilder sb = new StringBuilder();
-        sb.append(toString());
-        String li = "\n  ";
         if (_productCategory != null)
         { sb.append(li).append(xbRDS(_productCategory, "productCategory")); }
         if (_productStatus != null)
         { sb.append(li).append(xbRDS(_productStatus, "productStatus")); }
-        if (_purchaseList != null) { for (Entity et : _purchaseList)
+        if (_purchaseList != null) { for (Purchase et : _purchaseList)
         { if (et != null) { sb.append(li).append(xbRDS(et, "purchaseList")); } } }
         return sb.toString();
     }
-    protected String xbRDS(Entity et, String name) { // buildRelationDisplayString()
-        return et.buildDisplayString(name, true, true);
-    }
 
-    /**
-     * {@inheritDoc}
-     */
-    public String buildDisplayString(String name, boolean column, boolean relation) {
+    @Override
+    protected String doBuildColumnString(String dm) {
         StringBuilder sb = new StringBuilder();
-        if (name != null) { sb.append(name).append(column || relation ? ":" : ""); }
-        if (column) { sb.append(buildColumnString()); }
-        if (relation) { sb.append(buildRelationString()); }
-        sb.append("@").append(Integer.toHexString(hashCode()));
-        return sb.toString();
-    }
-    protected String buildColumnString() {
-        StringBuilder sb = new StringBuilder();
-        String dm = ", ";
-        sb.append(dm).append(getProductId());
-        sb.append(dm).append(getProductName());
-        sb.append(dm).append(getProductHandleCode());
-        sb.append(dm).append(getProductCategoryCode());
-        sb.append(dm).append(getProductStatusCode());
-        sb.append(dm).append(getRegularPrice());
-        sb.append(dm).append(getRegisterDatetime());
-        sb.append(dm).append(getRegisterUser());
-        sb.append(dm).append(getUpdateDatetime());
-        sb.append(dm).append(getUpdateUser());
-        sb.append(dm).append(getVersionNo());
+        sb.append(dm).append(xfND(_productId));
+        sb.append(dm).append(xfND(_productName));
+        sb.append(dm).append(xfND(_productHandleCode));
+        sb.append(dm).append(xfND(_productCategoryCode));
+        sb.append(dm).append(xfND(_productStatusCode));
+        sb.append(dm).append(xfND(_regularPrice));
+        sb.append(dm).append(xfND(_registerDatetime));
+        sb.append(dm).append(xfND(_registerUser));
+        sb.append(dm).append(xfND(_updateDatetime));
+        sb.append(dm).append(xfND(_updateUser));
+        sb.append(dm).append(xfND(_versionNo));
         if (sb.length() > dm.length()) {
             sb.delete(0, dm.length());
         }
         sb.insert(0, "{").append("}");
         return sb.toString();
     }
-    protected String buildRelationString() {
+
+    @Override
+    protected String doBuildRelationString(String dm) {
         StringBuilder sb = new StringBuilder();
-        String cm = ",";
-        if (_productCategory != null) { sb.append(cm).append("productCategory"); }
-        if (_productStatus != null) { sb.append(cm).append("productStatus"); }
+        if (_productCategory != null)
+        { sb.append(dm).append("productCategory"); }
+        if (_productStatus != null)
+        { sb.append(dm).append("productStatus"); }
         if (_purchaseList != null && !_purchaseList.isEmpty())
-        { sb.append(cm).append("purchaseList"); }
-        if (sb.length() > cm.length()) {
-            sb.delete(0, cm.length()).insert(0, "(").append(")");
+        { sb.append(dm).append("purchaseList"); }
+        if (sb.length() > dm.length()) {
+            sb.delete(0, dm.length()).insert(0, "(").append(")");
         }
         return sb.toString();
     }
 
-    /**
-     * Clone entity instance using super.clone(). (shallow copy) 
-     * @return The cloned instance of this entity. (NotNull)
-     */
+    @Override
     public Product clone() {
-        try {
-            return (Product)super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new IllegalStateException("Failed to clone the entity: " + toString(), e);
-        }
+        return (Product)super.clone();
     }
 
     // ===================================================================================
@@ -565,6 +447,7 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @return The value of the column 'PRODUCT_ID'. (basically NotNull if selected: for the constraint)
      */
     public Integer getProductId() {
+        checkSpecifiedProperty("productId");
         return _productId;
     }
 
@@ -573,8 +456,8 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @param productId The value of the column 'PRODUCT_ID'. (basically NotNull if update: for the constraint)
      */
     public void setProductId(Integer productId) {
-        __modifiedProperties.addPropertyName("productId");
-        this._productId = productId;
+        registerModifiedProperty("productId");
+        _productId = productId;
     }
 
     /**
@@ -584,6 +467,7 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @return The value of the column 'PRODUCT_NAME'. (basically NotNull if selected: for the constraint)
      */
     public String getProductName() {
+        checkSpecifiedProperty("productName");
         return convertEmptyToNull(_productName);
     }
 
@@ -594,8 +478,8 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @param productName The value of the column 'PRODUCT_NAME'. (basically NotNull if update: for the constraint)
      */
     public void setProductName(String productName) {
-        __modifiedProperties.addPropertyName("productName");
-        this._productName = productName;
+        registerModifiedProperty("productName");
+        _productName = productName;
     }
 
     /**
@@ -604,6 +488,7 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @return The value of the column 'PRODUCT_HANDLE_CODE'. (basically NotNull if selected: for the constraint)
      */
     public String getProductHandleCode() {
+        checkSpecifiedProperty("productHandleCode");
         return convertEmptyToNull(_productHandleCode);
     }
 
@@ -613,8 +498,8 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @param productHandleCode The value of the column 'PRODUCT_HANDLE_CODE'. (basically NotNull if update: for the constraint)
      */
     public void setProductHandleCode(String productHandleCode) {
-        __modifiedProperties.addPropertyName("productHandleCode");
-        this._productHandleCode = productHandleCode;
+        registerModifiedProperty("productHandleCode");
+        _productHandleCode = productHandleCode;
     }
 
     /**
@@ -622,6 +507,7 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @return The value of the column 'PRODUCT_CATEGORY_CODE'. (basically NotNull if selected: for the constraint)
      */
     public String getProductCategoryCode() {
+        checkSpecifiedProperty("productCategoryCode");
         return convertEmptyToNull(_productCategoryCode);
     }
 
@@ -630,8 +516,8 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @param productCategoryCode The value of the column 'PRODUCT_CATEGORY_CODE'. (basically NotNull if update: for the constraint)
      */
     public void setProductCategoryCode(String productCategoryCode) {
-        __modifiedProperties.addPropertyName("productCategoryCode");
-        this._productCategoryCode = productCategoryCode;
+        registerModifiedProperty("productCategoryCode");
+        _productCategoryCode = productCategoryCode;
     }
 
     /**
@@ -639,6 +525,7 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @return The value of the column 'PRODUCT_STATUS_CODE'. (basically NotNull if selected: for the constraint)
      */
     public String getProductStatusCode() {
+        checkSpecifiedProperty("productStatusCode");
         return convertEmptyToNull(_productStatusCode);
     }
 
@@ -647,8 +534,8 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @param productStatusCode The value of the column 'PRODUCT_STATUS_CODE'. (basically NotNull if update: for the constraint)
      */
     protected void setProductStatusCode(String productStatusCode) {
-        __modifiedProperties.addPropertyName("productStatusCode");
-        this._productStatusCode = productStatusCode;
+        registerModifiedProperty("productStatusCode");
+        _productStatusCode = productStatusCode;
     }
 
     /**
@@ -656,6 +543,7 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @return The value of the column 'REGULAR_PRICE'. (basically NotNull if selected: for the constraint)
      */
     public Integer getRegularPrice() {
+        checkSpecifiedProperty("regularPrice");
         return _regularPrice;
     }
 
@@ -664,8 +552,8 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @param regularPrice The value of the column 'REGULAR_PRICE'. (basically NotNull if update: for the constraint)
      */
     public void setRegularPrice(Integer regularPrice) {
-        __modifiedProperties.addPropertyName("regularPrice");
-        this._regularPrice = regularPrice;
+        registerModifiedProperty("regularPrice");
+        _regularPrice = regularPrice;
     }
 
     /**
@@ -673,6 +561,7 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @return The value of the column 'REGISTER_DATETIME'. (basically NotNull if selected: for the constraint)
      */
     public java.sql.Timestamp getRegisterDatetime() {
+        checkSpecifiedProperty("registerDatetime");
         return _registerDatetime;
     }
 
@@ -681,8 +570,8 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @param registerDatetime The value of the column 'REGISTER_DATETIME'. (basically NotNull if update: for the constraint)
      */
     public void setRegisterDatetime(java.sql.Timestamp registerDatetime) {
-        __modifiedProperties.addPropertyName("registerDatetime");
-        this._registerDatetime = registerDatetime;
+        registerModifiedProperty("registerDatetime");
+        _registerDatetime = registerDatetime;
     }
 
     /**
@@ -690,6 +579,7 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @return The value of the column 'REGISTER_USER'. (basically NotNull if selected: for the constraint)
      */
     public String getRegisterUser() {
+        checkSpecifiedProperty("registerUser");
         return convertEmptyToNull(_registerUser);
     }
 
@@ -698,8 +588,8 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @param registerUser The value of the column 'REGISTER_USER'. (basically NotNull if update: for the constraint)
      */
     public void setRegisterUser(String registerUser) {
-        __modifiedProperties.addPropertyName("registerUser");
-        this._registerUser = registerUser;
+        registerModifiedProperty("registerUser");
+        _registerUser = registerUser;
     }
 
     /**
@@ -707,6 +597,7 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @return The value of the column 'UPDATE_DATETIME'. (basically NotNull if selected: for the constraint)
      */
     public java.sql.Timestamp getUpdateDatetime() {
+        checkSpecifiedProperty("updateDatetime");
         return _updateDatetime;
     }
 
@@ -715,8 +606,8 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @param updateDatetime The value of the column 'UPDATE_DATETIME'. (basically NotNull if update: for the constraint)
      */
     public void setUpdateDatetime(java.sql.Timestamp updateDatetime) {
-        __modifiedProperties.addPropertyName("updateDatetime");
-        this._updateDatetime = updateDatetime;
+        registerModifiedProperty("updateDatetime");
+        _updateDatetime = updateDatetime;
     }
 
     /**
@@ -724,6 +615,7 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @return The value of the column 'UPDATE_USER'. (basically NotNull if selected: for the constraint)
      */
     public String getUpdateUser() {
+        checkSpecifiedProperty("updateUser");
         return convertEmptyToNull(_updateUser);
     }
 
@@ -732,8 +624,8 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @param updateUser The value of the column 'UPDATE_USER'. (basically NotNull if update: for the constraint)
      */
     public void setUpdateUser(String updateUser) {
-        __modifiedProperties.addPropertyName("updateUser");
-        this._updateUser = updateUser;
+        registerModifiedProperty("updateUser");
+        _updateUser = updateUser;
     }
 
     /**
@@ -741,6 +633,7 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @return The value of the column 'VERSION_NO'. (basically NotNull if selected: for the constraint)
      */
     public Long getVersionNo() {
+        checkSpecifiedProperty("versionNo");
         return _versionNo;
     }
 
@@ -749,11 +642,15 @@ public abstract class BsProduct implements EntityDefinedCommonColumn, Serializab
      * @param versionNo The value of the column 'VERSION_NO'. (basically NotNull if update: for the constraint)
      */
     public void setVersionNo(Long versionNo) {
-        __modifiedProperties.addPropertyName("versionNo");
-        this._versionNo = versionNo;
+        registerModifiedProperty("versionNo");
+        _versionNo = versionNo;
     }
 
-    protected String convertEmptyToNull(String value) {
-        return FunCustodial.convertEmptyToNull(value);
+    /**
+     * For framework so basically DON'T use this method.
+     * @param productStatusCode The value of the column 'PRODUCT_STATUS_CODE'. (basically NotNull if update: for the constraint)
+     */
+    public void mynativeMappingProductStatusCode(String productStatusCode) {
+        setProductStatusCode(productStatusCode);
     }
 }

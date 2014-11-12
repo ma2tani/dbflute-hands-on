@@ -58,8 +58,11 @@ public class BsMemberServiceCB extends AbstractConditionBean {
         if (DBFluteConfig.getInstance().isPagingCountLeastJoin()) {
             enablePagingCountLeastJoin();
         }
-        if (DBFluteConfig.getInstance().isCheckCountBeforeQueryUpdate()) {
-            enableCheckCountBeforeQueryUpdate();
+        if (DBFluteConfig.getInstance().isNonSpecifiedColumnAccessAllowed()) {
+            enableNonSpecifiedColumnAccess();
+        }
+        if (DBFluteConfig.getInstance().isQueryUpdateCountPreCheck()) {
+            enableQueryUpdateCountPreCheck();
         }
     }
 
@@ -96,21 +99,35 @@ public class BsMemberServiceCB extends AbstractConditionBean {
     /**
      * Accept the query condition of primary key as equal.
      * @param memberServiceId (会員サービスID): PK, ID, NotNull, INTEGER(10). (NotNull)
+     * @return this. (NotNull)
+     */
+    public MemberServiceCB acceptPK(Integer memberServiceId) {
+        assertObjectNotNull("memberServiceId", memberServiceId);
+        BsMemberServiceCB cb = this;
+        cb.query().setMemberServiceId_Equal(memberServiceId);
+        return (MemberServiceCB)this;
+    }
+
+    /**
+     * Accept the query condition of primary key as equal. (old style)
+     * @param memberServiceId (会員サービスID): PK, ID, NotNull, INTEGER(10). (NotNull)
      */
     public void acceptPrimaryKey(Integer memberServiceId) {
         assertObjectNotNull("memberServiceId", memberServiceId);
         BsMemberServiceCB cb = this;
-        cb.query().setMemberServiceId_Equal(memberServiceId);;
+        cb.query().setMemberServiceId_Equal(memberServiceId);
     }
 
     /**
      * Accept the query condition of unique key as equal.
      * @param memberId (会員ID): UQ, IX, NotNull, INTEGER(10), FK to MEMBER. (NotNull)
+     * @return this. (NotNull)
      */
-    public void acceptUniqueOf(Integer memberId) {
+    public MemberServiceCB acceptUniqueOf(Integer memberId) {
         assertObjectNotNull("memberId", memberId);
         BsMemberServiceCB cb = this;
-        cb.query().setMemberId_Equal(memberId);;
+        cb.query().setMemberId_Equal(memberId);
+        return (MemberServiceCB)this;
     }
 
     public ConditionBean addOrderBy_PK_Asc() {
@@ -505,7 +522,7 @@ public class BsMemberServiceCB extends AbstractConditionBean {
      * @return The object for setting up operand and right column. (NotNull)
      */
     public HpColQyOperand<MemberServiceCB> columnQuery(final SpecifyQuery<MemberServiceCB> leftSpecifyQuery) {
-        return new HpColQyOperand<MemberServiceCB>(new HpColQyHandler<MemberServiceCB>() {
+        return xcreateColQyOperand(new HpColQyHandler<MemberServiceCB>() {
             public HpCalculator handle(SpecifyQuery<MemberServiceCB> rightSp, String operand) {
                 return xcolqy(xcreateColumnQueryCB(), xcreateColumnQueryCB(), leftSpecifyQuery, rightSp, operand);
             }
@@ -584,6 +601,99 @@ public class BsMemberServiceCB extends AbstractConditionBean {
      */
     public void orScopeQueryAndPart(AndQuery<MemberServiceCB> andQuery) {
         xorSQAP((MemberServiceCB)this, andQuery);
+    }
+
+    /**
+     * Check invalid query when query is set. <br />
+     * (it throws an exception if set query is invalid) <br />
+     * You should call this before registrations of where clause and other queries. <br />
+     * Union and SubQuery and other sub condition-bean inherit this. <br />
+     * 
+     * <p>renamed to checkNullOrEmptyQuery() since 1.1,
+     * but not deprecated because it might have many use.</p>
+     * 
+     * #java8 compatible option
+     */
+    public void checkInvalidQuery() {
+        checkNullOrEmptyQuery();
+    }
+
+    /**
+     * Accept (no check) an invalid query when a query is set. <br />
+     * (no condition if a set query is invalid) <br />
+     * You should call this before registrations of where clause and other queries. <br />
+     * Union and SubQuery and other sub condition-bean inherit this.
+     * @deprecated use ignoreNullOrEmptyQuery()
+     */
+    public void acceptInvalidQuery() {
+        getSqlClause().ignoreNullOrEmptyQuery();
+    }
+
+    /**
+     * Allow to auto-detect joins that can be inner-join. <br />
+     * <pre>
+     * o You should call this before registrations of where clause.
+     * o Union and SubQuery and other sub condition-bean inherit this.
+     * o You should confirm your SQL on the log to be tuned by inner-join correctly.
+     * </pre>
+     * @deprecated use enableInnerJoinAutoDetect()
+     */
+    public void allowInnerJoinAutoDetect() {
+        enableInnerJoinAutoDetect();
+    }
+
+    /**
+     * Suppress auto-detecting inner-join. <br />
+     * You should call this before registrations of where clause.
+     * @deprecated use disableInnerJoinAutoDetect()
+     */
+    public void suppressInnerJoinAutoDetect() {
+        disableInnerJoinAutoDetect();
+    }
+
+    /**
+     * Allow an empty string for query. <br />
+     * (you can use an empty string as condition) <br />
+     * You should call this before registrations of where clause and other queries. <br />
+     * Union and SubQuery and other sub condition-bean inherit this.
+     * @deprecated use enableEmptyStringQuery()
+     */
+    public void allowEmptyStringQuery() {
+        enableEmptyStringQuery();
+    }
+
+    /**
+     * Enable checking record count before QueryUpdate (contains QueryDelete). (default is disabled) <br />
+     * No query update if zero count. (basically for MySQL's deadlock by next-key lock)
+     * @deprecated use enableQueryUpdateCountPreCheck()
+     */
+    public void enableCheckCountBeforeQueryUpdate() {
+        enableQueryUpdateCountPreCheck();
+    }
+
+    /**
+     * Disable checking record count before QueryUpdate (contains QueryDelete). (back to default) <br />
+     * Executes query update even if zero count. (normal specification)
+     * @deprecated use disableQueryUpdateCountPreCheck()
+     */
+    public void disableCheckCountBeforeQueryUpdate() {
+        disableQueryUpdateCountPreCheck();
+    }
+
+    /**
+     * Allow "that's bad timing" check.
+     * @deprecated use enableThatsBadTiming()
+     */
+    public void allowThatsBadTiming() {
+        enableThatsBadTiming();
+    }
+
+    /**
+     * Suppress "that's bad timing" check.
+     * @deprecated use disableThatsBadTiming()
+     */
+    public void suppressThatsBadTiming() {
+        disableThatsBadTiming();
     }
 
     // ===================================================================================

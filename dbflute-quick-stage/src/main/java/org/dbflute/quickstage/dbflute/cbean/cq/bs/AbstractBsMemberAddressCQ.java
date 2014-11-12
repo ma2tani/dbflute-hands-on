@@ -59,7 +59,6 @@ public abstract class AbstractBsMemberAddressCQ extends AbstractConditionQuery {
     // ===================================================================================
     //                                                                               Query
     //                                                                               =====
-    
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
      * (会員住所ID)MEMBER_ADDRESS_ID: {PK, ID, NotNull, INTEGER(10)}
@@ -175,7 +174,7 @@ public abstract class AbstractBsMemberAddressCQ extends AbstractConditionQuery {
 
     protected void regMemberAddressId(ConditionKey ky, Object vl) { regQ(ky, vl, getCValueMemberAddressId(), "MEMBER_ADDRESS_ID"); }
     protected abstract ConditionValue getCValueMemberAddressId();
-    
+
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
      * (会員ID)MEMBER_ID: {UQ+, IX, NotNull, INTEGER(10), FK to MEMBER}
@@ -583,7 +582,7 @@ public abstract class AbstractBsMemberAddressCQ extends AbstractConditionQuery {
 
     protected void regAddress(ConditionKey ky, Object vl) { regQ(ky, vl, getCValueAddress(), "ADDRESS"); }
     protected abstract ConditionValue getCValueAddress();
-    
+
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
      * (地域ID)REGION_ID: {IX, NotNull, INTEGER(10), FK to REGION, classification=Region}
@@ -1168,7 +1167,7 @@ public abstract class AbstractBsMemberAddressCQ extends AbstractConditionQuery {
 
     protected void regUpdateUser(ConditionKey ky, Object vl) { regQ(ky, vl, getCValueUpdateUser(), "UPDATE_USER"); }
     protected abstract ConditionValue getCValueUpdateUser();
-    
+
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
      * VERSION_NO: {NotNull, BIGINT(19)}
@@ -1290,7 +1289,7 @@ public abstract class AbstractBsMemberAddressCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<MemberAddressCB> scalar_Equal() {
-        return xcreateSSQFunction(CK_EQ.getOperand(), MemberAddressCB.class);
+        return xcreateSSQFunction(CK_EQ, MemberAddressCB.class);
     }
 
     /**
@@ -1307,7 +1306,7 @@ public abstract class AbstractBsMemberAddressCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<MemberAddressCB> scalar_NotEqual() {
-        return xcreateSSQFunction(CK_NES.getOperand(), MemberAddressCB.class);
+        return xcreateSSQFunction(CK_NES, MemberAddressCB.class);
     }
 
     /**
@@ -1324,7 +1323,7 @@ public abstract class AbstractBsMemberAddressCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<MemberAddressCB> scalar_GreaterThan() {
-        return xcreateSSQFunction(CK_GT.getOperand(), MemberAddressCB.class);
+        return xcreateSSQFunction(CK_GT, MemberAddressCB.class);
     }
 
     /**
@@ -1341,7 +1340,7 @@ public abstract class AbstractBsMemberAddressCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<MemberAddressCB> scalar_LessThan() {
-        return xcreateSSQFunction(CK_LT.getOperand(), MemberAddressCB.class);
+        return xcreateSSQFunction(CK_LT, MemberAddressCB.class);
     }
 
     /**
@@ -1358,7 +1357,7 @@ public abstract class AbstractBsMemberAddressCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<MemberAddressCB> scalar_GreaterEqual() {
-        return xcreateSSQFunction(CK_GE.getOperand(), MemberAddressCB.class);
+        return xcreateSSQFunction(CK_GE, MemberAddressCB.class);
     }
 
     /**
@@ -1375,7 +1374,7 @@ public abstract class AbstractBsMemberAddressCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<MemberAddressCB> scalar_LessEqual() {
-        return xcreateSSQFunction(CK_LE.getOperand(), MemberAddressCB.class);
+        return xcreateSSQFunction(CK_LE, MemberAddressCB.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -1461,8 +1460,46 @@ public abstract class AbstractBsMemberAddressCQ extends AbstractConditionQuery {
     public abstract String keepMyselfInScope(MemberAddressCQ sq);
 
     // ===================================================================================
-    //                                                                          Compatible
-    //                                                                          ==========
+    //                                                                        Manual Order
+    //                                                                        ============
+    /**
+     * Order along manual ordering information.
+     * <pre>
+     * MemberCB cb = new MemberCB();
+     * ManualOrderBean mob = new ManualOrderBean();
+     * mob.<span style="color: #DD4747">when_GreaterEqual</span>(priorityDate); <span style="color: #3F7E5E">// e.g. 2000/01/01</span>
+     * cb.query().addOrderBy_Birthdate_Asc().<span style="color: #DD4747">withManualOrder(mob)</span>;
+     * <span style="color: #3F7E5E">// order by </span>
+     * <span style="color: #3F7E5E">//   case</span>
+     * <span style="color: #3F7E5E">//     when BIRTHDATE &gt;= '2000/01/01' then 0</span>
+     * <span style="color: #3F7E5E">//     else 1</span>
+     * <span style="color: #3F7E5E">//   end asc, ...</span>
+     *
+     * MemberCB cb = new MemberCB();
+     * ManualOrderBean mob = new ManualOrderBean();
+     * mob.<span style="color: #DD4747">when_Equal</span>(CDef.MemberStatus.Withdrawal);
+     * mob.<span style="color: #DD4747">when_Equal</span>(CDef.MemberStatus.Formalized);
+     * mob.<span style="color: #DD4747">when_Equal</span>(CDef.MemberStatus.Provisional);
+     * cb.query().addOrderBy_MemberStatusCode_Asc().<span style="color: #DD4747">withManualOrder(mob)</span>;
+     * <span style="color: #3F7E5E">// order by </span>
+     * <span style="color: #3F7E5E">//   case</span>
+     * <span style="color: #3F7E5E">//     when MEMBER_STATUS_CODE = 'WDL' then 0</span>
+     * <span style="color: #3F7E5E">//     when MEMBER_STATUS_CODE = 'FML' then 1</span>
+     * <span style="color: #3F7E5E">//     when MEMBER_STATUS_CODE = 'PRV' then 2</span>
+     * <span style="color: #3F7E5E">//     else 3</span>
+     * <span style="color: #3F7E5E">//   end asc, ...</span>
+     * </pre>
+     * <p>This function with Union is unsupported!</p>
+     * <p>The order values are bound (treated as bind parameter).</p>
+     * @param mob The bean of manual order containing order values. (NotNull)
+     */
+    public void withManualOrder(ManualOrderBean mob) { // is user public!
+        xdoWithManualOrder(mob);
+    }
+
+    // ===================================================================================
+    //                                                                    Small Adjustment
+    //                                                                    ================
     /**
      * Order along the list of manual values. #beforejava8 <br />
      * This function with Union is unsupported! <br />
@@ -1491,6 +1528,11 @@ public abstract class AbstractBsMemberAddressCQ extends AbstractConditionQuery {
         withManualOrder(manualOrderBean);
     }
 
+    @Override
+    protected void filterFromToOption(FromToOption option) {
+        option.allowOneSide();
+    }
+
     // ===================================================================================
     //                                                                       Very Internal
     //                                                                       =============
@@ -1498,6 +1540,7 @@ public abstract class AbstractBsMemberAddressCQ extends AbstractConditionQuery {
         return new MemberAddressCB();
     }
     // very internal (for suppressing warn about 'Not Use Import')
+    protected String xabUDT() { return Date.class.getName(); }
     protected String xabCQ() { return MemberAddressCQ.class.getName(); }
     protected String xabLSO() { return LikeSearchOption.class.getName(); }
     protected String xabSSQS() { return HpSSQSetupper.class.getName(); }

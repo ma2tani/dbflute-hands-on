@@ -15,13 +15,11 @@
  */
 package org.dbflute.quickstage.dbflute.bsentity;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Set;
 
 import org.seasar.dbflute.dbmeta.DBMeta;
-import org.seasar.dbflute.Entity;
+import org.seasar.dbflute.dbmeta.AbstractEntity;
 import org.dbflute.quickstage.dbflute.allcommon.EntityDefinedCommonColumn;
 import org.dbflute.quickstage.dbflute.allcommon.DBMetaInstanceHandler;
 import org.dbflute.quickstage.dbflute.allcommon.CDef;
@@ -83,7 +81,7 @@ import org.dbflute.quickstage.dbflute.exentity.*;
  * </pre>
  * @author DBFlute(AutoGenerator)
  */
-public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Serializable, Cloneable {
+public abstract class BsPurchasePayment extends AbstractEntity implements EntityDefinedCommonColumn {
 
     // ===================================================================================
     //                                                                          Definition
@@ -127,17 +125,8 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
     // -----------------------------------------------------
     //                                              Internal
     //                                              --------
-    /** The unique-driven properties for this entity. (NotNull) */
-    protected final EntityUniqueDrivenProperties __uniqueDrivenProperties = newUniqueDrivenProperties();
-
-    /** The modified properties for this entity. (NotNull) */
-    protected final EntityModifiedProperties __modifiedProperties = newModifiedProperties();
-
     /** Is common column auto set up effective? */
     protected boolean __canCommonColumnAutoSetup = true;
-
-    /** Is the entity created by DBFlute select process? */
-    protected boolean __createdBySelect;
 
     // ===================================================================================
     //                                                                          Table Name
@@ -175,17 +164,6 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
     public boolean hasPrimaryKeyValue() {
         if (getPurchasePaymentId() == null) { return false; }
         return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Set<String> myuniqueDrivenProperties() {
-        return __uniqueDrivenProperties.getPropertyNames();
-    }
-
-    protected EntityUniqueDrivenProperties newUniqueDrivenProperties() {
-        return new EntityUniqueDrivenProperties();
     }
 
     // ===================================================================================
@@ -313,7 +291,7 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
     protected Purchase _purchase;
 
     /**
-     * (購入)PURCHASE by my PURCHASE_ID, named 'purchase'.
+     * [get] (購入)PURCHASE by my PURCHASE_ID, named 'purchase'.
      * @return The entity of foreign property 'purchase'. (NullAllowed: when e.g. null FK column, no setupSelect)
      */
     public Purchase getPurchase() {
@@ -321,7 +299,7 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
     }
 
     /**
-     * (購入)PURCHASE by my PURCHASE_ID, named 'purchase'.
+     * [set] (購入)PURCHASE by my PURCHASE_ID, named 'purchase'.
      * @param purchase The entity of foreign property 'purchase'. (NullAllowed)
      */
     public void setPurchase(Purchase purchase) {
@@ -333,51 +311,6 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
     //                                                                   =================
     protected <ELEMENT> List<ELEMENT> newReferrerList() {
         return new ArrayList<ELEMENT>();
-    }
-
-    // ===================================================================================
-    //                                                                 Modified Properties
-    //                                                                 ===================
-    /**
-     * {@inheritDoc}
-     */
-    public Set<String> modifiedProperties() {
-        return __modifiedProperties.getPropertyNames();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void clearModifiedInfo() {
-        __modifiedProperties.clear();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean hasModification() {
-        return !__modifiedProperties.isEmpty();
-    }
-
-    protected EntityModifiedProperties newModifiedProperties() {
-        return new EntityModifiedProperties();
-    }
-
-    // ===================================================================================
-    //                                                                     Birthplace Mark
-    //                                                                     ===============
-    /**
-     * {@inheritDoc}
-     */
-    public void markAsSelect() {
-        __createdBySelect = true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean createdBySelect() {
-        return __createdBySelect;
     }
 
     // ===================================================================================
@@ -407,115 +340,66 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
     // ===================================================================================
     //                                                                      Basic Override
     //                                                                      ==============
-    /**
-     * Determine the object is equal with this. <br />
-     * If primary-keys or columns of the other are same as this one, returns true.
-     * @param obj The object as other entity. (NullAllowed: if null, returns false fixedly)
-     * @return Comparing result.
-     */
-    public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof BsPurchasePayment)) { return false; }
-        BsPurchasePayment other = (BsPurchasePayment)obj;
-        if (!xSV(getPurchasePaymentId(), other.getPurchasePaymentId())) { return false; }
-        return true;
-    }
-    protected boolean xSV(Object v1, Object v2) {
-        return FunCustodial.isSameValue(v1, v2);
+    @Override
+    protected boolean doEquals(Object obj) {
+        if (obj instanceof BsPurchasePayment) {
+            BsPurchasePayment other = (BsPurchasePayment)obj;
+            if (!xSV(_purchasePaymentId, other._purchasePaymentId)) { return false; }
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    /**
-     * Calculate the hash-code from primary-keys or columns.
-     * @return The hash-code from primary-key or columns.
-     */
-    public int hashCode() {
-        int hs = 17;
+    @Override
+    protected int doHashCode(int initial) {
+        int hs = initial;
         hs = xCH(hs, getTableDbName());
-        hs = xCH(hs, getPurchasePaymentId());
+        hs = xCH(hs, _purchasePaymentId);
         return hs;
     }
-    protected int xCH(int hs, Object vl) {
-        return FunCustodial.calculateHashcode(hs, vl);
-    }
 
-    /**
-     * {@inheritDoc}
-     */
-    public int instanceHash() {
-        return super.hashCode();
-    }
-
-    /**
-     * Convert to display string of entity's data. (no relation data)
-     * @return The display string of all columns and relation existences. (NotNull)
-     */
-    public String toString() {
-        return buildDisplayString(FunCustodial.toClassTitle(this), true, true);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String toStringWithRelation() {
+    @Override
+    protected String doBuildStringWithRelation(String li) {
         StringBuilder sb = new StringBuilder();
-        sb.append(toString());
-        String li = "\n  ";
         if (_purchase != null)
         { sb.append(li).append(xbRDS(_purchase, "purchase")); }
         return sb.toString();
     }
-    protected String xbRDS(Entity et, String name) { // buildRelationDisplayString()
-        return et.buildDisplayString(name, true, true);
-    }
 
-    /**
-     * {@inheritDoc}
-     */
-    public String buildDisplayString(String name, boolean column, boolean relation) {
+    @Override
+    protected String doBuildColumnString(String dm) {
         StringBuilder sb = new StringBuilder();
-        if (name != null) { sb.append(name).append(column || relation ? ":" : ""); }
-        if (column) { sb.append(buildColumnString()); }
-        if (relation) { sb.append(buildRelationString()); }
-        sb.append("@").append(Integer.toHexString(hashCode()));
-        return sb.toString();
-    }
-    protected String buildColumnString() {
-        StringBuilder sb = new StringBuilder();
-        String dm = ", ";
-        sb.append(dm).append(getPurchasePaymentId());
-        sb.append(dm).append(getPurchaseId());
-        sb.append(dm).append(getPaymentAmount());
-        sb.append(dm).append(getPaymentDatetime());
-        sb.append(dm).append(getPaymentMethodCode());
-        sb.append(dm).append(getRegisterDatetime());
-        sb.append(dm).append(getRegisterUser());
-        sb.append(dm).append(getUpdateDatetime());
-        sb.append(dm).append(getUpdateUser());
+        sb.append(dm).append(xfND(_purchasePaymentId));
+        sb.append(dm).append(xfND(_purchaseId));
+        sb.append(dm).append(xfND(_paymentAmount));
+        sb.append(dm).append(xfND(_paymentDatetime));
+        sb.append(dm).append(xfND(_paymentMethodCode));
+        sb.append(dm).append(xfND(_registerDatetime));
+        sb.append(dm).append(xfND(_registerUser));
+        sb.append(dm).append(xfND(_updateDatetime));
+        sb.append(dm).append(xfND(_updateUser));
         if (sb.length() > dm.length()) {
             sb.delete(0, dm.length());
         }
         sb.insert(0, "{").append("}");
         return sb.toString();
     }
-    protected String buildRelationString() {
+
+    @Override
+    protected String doBuildRelationString(String dm) {
         StringBuilder sb = new StringBuilder();
-        String cm = ",";
-        if (_purchase != null) { sb.append(cm).append("purchase"); }
-        if (sb.length() > cm.length()) {
-            sb.delete(0, cm.length()).insert(0, "(").append(")");
+        if (_purchase != null)
+        { sb.append(dm).append("purchase"); }
+        if (sb.length() > dm.length()) {
+            sb.delete(0, dm.length()).insert(0, "(").append(")");
         }
         return sb.toString();
     }
 
-    /**
-     * Clone entity instance using super.clone(). (shallow copy) 
-     * @return The cloned instance of this entity. (NotNull)
-     */
+    @Override
     public PurchasePayment clone() {
-        try {
-            return (PurchasePayment)super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new IllegalStateException("Failed to clone the entity: " + toString(), e);
-        }
+        return (PurchasePayment)super.clone();
     }
 
     // ===================================================================================
@@ -527,6 +411,7 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
      * @return The value of the column 'PURCHASE_PAYMENT_ID'. (basically NotNull if selected: for the constraint)
      */
     public Long getPurchasePaymentId() {
+        checkSpecifiedProperty("purchasePaymentId");
         return _purchasePaymentId;
     }
 
@@ -536,8 +421,8 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
      * @param purchasePaymentId The value of the column 'PURCHASE_PAYMENT_ID'. (basically NotNull if update: for the constraint)
      */
     public void setPurchasePaymentId(Long purchasePaymentId) {
-        __modifiedProperties.addPropertyName("purchasePaymentId");
-        this._purchasePaymentId = purchasePaymentId;
+        registerModifiedProperty("purchasePaymentId");
+        _purchasePaymentId = purchasePaymentId;
     }
 
     /**
@@ -546,6 +431,7 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
      * @return The value of the column 'PURCHASE_ID'. (basically NotNull if selected: for the constraint)
      */
     public Long getPurchaseId() {
+        checkSpecifiedProperty("purchaseId");
         return _purchaseId;
     }
 
@@ -555,8 +441,8 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
      * @param purchaseId The value of the column 'PURCHASE_ID'. (basically NotNull if update: for the constraint)
      */
     public void setPurchaseId(Long purchaseId) {
-        __modifiedProperties.addPropertyName("purchaseId");
-        this._purchaseId = purchaseId;
+        registerModifiedProperty("purchaseId");
+        _purchaseId = purchaseId;
     }
 
     /**
@@ -565,6 +451,7 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
      * @return The value of the column 'PAYMENT_AMOUNT'. (basically NotNull if selected: for the constraint)
      */
     public java.math.BigDecimal getPaymentAmount() {
+        checkSpecifiedProperty("paymentAmount");
         return _paymentAmount;
     }
 
@@ -574,8 +461,8 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
      * @param paymentAmount The value of the column 'PAYMENT_AMOUNT'. (basically NotNull if update: for the constraint)
      */
     public void setPaymentAmount(java.math.BigDecimal paymentAmount) {
-        __modifiedProperties.addPropertyName("paymentAmount");
-        this._paymentAmount = paymentAmount;
+        registerModifiedProperty("paymentAmount");
+        _paymentAmount = paymentAmount;
     }
 
     /**
@@ -584,6 +471,7 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
      * @return The value of the column 'PAYMENT_DATETIME'. (basically NotNull if selected: for the constraint)
      */
     public java.sql.Timestamp getPaymentDatetime() {
+        checkSpecifiedProperty("paymentDatetime");
         return _paymentDatetime;
     }
 
@@ -593,8 +481,8 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
      * @param paymentDatetime The value of the column 'PAYMENT_DATETIME'. (basically NotNull if update: for the constraint)
      */
     public void setPaymentDatetime(java.sql.Timestamp paymentDatetime) {
-        __modifiedProperties.addPropertyName("paymentDatetime");
-        this._paymentDatetime = paymentDatetime;
+        registerModifiedProperty("paymentDatetime");
+        _paymentDatetime = paymentDatetime;
     }
 
     /**
@@ -603,6 +491,7 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
      * @return The value of the column 'PAYMENT_METHOD_CODE'. (basically NotNull if selected: for the constraint)
      */
     public String getPaymentMethodCode() {
+        checkSpecifiedProperty("paymentMethodCode");
         return convertEmptyToNull(_paymentMethodCode);
     }
 
@@ -612,9 +501,9 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
      * @param paymentMethodCode The value of the column 'PAYMENT_METHOD_CODE'. (basically NotNull if update: for the constraint)
      */
     protected void setPaymentMethodCode(String paymentMethodCode) {
-        checkImplicitSet("PAYMENT_METHOD_CODE", CDef.DefMeta.PaymentMethod, paymentMethodCode);
-        __modifiedProperties.addPropertyName("paymentMethodCode");
-        this._paymentMethodCode = paymentMethodCode;
+        checkClassificationCode("PAYMENT_METHOD_CODE", CDef.DefMeta.PaymentMethod, paymentMethodCode);
+        registerModifiedProperty("paymentMethodCode");
+        _paymentMethodCode = paymentMethodCode;
     }
 
     /**
@@ -622,6 +511,7 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
      * @return The value of the column 'REGISTER_DATETIME'. (basically NotNull if selected: for the constraint)
      */
     public java.sql.Timestamp getRegisterDatetime() {
+        checkSpecifiedProperty("registerDatetime");
         return _registerDatetime;
     }
 
@@ -630,8 +520,8 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
      * @param registerDatetime The value of the column 'REGISTER_DATETIME'. (basically NotNull if update: for the constraint)
      */
     public void setRegisterDatetime(java.sql.Timestamp registerDatetime) {
-        __modifiedProperties.addPropertyName("registerDatetime");
-        this._registerDatetime = registerDatetime;
+        registerModifiedProperty("registerDatetime");
+        _registerDatetime = registerDatetime;
     }
 
     /**
@@ -639,6 +529,7 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
      * @return The value of the column 'REGISTER_USER'. (basically NotNull if selected: for the constraint)
      */
     public String getRegisterUser() {
+        checkSpecifiedProperty("registerUser");
         return convertEmptyToNull(_registerUser);
     }
 
@@ -647,8 +538,8 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
      * @param registerUser The value of the column 'REGISTER_USER'. (basically NotNull if update: for the constraint)
      */
     public void setRegisterUser(String registerUser) {
-        __modifiedProperties.addPropertyName("registerUser");
-        this._registerUser = registerUser;
+        registerModifiedProperty("registerUser");
+        _registerUser = registerUser;
     }
 
     /**
@@ -656,6 +547,7 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
      * @return The value of the column 'UPDATE_DATETIME'. (basically NotNull if selected: for the constraint)
      */
     public java.sql.Timestamp getUpdateDatetime() {
+        checkSpecifiedProperty("updateDatetime");
         return _updateDatetime;
     }
 
@@ -664,8 +556,8 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
      * @param updateDatetime The value of the column 'UPDATE_DATETIME'. (basically NotNull if update: for the constraint)
      */
     public void setUpdateDatetime(java.sql.Timestamp updateDatetime) {
-        __modifiedProperties.addPropertyName("updateDatetime");
-        this._updateDatetime = updateDatetime;
+        registerModifiedProperty("updateDatetime");
+        _updateDatetime = updateDatetime;
     }
 
     /**
@@ -673,6 +565,7 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
      * @return The value of the column 'UPDATE_USER'. (basically NotNull if selected: for the constraint)
      */
     public String getUpdateUser() {
+        checkSpecifiedProperty("updateUser");
         return convertEmptyToNull(_updateUser);
     }
 
@@ -681,15 +574,15 @@ public abstract class BsPurchasePayment implements EntityDefinedCommonColumn, Se
      * @param updateUser The value of the column 'UPDATE_USER'. (basically NotNull if update: for the constraint)
      */
     public void setUpdateUser(String updateUser) {
-        __modifiedProperties.addPropertyName("updateUser");
-        this._updateUser = updateUser;
+        registerModifiedProperty("updateUser");
+        _updateUser = updateUser;
     }
 
-    protected String convertEmptyToNull(String value) {
-        return FunCustodial.convertEmptyToNull(value);
-    }
-
-    protected void checkImplicitSet(String columnDbName, CDef.DefMeta meta, Object value) {
-        FunCustodial.checkImplicitSet(this, columnDbName, meta, value);
+    /**
+     * For framework so basically DON'T use this method.
+     * @param paymentMethodCode The value of the column 'PAYMENT_METHOD_CODE'. (basically NotNull if update: for the constraint)
+     */
+    public void mynativeMappingPaymentMethodCode(String paymentMethodCode) {
+        setPaymentMethodCode(paymentMethodCode);
     }
 }

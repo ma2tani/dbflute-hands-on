@@ -59,7 +59,6 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
     // ===================================================================================
     //                                                                               Query
     //                                                                               =====
-
     /**
      * Equal(=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br />
      * (サービスランクコード)SERVICE_RANK_CODE: {PK, NotNull, CHAR(3), classification=ServiceRank}
@@ -485,7 +484,7 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
 
     protected void regServiceRankName(ConditionKey ky, Object vl) { regQ(ky, vl, getCValueServiceRankName(), "SERVICE_RANK_NAME"); }
     protected abstract ConditionValue getCValueServiceRankName();
-    
+
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
      * (サービスポイント発生率)SERVICE_POINT_INCIDENCE: {NotNull, DECIMAL(5, 3)}
@@ -589,7 +588,7 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
 
     protected void regServicePointIncidence(ConditionKey ky, Object vl) { regQ(ky, vl, getCValueServicePointIncidence(), "SERVICE_POINT_INCIDENCE"); }
     protected abstract ConditionValue getCValueServicePointIncidence();
-    
+
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
      * (新規受け入れ可能フラグ)NEW_ACCEPTABLE_FLG: {NotNull, INTEGER(10), classification=Flg}
@@ -848,7 +847,7 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
 
     protected void regDescription(ConditionKey ky, Object vl) { regQ(ky, vl, getCValueDescription(), "DESCRIPTION"); }
     protected abstract ConditionValue getCValueDescription();
-    
+
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
      * (表示順)DISPLAY_ORDER: {UQ, NotNull, INTEGER(10)}
@@ -970,7 +969,7 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<ServiceRankCB> scalar_Equal() {
-        return xcreateSSQFunction(CK_EQ.getOperand(), ServiceRankCB.class);
+        return xcreateSSQFunction(CK_EQ, ServiceRankCB.class);
     }
 
     /**
@@ -987,7 +986,7 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<ServiceRankCB> scalar_NotEqual() {
-        return xcreateSSQFunction(CK_NES.getOperand(), ServiceRankCB.class);
+        return xcreateSSQFunction(CK_NES, ServiceRankCB.class);
     }
 
     /**
@@ -1004,7 +1003,7 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<ServiceRankCB> scalar_GreaterThan() {
-        return xcreateSSQFunction(CK_GT.getOperand(), ServiceRankCB.class);
+        return xcreateSSQFunction(CK_GT, ServiceRankCB.class);
     }
 
     /**
@@ -1021,7 +1020,7 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<ServiceRankCB> scalar_LessThan() {
-        return xcreateSSQFunction(CK_LT.getOperand(), ServiceRankCB.class);
+        return xcreateSSQFunction(CK_LT, ServiceRankCB.class);
     }
 
     /**
@@ -1038,7 +1037,7 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<ServiceRankCB> scalar_GreaterEqual() {
-        return xcreateSSQFunction(CK_GE.getOperand(), ServiceRankCB.class);
+        return xcreateSSQFunction(CK_GE, ServiceRankCB.class);
     }
 
     /**
@@ -1055,7 +1054,7 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<ServiceRankCB> scalar_LessEqual() {
-        return xcreateSSQFunction(CK_LE.getOperand(), ServiceRankCB.class);
+        return xcreateSSQFunction(CK_LE, ServiceRankCB.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -1141,8 +1140,46 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
     public abstract String keepMyselfInScope(ServiceRankCQ sq);
 
     // ===================================================================================
-    //                                                                          Compatible
-    //                                                                          ==========
+    //                                                                        Manual Order
+    //                                                                        ============
+    /**
+     * Order along manual ordering information.
+     * <pre>
+     * MemberCB cb = new MemberCB();
+     * ManualOrderBean mob = new ManualOrderBean();
+     * mob.<span style="color: #DD4747">when_GreaterEqual</span>(priorityDate); <span style="color: #3F7E5E">// e.g. 2000/01/01</span>
+     * cb.query().addOrderBy_Birthdate_Asc().<span style="color: #DD4747">withManualOrder(mob)</span>;
+     * <span style="color: #3F7E5E">// order by </span>
+     * <span style="color: #3F7E5E">//   case</span>
+     * <span style="color: #3F7E5E">//     when BIRTHDATE &gt;= '2000/01/01' then 0</span>
+     * <span style="color: #3F7E5E">//     else 1</span>
+     * <span style="color: #3F7E5E">//   end asc, ...</span>
+     *
+     * MemberCB cb = new MemberCB();
+     * ManualOrderBean mob = new ManualOrderBean();
+     * mob.<span style="color: #DD4747">when_Equal</span>(CDef.MemberStatus.Withdrawal);
+     * mob.<span style="color: #DD4747">when_Equal</span>(CDef.MemberStatus.Formalized);
+     * mob.<span style="color: #DD4747">when_Equal</span>(CDef.MemberStatus.Provisional);
+     * cb.query().addOrderBy_MemberStatusCode_Asc().<span style="color: #DD4747">withManualOrder(mob)</span>;
+     * <span style="color: #3F7E5E">// order by </span>
+     * <span style="color: #3F7E5E">//   case</span>
+     * <span style="color: #3F7E5E">//     when MEMBER_STATUS_CODE = 'WDL' then 0</span>
+     * <span style="color: #3F7E5E">//     when MEMBER_STATUS_CODE = 'FML' then 1</span>
+     * <span style="color: #3F7E5E">//     when MEMBER_STATUS_CODE = 'PRV' then 2</span>
+     * <span style="color: #3F7E5E">//     else 3</span>
+     * <span style="color: #3F7E5E">//   end asc, ...</span>
+     * </pre>
+     * <p>This function with Union is unsupported!</p>
+     * <p>The order values are bound (treated as bind parameter).</p>
+     * @param mob The bean of manual order containing order values. (NotNull)
+     */
+    public void withManualOrder(ManualOrderBean mob) { // is user public!
+        xdoWithManualOrder(mob);
+    }
+
+    // ===================================================================================
+    //                                                                    Small Adjustment
+    //                                                                    ================
     /**
      * Order along the list of manual values. #beforejava8 <br />
      * This function with Union is unsupported! <br />
@@ -1171,6 +1208,11 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
         withManualOrder(manualOrderBean);
     }
 
+    @Override
+    protected void filterFromToOption(FromToOption option) {
+        option.allowOneSide();
+    }
+
     // ===================================================================================
     //                                                                       Very Internal
     //                                                                       =============
@@ -1178,6 +1220,7 @@ public abstract class AbstractBsServiceRankCQ extends AbstractConditionQuery {
         return new ServiceRankCB();
     }
     // very internal (for suppressing warn about 'Not Use Import')
+    protected String xabUDT() { return Date.class.getName(); }
     protected String xabCQ() { return ServiceRankCQ.class.getName(); }
     protected String xabLSO() { return LikeSearchOption.class.getName(); }
     protected String xabSSQS() { return HpSSQSetupper.class.getName(); }

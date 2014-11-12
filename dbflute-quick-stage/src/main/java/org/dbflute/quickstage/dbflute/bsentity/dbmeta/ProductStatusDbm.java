@@ -21,9 +21,9 @@ import java.util.Map;
 import org.seasar.dbflute.DBDef;
 import org.seasar.dbflute.Entity;
 import org.seasar.dbflute.dbmeta.AbstractDBMeta;
-import org.seasar.dbflute.dbmeta.PropertyGateway;
 import org.seasar.dbflute.dbmeta.info.*;
 import org.seasar.dbflute.dbmeta.name.*;
+import org.seasar.dbflute.dbmeta.property.PropertyGateway;
 import org.dbflute.quickstage.dbflute.allcommon.*;
 import org.dbflute.quickstage.dbflute.exentity.*;
 
@@ -62,7 +62,12 @@ public class ProductStatusDbm extends AbstractDBMeta {
         public void write(Entity et, Object vl) {
             ColumnInfo col = columnProductStatusCode();
             ccls(col, vl);
-            ((ProductStatus)et).setProductStatusCodeAsProductStatus((CDef.ProductStatus)gcls(col, vl));
+            CDef.ProductStatus cls = (CDef.ProductStatus)gcls(col, vl);
+            if (cls != null) {
+                ((ProductStatus)et).setProductStatusCodeAsProductStatus(cls);
+            } else {
+                ((ProductStatus)et).mynativeMappingProductStatusCode((String)vl);
+            }
         }
     }
     public static class EpgProductStatusName implements PropertyGateway {
@@ -182,7 +187,7 @@ public class ProductStatusDbm extends AbstractDBMeta {
     // ===================================================================================
     //                                                                     Object Instance
     //                                                                     ===============
-    public Entity newEntity() { return newMyEntity(); }
+    public ProductStatus newEntity() { return new ProductStatus(); }
     public ProductStatus newMyEntity() { return new ProductStatus(); }
 
     // ===================================================================================

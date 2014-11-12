@@ -21,9 +21,9 @@ import java.util.Map;
 import org.seasar.dbflute.DBDef;
 import org.seasar.dbflute.Entity;
 import org.seasar.dbflute.dbmeta.AbstractDBMeta;
-import org.seasar.dbflute.dbmeta.PropertyGateway;
 import org.seasar.dbflute.dbmeta.info.*;
 import org.seasar.dbflute.dbmeta.name.*;
+import org.seasar.dbflute.dbmeta.property.PropertyGateway;
 import org.dbflute.quickstage.dbflute.allcommon.*;
 import org.dbflute.quickstage.dbflute.exentity.*;
 
@@ -76,7 +76,12 @@ public class SummaryProductDbm extends AbstractDBMeta {
         public void write(Entity et, Object vl) {
             ColumnInfo col = columnProductStatusCode();
             ccls(col, vl);
-            ((SummaryProduct)et).setProductStatusCodeAsProductStatus((CDef.ProductStatus)gcls(col, vl));
+            CDef.ProductStatus cls = (CDef.ProductStatus)gcls(col, vl);
+            if (cls != null) {
+                ((SummaryProduct)et).setProductStatusCodeAsProductStatus(cls);
+            } else {
+                ((SummaryProduct)et).mynativeMappingProductStatusCode((String)vl);
+            }
         }
     }
     public static class EpgLatestPurchaseDatetime implements PropertyGateway {
@@ -216,7 +221,7 @@ public class SummaryProductDbm extends AbstractDBMeta {
     // ===================================================================================
     //                                                                     Object Instance
     //                                                                     ===============
-    public Entity newEntity() { return newMyEntity(); }
+    public SummaryProduct newEntity() { return new SummaryProduct(); }
     public SummaryProduct newMyEntity() { return new SummaryProduct(); }
 
     // ===================================================================================

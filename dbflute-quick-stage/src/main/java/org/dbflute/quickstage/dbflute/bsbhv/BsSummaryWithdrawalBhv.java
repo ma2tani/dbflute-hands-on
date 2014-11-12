@@ -20,11 +20,12 @@ import java.util.List;
 import org.seasar.dbflute.*;
 import org.seasar.dbflute.bhv.*;
 import org.seasar.dbflute.cbean.*;
-import org.seasar.dbflute.dbmeta.DBMeta;
+import org.seasar.dbflute.cbean.chelper.HpSLSFunction;
 import org.seasar.dbflute.exception.*;
-import org.seasar.dbflute.optional.*;
+import org.seasar.dbflute.optional.OptionalEntity;
 import org.seasar.dbflute.outsidesql.executor.*;
 import org.dbflute.quickstage.dbflute.exbhv.*;
+import org.dbflute.quickstage.dbflute.bsbhv.loader.*;
 import org.dbflute.quickstage.dbflute.exentity.*;
 import org.dbflute.quickstage.dbflute.bsentity.dbmeta.*;
 import org.dbflute.quickstage.dbflute.cbean.*;
@@ -61,7 +62,7 @@ import org.dbflute.quickstage.dbflute.cbean.*;
  * </pre>
  * @author DBFlute(AutoGenerator)
  */
-public abstract class BsSummaryWithdrawalBhv extends AbstractBehaviorReadable {
+public abstract class BsSummaryWithdrawalBhv extends AbstractBehaviorReadable<SummaryWithdrawal, SummaryWithdrawalCB> {
 
     // ===================================================================================
     //                                                                          Definition
@@ -70,16 +71,10 @@ public abstract class BsSummaryWithdrawalBhv extends AbstractBehaviorReadable {
     /*df:endQueryPath*/
 
     // ===================================================================================
-    //                                                                          Table name
-    //                                                                          ==========
-    /** @return The name on database of table. (NotNull) */
-    public String getTableDbName() { return "SUMMARY_WITHDRAWAL"; }
-
-    // ===================================================================================
     //                                                                              DBMeta
     //                                                                              ======
-    /** @return The instance of DBMeta. (NotNull) */
-    public DBMeta getDBMeta() { return SummaryWithdrawalDbm.getInstance(); }
+    /** {@inheritDoc} */
+    public SummaryWithdrawalDbm getDBMeta() { return SummaryWithdrawalDbm.getInstance(); }
 
     /** @return The instance of DBMeta as my table type. (NotNull) */
     public SummaryWithdrawalDbm getMyDBMeta() { return SummaryWithdrawalDbm.getInstance(); }
@@ -88,10 +83,7 @@ public abstract class BsSummaryWithdrawalBhv extends AbstractBehaviorReadable {
     //                                                                        New Instance
     //                                                                        ============
     /** {@inheritDoc} */
-    public Entity newEntity() { return newMyEntity(); }
-
-    /** {@inheritDoc} */
-    public ConditionBean newConditionBean() { return newMyConditionBean(); }
+    public SummaryWithdrawalCB newConditionBean() { return new SummaryWithdrawalCB(); }
 
     /** @return The instance of new entity as my table type. (NotNull) */
     public SummaryWithdrawal newMyEntity() { return new SummaryWithdrawal(); }
@@ -114,22 +106,7 @@ public abstract class BsSummaryWithdrawalBhv extends AbstractBehaviorReadable {
      * @return The count for the condition. (NotMinus)
      */
     public int selectCount(SummaryWithdrawalCB cb) {
-        return doSelectCountUniquely(cb);
-    }
-
-    protected int doSelectCountUniquely(SummaryWithdrawalCB cb) { // called by selectCount(cb)
-        assertCBStateValid(cb);
-        return delegateSelectCountUniquely(cb);
-    }
-
-    protected int doSelectCountPlainly(SummaryWithdrawalCB cb) { // called by selectPage(cb)
-        assertCBStateValid(cb);
-        return delegateSelectCountPlainly(cb);
-    }
-
-    @Override
-    protected int doReadCount(ConditionBean cb) {
-        return selectCount(downcast(cb));
+        return facadeSelectCount(cb);
     }
 
     // ===================================================================================
@@ -155,23 +132,18 @@ public abstract class BsSummaryWithdrawalBhv extends AbstractBehaviorReadable {
      * @exception SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
      */
     public SummaryWithdrawal selectEntity(SummaryWithdrawalCB cb) {
-        return doSelectEntity(cb, SummaryWithdrawal.class);
+        return facadeSelectEntity(cb);
     }
 
-    protected <ENTITY extends SummaryWithdrawal> ENTITY doSelectEntity(SummaryWithdrawalCB cb, Class<ENTITY> tp) {
-        assertCBStateValid(cb); assertObjectNotNull("entityType", tp);
-        return helpSelectEntityInternally(cb, tp, new InternalSelectEntityCallback<ENTITY, SummaryWithdrawalCB>() {
-            public List<ENTITY> callbackSelectList(SummaryWithdrawalCB lcb, Class<ENTITY> ltp) { return doSelectList(lcb, ltp); } });
+    protected SummaryWithdrawal facadeSelectEntity(SummaryWithdrawalCB cb) {
+        return doSelectEntity(cb, typeOfSelectedEntity());
     }
 
-    protected <ENTITY extends SummaryWithdrawal> OptionalEntity<ENTITY> doSelectOptionalEntity(SummaryWithdrawalCB cb, Class<ENTITY> tp) {
+    protected <ENTITY extends SummaryWithdrawal> OptionalEntity<ENTITY> doSelectOptionalEntity(SummaryWithdrawalCB cb, Class<? extends ENTITY> tp) {
         return createOptionalEntity(doSelectEntity(cb, tp), cb);
     }
 
-    @Override
-    protected Entity doReadEntity(ConditionBean cb) {
-        return selectEntity(downcast(cb));
-    }
+    protected Entity doReadEntity(ConditionBean cb) { return facadeSelectEntity(downcast(cb)); }
 
     /**
      * Select the entity by the condition-bean with deleted check. <br />
@@ -189,18 +161,7 @@ public abstract class BsSummaryWithdrawalBhv extends AbstractBehaviorReadable {
      * @exception SelectEntityConditionNotFoundException When the condition for selecting an entity is not found.
      */
     public SummaryWithdrawal selectEntityWithDeletedCheck(SummaryWithdrawalCB cb) {
-        return doSelectEntityWithDeletedCheck(cb, SummaryWithdrawal.class);
-    }
-
-    protected <ENTITY extends SummaryWithdrawal> ENTITY doSelectEntityWithDeletedCheck(SummaryWithdrawalCB cb, Class<ENTITY> tp) {
-        assertCBStateValid(cb); assertObjectNotNull("entityType", tp);
-        return helpSelectEntityWithDeletedCheckInternally(cb, tp, new InternalSelectEntityWithDeletedCheckCallback<ENTITY, SummaryWithdrawalCB>() {
-            public List<ENTITY> callbackSelectList(SummaryWithdrawalCB lcb, Class<ENTITY> ltp) { return doSelectList(lcb, ltp); } });
-    }
-
-    @Override
-    protected Entity doReadEntityWithDeletedCheck(ConditionBean cb) {
-        return selectEntityWithDeletedCheck(downcast(cb));
+        return facadeSelectEntityWithDeletedCheck(cb);
     }
 
     // ===================================================================================
@@ -222,19 +183,7 @@ public abstract class BsSummaryWithdrawalBhv extends AbstractBehaviorReadable {
      * @exception DangerousResultSizeException When the result size is over the specified safety size.
      */
     public ListResultBean<SummaryWithdrawal> selectList(SummaryWithdrawalCB cb) {
-        return doSelectList(cb, SummaryWithdrawal.class);
-    }
-
-    protected <ENTITY extends SummaryWithdrawal> ListResultBean<ENTITY> doSelectList(SummaryWithdrawalCB cb, Class<ENTITY> tp) {
-        assertCBStateValid(cb); assertObjectNotNull("entityType", tp);
-        assertSpecifyDerivedReferrerEntityProperty(cb, tp);
-        return helpSelectListInternally(cb, tp, new InternalSelectListCallback<ENTITY, SummaryWithdrawalCB>() {
-            public List<ENTITY> callbackSelectList(SummaryWithdrawalCB lcb, Class<ENTITY> ltp) { return delegateSelectList(lcb, ltp); } });
-    }
-
-    @Override
-    protected ListResultBean<? extends Entity> doReadList(ConditionBean cb) {
-        return selectList(downcast(cb));
+        return facadeSelectList(cb);
     }
 
     // ===================================================================================
@@ -263,20 +212,7 @@ public abstract class BsSummaryWithdrawalBhv extends AbstractBehaviorReadable {
      * @exception DangerousResultSizeException When the result size is over the specified safety size.
      */
     public PagingResultBean<SummaryWithdrawal> selectPage(SummaryWithdrawalCB cb) {
-        return doSelectPage(cb, SummaryWithdrawal.class);
-    }
-
-    protected <ENTITY extends SummaryWithdrawal> PagingResultBean<ENTITY> doSelectPage(SummaryWithdrawalCB cb, Class<ENTITY> tp) {
-        assertCBStateValid(cb); assertObjectNotNull("entityType", tp);
-        return helpSelectPageInternally(cb, tp, new InternalSelectPageCallback<ENTITY, SummaryWithdrawalCB>() {
-            public int callbackSelectCount(SummaryWithdrawalCB cb) { return doSelectCountPlainly(cb); }
-            public List<ENTITY> callbackSelectList(SummaryWithdrawalCB cb, Class<ENTITY> tp) { return doSelectList(cb, tp); }
-        });
-    }
-
-    @Override
-    protected PagingResultBean<? extends Entity> doReadPage(ConditionBean cb) {
-        return selectPage(downcast(cb));
+        return facadeSelectPage(cb);
     }
 
     // ===================================================================================
@@ -297,16 +233,7 @@ public abstract class BsSummaryWithdrawalBhv extends AbstractBehaviorReadable {
      * @param entityRowHandler The handler of entity row of SummaryWithdrawal. (NotNull)
      */
     public void selectCursor(SummaryWithdrawalCB cb, EntityRowHandler<SummaryWithdrawal> entityRowHandler) {
-        doSelectCursor(cb, entityRowHandler, SummaryWithdrawal.class);
-    }
-
-    protected <ENTITY extends SummaryWithdrawal> void doSelectCursor(SummaryWithdrawalCB cb, EntityRowHandler<ENTITY> handler, Class<ENTITY> tp) {
-        assertCBStateValid(cb); assertObjectNotNull("entityRowHandler", handler); assertObjectNotNull("entityType", tp);
-        assertSpecifyDerivedReferrerEntityProperty(cb, tp);
-        helpSelectCursorInternally(cb, handler, tp, new InternalSelectCursorCallback<ENTITY, SummaryWithdrawalCB>() {
-            public void callbackSelectCursor(SummaryWithdrawalCB cb, EntityRowHandler<ENTITY> handler, Class<ENTITY> tp) { delegateSelectCursor(cb, handler, tp); }
-            public List<ENTITY> callbackSelectList(SummaryWithdrawalCB cb, Class<ENTITY> tp) { return doSelectList(cb, tp); }
-        });
+        facadeSelectCursor(cb, entityRowHandler);
     }
 
     // ===================================================================================
@@ -327,22 +254,8 @@ public abstract class BsSummaryWithdrawalBhv extends AbstractBehaviorReadable {
      * @param resultType The type of result. (NotNull)
      * @return The scalar function object to specify function for scalar value. (NotNull)
      */
-    public <RESULT> SLFunction<SummaryWithdrawalCB, RESULT> scalarSelect(Class<RESULT> resultType) {
-        return doScalarSelect(resultType, newMyConditionBean());
-    }
-
-    protected <RESULT, CB extends SummaryWithdrawalCB> SLFunction<CB, RESULT> doScalarSelect(Class<RESULT> tp, CB cb) {
-        assertObjectNotNull("resultType", tp); assertCBStateValid(cb);
-        cb.xsetupForScalarSelect(); cb.getSqlClause().disableSelectIndex(); // for when you use union
-        return createSLFunction(cb, tp);
-    }
-
-    protected <RESULT, CB extends SummaryWithdrawalCB> SLFunction<CB, RESULT> createSLFunction(CB cb, Class<RESULT> tp) {
-        return new SLFunction<CB, RESULT>(cb, tp);
-    }
-
-    protected <RESULT> SLFunction<? extends ConditionBean, RESULT> doReadScalar(Class<RESULT> tp) {
-        return doScalarSelect(tp, newMyConditionBean());
+    public <RESULT> HpSLSFunction<SummaryWithdrawalCB, RESULT> scalarSelect(Class<RESULT> resultType) {
+        return facadeScalarSelect(resultType);
     }
 
     // ===================================================================================
@@ -355,9 +268,83 @@ public abstract class BsSummaryWithdrawalBhv extends AbstractBehaviorReadable {
     }
 
     // ===================================================================================
+    //                                                                       Load Referrer
+    //                                                                       =============
+    /**
+     * Load referrer by the the referrer loader. <br />
+     * <pre>
+     * MemberCB cb = new MemberCB();
+     * cb.query().set...
+     * List&lt;Member&gt; memberList = memberBhv.selectList(cb);
+     * memberBhv.<span style="color: #DD4747">load</span>(memberList, loader -&gt; {
+     *     loader.<span style="color: #DD4747">loadPurchaseList</span>(purchaseCB -&gt; {
+     *         purchaseCB.query().set...
+     *         purchaseCB.query().addOrderBy_PurchasePrice_Desc();
+     *     }); <span style="color: #3F7E5E">// you can also load nested referrer from here</span>
+     *     <span style="color: #3F7E5E">//}).withNestedList(purchaseLoader -&gt {</span>
+     *     <span style="color: #3F7E5E">//    purchaseLoader.loadPurchasePaymentList(...);</span>
+     *     <span style="color: #3F7E5E">//});</span>
+     *
+     *     <span style="color: #3F7E5E">// you can also pull out foreign table and load its referrer</span>
+     *     <span style="color: #3F7E5E">// (setupSelect of the foreign table should be called)</span>
+     *     <span style="color: #3F7E5E">//loader.pulloutMemberStatus().loadMemberLoginList(...)</span>
+     * }
+     * for (Member member : memberList) {
+     *     List&lt;Purchase&gt; purchaseList = member.<span style="color: #DD4747">getPurchaseList()</span>;
+     *     for (Purchase purchase : purchaseList) {
+     *         ...
+     *     }
+     * }
+     * </pre>
+     * About internal policy, the value of primary key (and others too) is treated as case-insensitive. <br />
+     * The condition-bean, which the set-upper provides, has order by FK before callback.
+     * @param summaryWithdrawalList The entity list of summaryWithdrawal. (NotNull)
+     * @param handler The callback to handle the referrer loader for actually loading referrer. (NotNull)
+     */
+    public void load(List<SummaryWithdrawal> summaryWithdrawalList, ReferrerLoaderHandler<LoaderOfSummaryWithdrawal> handler) {
+        xassLRArg(summaryWithdrawalList, handler);
+        handler.handle(new LoaderOfSummaryWithdrawal().ready(summaryWithdrawalList, _behaviorSelector));
+    }
+
+    /**
+     * Load referrer of ${referrer.referrerJavaBeansRulePropertyName} by the referrer loader. <br />
+     * <pre>
+     * MemberCB cb = new MemberCB();
+     * cb.query().set...
+     * Member member = memberBhv.selectEntityWithDeletedCheck(cb);
+     * memberBhv.<span style="color: #DD4747">load</span>(member, loader -&gt; {
+     *     loader.<span style="color: #DD4747">loadPurchaseList</span>(purchaseCB -&gt; {
+     *         purchaseCB.query().set...
+     *         purchaseCB.query().addOrderBy_PurchasePrice_Desc();
+     *     }); <span style="color: #3F7E5E">// you can also load nested referrer from here</span>
+     *     <span style="color: #3F7E5E">//}).withNestedList(purchaseLoader -&gt {</span>
+     *     <span style="color: #3F7E5E">//    purchaseLoader.loadPurchasePaymentList(...);</span>
+     *     <span style="color: #3F7E5E">//});</span>
+     *
+     *     <span style="color: #3F7E5E">// you can also pull out foreign table and load its referrer</span>
+     *     <span style="color: #3F7E5E">// (setupSelect of the foreign table should be called)</span>
+     *     <span style="color: #3F7E5E">//loader.pulloutMemberStatus().loadMemberLoginList(...)</span>
+     * }
+     * for (Member member : memberList) {
+     *     List&lt;Purchase&gt; purchaseList = member.<span style="color: #DD4747">getPurchaseList()</span>;
+     *     for (Purchase purchase : purchaseList) {
+     *         ...
+     *     }
+     * }
+     * </pre>
+     * About internal policy, the value of primary key (and others too) is treated as case-insensitive. <br />
+     * The condition-bean, which the set-upper provides, has order by FK before callback.
+     * @param summaryWithdrawal The entity of summaryWithdrawal. (NotNull)
+     * @param handler The callback to handle the referrer loader for actually loading referrer. (NotNull)
+     */
+    public void load(SummaryWithdrawal summaryWithdrawal, ReferrerLoaderHandler<LoaderOfSummaryWithdrawal> handler) {
+        xassLRArg(summaryWithdrawal, handler);
+        handler.handle(new LoaderOfSummaryWithdrawal().ready(xnewLRAryLs(summaryWithdrawal), _behaviorSelector));
+    }
+
+    // ===================================================================================
     //                                                                   Pull out Relation
     //                                                                   =================
-
     // ===================================================================================
     //                                                                      Extract Column
     //                                                                      ==============
@@ -397,55 +384,14 @@ public abstract class BsSummaryWithdrawalBhv extends AbstractBehaviorReadable {
      * @return The basic executor of outside-SQL. (NotNull)
      */
     public OutsideSqlBasicExecutor<SummaryWithdrawalBhv> outsideSql() {
-        return doOutsideSql();
+        OutsideSqlAllFacadeExecutor<SummaryWithdrawalBhv> facadeExecutor = doOutsideSql();
+        return facadeExecutor.xbasicExecutor(); // variable to resolve generic type
     }
 
     // ===================================================================================
-    //                                                                     Delegate Method
-    //                                                                     ===============
-    // [Behavior Command]
-    // -----------------------------------------------------
-    //                                                Select
-    //                                                ------
-    protected int delegateSelectCountUniquely(SummaryWithdrawalCB cb) { return invoke(createSelectCountCBCommand(cb, true)); }
-    protected int delegateSelectCountPlainly(SummaryWithdrawalCB cb) { return invoke(createSelectCountCBCommand(cb, false)); }
-    protected <ENTITY extends SummaryWithdrawal> void delegateSelectCursor(SummaryWithdrawalCB cb, EntityRowHandler<ENTITY> rh, Class<ENTITY> tp)
-    { invoke(createSelectCursorCBCommand(cb, rh, tp)); }
-    protected <ENTITY extends SummaryWithdrawal> List<ENTITY> delegateSelectList(SummaryWithdrawalCB cb, Class<ENTITY> tp)
-    { return invoke(createSelectListCBCommand(cb, tp)); }
-
-    // ===================================================================================
-    //                                                                Optimistic Lock Info
-    //                                                                ====================
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected boolean hasVersionNoValue(Entity et) {
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected boolean hasUpdateDateValue(Entity et) {
-        return false;
-    }
-
-    // ===================================================================================
-    //                                                                     Downcast Helper
-    //                                                                     ===============
-    protected SummaryWithdrawal downcast(Entity et) {
-        return helpEntityDowncastInternally(et, SummaryWithdrawal.class);
-    }
-
-    protected SummaryWithdrawalCB downcast(ConditionBean cb) {
-        return helpConditionBeanDowncastInternally(cb, SummaryWithdrawalCB.class);
-    }
-
-    @SuppressWarnings("unchecked")
-    protected List<SummaryWithdrawal> downcast(List<? extends Entity> ls) {
-        return (List<SummaryWithdrawal>)ls;
-    }
+    //                                                                         Type Helper
+    //                                                                         ===========
+    protected Class<? extends SummaryWithdrawal> typeOfSelectedEntity() { return SummaryWithdrawal.class; }
+    protected Class<SummaryWithdrawal> typeOfHandlingEntity() { return SummaryWithdrawal.class; }
+    protected Class<SummaryWithdrawalCB> typeOfHandlingConditionBean() { return SummaryWithdrawalCB.class; }
 }

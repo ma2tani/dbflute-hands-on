@@ -21,9 +21,9 @@ import java.util.Map;
 import org.seasar.dbflute.DBDef;
 import org.seasar.dbflute.Entity;
 import org.seasar.dbflute.dbmeta.AbstractDBMeta;
-import org.seasar.dbflute.dbmeta.PropertyGateway;
 import org.seasar.dbflute.dbmeta.info.*;
 import org.seasar.dbflute.dbmeta.name.*;
+import org.seasar.dbflute.dbmeta.property.PropertyGateway;
 import org.dbflute.quickstage.dbflute.allcommon.*;
 import org.dbflute.quickstage.dbflute.exentity.*;
 
@@ -95,7 +95,12 @@ public class PurchaseDbm extends AbstractDBMeta {
         public void write(Entity et, Object vl) {
             ColumnInfo col = columnPaymentCompleteFlg();
             ccls(col, vl);
-            ((Purchase)et).setPaymentCompleteFlgAsFlg((CDef.Flg)gcls(col, vl));
+            CDef.Flg cls = (CDef.Flg)gcls(col, vl);
+            if (cls != null) {
+                ((Purchase)et).setPaymentCompleteFlgAsFlg(cls);
+            } else {
+                ((Purchase)et).mynativeMappingPaymentCompleteFlg(ctn(vl, Integer.class));
+            }
         }
     }
     public static class EpgRegisterDatetime implements PropertyGateway {
@@ -163,7 +168,7 @@ public class PurchaseDbm extends AbstractDBMeta {
     // ===================================================================================
     //                                                                         Column Info
     //                                                                         ===========
-    protected final ColumnInfo _columnPurchaseId = cci("PURCHASE_ID", "PURCHASE_ID", null, null, Long.class, "purchaseId", null, true, true, true, "BIGINT", 19, 0, "NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_40BABCB2_E40A_4754_93BE_9528AC0D18B0", false, null, null, null, "purchasePaymentList", null);
+    protected final ColumnInfo _columnPurchaseId = cci("PURCHASE_ID", "PURCHASE_ID", null, null, Long.class, "purchaseId", null, true, true, true, "BIGINT", 19, 0, "NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_C6C70A2B_5B4B_4B4D_B9F2_CD6BBB04F507", false, null, null, null, "purchasePaymentList", null);
     protected final ColumnInfo _columnMemberId = cci("MEMBER_ID", "MEMBER_ID", null, "会員ID", Integer.class, "memberId", null, false, false, true, "INTEGER", 10, 0, null, false, null, "会員を参照するID。\n購入を識別する自然キー(複合ユニーク制約)の筆頭要素。", "member", null, null);
     protected final ColumnInfo _columnProductId = cci("PRODUCT_ID", "PRODUCT_ID", null, "商品ID", Integer.class, "productId", null, false, false, true, "INTEGER", 10, 0, null, false, null, "あなたは何を買ったのか？", "product,summaryProduct", null, null);
     protected final ColumnInfo _columnPurchaseDatetime = cci("PURCHASE_DATETIME", "PURCHASE_DATETIME", null, "購入日時", java.sql.Timestamp.class, "purchaseDatetime", null, false, false, true, "TIMESTAMP", 23, 10, null, false, null, "購入した瞬間の日時。", null, null, null);
@@ -340,7 +345,7 @@ public class PurchaseDbm extends AbstractDBMeta {
     // ===================================================================================
     //                                                                     Object Instance
     //                                                                     ===============
-    public Entity newEntity() { return newMyEntity(); }
+    public Purchase newEntity() { return new Purchase(); }
     public Purchase newMyEntity() { return new Purchase(); }
 
     // ===================================================================================

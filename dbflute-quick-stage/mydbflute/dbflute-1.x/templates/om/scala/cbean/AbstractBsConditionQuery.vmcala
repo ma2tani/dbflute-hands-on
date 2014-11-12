@@ -14,10 +14,13 @@
 ## governing permissions and limitations under the License.
 ##
 ${database.allClassCopyright}package ${glPackageBaseCQ};
-
 #set ($myClassName = "${myAbstractBaseConditionQueryClassName}")
-import java.lang.Long;
-import java.util._;
+
+import scala.collection.immutable;
+import scala.collection.JavaConverters._;
+
+import java.util.Collection;
+import java.util.Date;
 
 import org.seasar.dbflute.cbean._;
 import org.seasar.dbflute.cbean.AbstractConditionQuery._;
@@ -27,6 +30,13 @@ import org.seasar.dbflute.cbean.coption._;
 import org.seasar.dbflute.cbean.cvalue.ConditionValue;
 import org.seasar.dbflute.cbean.sqlclause.SqlClause;
 import org.seasar.dbflute.dbmeta.DBMetaProvider;
+#if ($database.isAvailableJodaTimeEntity())
+import org.seasar.dbflute.util.DfTypeUtil;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.ReadableInstant;
+import org.joda.time.ReadablePartial;
+#end
 import ${glPackageBaseCommon}._;
 import ${glPackageCB}._;
 import ${glPackageCQ}._;
@@ -53,21 +63,25 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
         return "${table.tableDbName}";
     }
 
+#set ($columnLoopIndex = 0)
+#foreach ($col in $table.columns)
+#if ($columnLoopIndex == 0)
     // ===================================================================================
     //                                                                               Query
     //                                                                               =====
-#foreach ($col in $table.columns)
+#else
+
+#end
 #set ($tmpJavaName = "${col.javaName}")
 #set ($tmpUncapitalisedJavaName = "${col.uncapitalisedJavaName}")
 #set ($fk = $col.foreignKey)
 #if (${col.isJavaNativeStringObject()})
-
     /**
      * Equal(=). And NullOrEmptyIgnored, OnlyOnceRegistered. <br />
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as equal. (NullAllowed: if null (or empty), no condition)
      */
-    ${col.propertySettingModifier} def set${tmpJavaName}_Equal(${tmpUncapitalisedJavaName}: ${col.javaNative}): Unit = {
+    ${col.propertySettingModifierAsPrefix}def set${tmpJavaName}_Equal(${tmpUncapitalisedJavaName}: ${col.immutableJavaNative}): Unit = {
         doSet${tmpJavaName}_Equal(fRES(${tmpUncapitalisedJavaName}));
     }
 #if (${col.isAvailableStringEmptyString()})
@@ -76,7 +90,7 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * Equal(=). As the empty-string. And OnlyOnceRegistered. <br />
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      */
-    ${col.propertySettingModifier} def set${tmpJavaName}_Equal_EmptyString(): Unit = {
+    ${col.propertySettingModifierAsPrefix}def set${tmpJavaName}_Equal_EmptyString(): Unit = {
         doSet${tmpJavaName}_Equal("");
     }
 #end
@@ -137,7 +151,7 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as notEqual. (NullAllowed: if null (or empty), no condition)
      */
-    ${col.propertySettingModifier} def set${tmpJavaName}_NotEqual(${tmpUncapitalisedJavaName}: ${col.javaNative}): Unit = {
+    ${col.propertySettingModifierAsPrefix}def set${tmpJavaName}_NotEqual(${tmpUncapitalisedJavaName}: ${col.immutableJavaNative}): Unit = {
         doSet${tmpJavaName}_NotEqual(fRES(${tmpUncapitalisedJavaName}));
     }
 #if (${col.isAvailableStringEmptyString()})
@@ -146,7 +160,7 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * NotEqual(&lt;&gt;). As the empty-string. And OnlyOnceRegistered. <br />
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      */
-    ${col.propertySettingModifier} def set${tmpJavaName}_NotEqual_EmptyString(): Unit = {
+    ${col.propertySettingModifierAsPrefix}def set${tmpJavaName}_NotEqual_EmptyString(): Unit = {
         doSet${tmpJavaName}_NotEqual("");
     }
 #end
@@ -194,7 +208,7 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as greaterThan. (NullAllowed: if null (or empty), no condition)
      */
-    def set${tmpJavaName}_GreaterThan(${tmpUncapitalisedJavaName}: ${col.javaNative}): Unit = {
+    def set${tmpJavaName}_GreaterThan(${tmpUncapitalisedJavaName}: ${col.immutableJavaNative}): Unit = {
         reg${tmpJavaName}(CK_GT, fRES(${tmpUncapitalisedJavaName}));
     }
 #end
@@ -205,7 +219,7 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as lessThan. (NullAllowed: if null (or empty), no condition)
      */
-    def set${tmpJavaName}_LessThan(${tmpUncapitalisedJavaName}: $col.javaNative): Unit = {
+    def set${tmpJavaName}_LessThan(${tmpUncapitalisedJavaName}: $col.immutableJavaNative): Unit = {
         reg${tmpJavaName}(CK_LT, fRES(${tmpUncapitalisedJavaName}));
     }
 #end
@@ -216,7 +230,7 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as greaterEqual. (NullAllowed: if null (or empty), no condition)
      */
-    def set${tmpJavaName}_GreaterEqual(${tmpUncapitalisedJavaName}: ${col.javaNative}): Unit = {
+    def set${tmpJavaName}_GreaterEqual(${tmpUncapitalisedJavaName}: ${col.immutableJavaNative}): Unit = {
         reg${tmpJavaName}(CK_GE, fRES(${tmpUncapitalisedJavaName}));
     }
 #end
@@ -227,7 +241,7 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as lessEqual. (NullAllowed: if null (or empty), no condition)
      */
-    def set${tmpJavaName}_LessEqual(${tmpUncapitalisedJavaName}: ${col.javaNative}): Unit = {
+    def set${tmpJavaName}_LessEqual(${tmpUncapitalisedJavaName}: ${col.immutableJavaNative}): Unit = {
         reg${tmpJavaName}(CK_LE, fRES(${tmpUncapitalisedJavaName}));
     }
 #end
@@ -238,8 +252,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName}List The collection of ${col.uncapitalisedJavaName} as inScope. (NullAllowed: if null (or empty), no condition)
      */
-    def set${tmpJavaName}_InScope(${tmpUncapitalisedJavaName}List: Collection[${col.javaNative}]): Unit = {
-        doSet${tmpJavaName}_InScope(${tmpUncapitalisedJavaName}List);
+    def set${tmpJavaName}_InScope(${tmpUncapitalisedJavaName}List: List[${col.immutableJavaNative}]): Unit = {
+        doSet${tmpJavaName}_InScope(toMutableValueCollectionImplicitly(${tmpUncapitalisedJavaName}List));
     }
 #if ($col.hasClassification())
 #set ($classificationTop = $database.getClassificationTop($col.classificationName))
@@ -252,8 +266,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
 #end
      * @param cdefList The list of classification definition (as ENUM type). (NullAllowed: if null (or empty), no condition)
      */
-    def set${tmpJavaName}_InScope_As${col.classificationName}(cdefList: Collection[${glCDef}.${col.classificationName}]): Unit = {
-        doSet${tmpJavaName}_InScope(cTStrL(cdefList));
+    def set${tmpJavaName}_InScope_As${col.classificationName}(cdefList: List[${glCDef}.${col.classificationName}]): Unit = {
+        doSet${tmpJavaName}_InScope(cTStrL(cdefList.asJava));
     }
 #foreach ($group in $classificationTop.groupList)
 
@@ -273,7 +287,7 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
 #end
 #end
 
-    def doSet${tmpJavaName}_InScope(${tmpUncapitalisedJavaName}List: Collection[${col.javaNative}]): Unit = {
+    protected def doSet${tmpJavaName}_InScope(${tmpUncapitalisedJavaName}List: Collection[${col.javaNative}]): Unit = {
         regINS(CK_INS, cTL(${tmpUncapitalisedJavaName}List), getCValue${tmpJavaName}(), "${col.name}");
     }
 #end
@@ -284,8 +298,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName}List The collection of ${col.uncapitalisedJavaName} as notInScope. (NullAllowed: if null (or empty), no condition)
      */
-    def set${tmpJavaName}_NotInScope(${tmpUncapitalisedJavaName}List: Collection[${col.javaNative}]): Unit = {
-        doSet${tmpJavaName}_NotInScope(${tmpUncapitalisedJavaName}List);
+    def set${tmpJavaName}_NotInScope(${tmpUncapitalisedJavaName}List: List[${col.immutableJavaNative}]): Unit = {
+        doSet${tmpJavaName}_NotInScope(if (${tmpUncapitalisedJavaName}List != null) { ${tmpUncapitalisedJavaName}List.map(_.asInstanceOf[${col.javaNative}]).asJava } else { null });
     }
 #if ($col.hasClassification())
 #set ($classificationTop = $database.getClassificationTop($col.classificationName))
@@ -298,12 +312,12 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
 #end
      * @param cdefList The list of classification definition (as ENUM type). (NullAllowed: if null (or empty), no condition)
      */
-    def set${tmpJavaName}_NotInScope_As${col.classificationName}(cdefList: Collection[${glCDef}.${col.classificationName}]): Unit = {
-        doSet${tmpJavaName}_NotInScope(cTStrL(cdefList));
+    def set${tmpJavaName}_NotInScope_As${col.classificationName}(cdefList: List[${glCDef}.${col.classificationName}]): Unit = {
+        doSet${tmpJavaName}_NotInScope(cTStrL(cdefList.asJava));
     }
 #end
 
-    def doSet${tmpJavaName}_NotInScope(${tmpUncapitalisedJavaName}List: Collection[${col.javaNative}]): Unit = {
+    protected def doSet${tmpJavaName}_NotInScope(${tmpUncapitalisedJavaName}List: Collection[${col.javaNative}]): Unit = {
         regINS(CK_NINS, cTL(${tmpUncapitalisedJavaName}List), getCValue${tmpJavaName}(), "${col.name}");
     }
 #end
@@ -315,7 +329,7 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as prefixSearch. (NullAllowed: if null (or empty), no condition)
      */
     def set${tmpJavaName}_PrefixSearch(${tmpUncapitalisedJavaName}: ${col.javaNative}): Unit = {
-        set${tmpJavaName}_LikeSearch(${tmpUncapitalisedJavaName}, cLSOP());
+        set${tmpJavaName}_LikeSearch(${tmpUncapitalisedJavaName})(_.likePrefix);
     }
 #end
 #if (${col.isAvailableStringLikeSearch()})
@@ -325,10 +339,10 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}} <br />
      * <pre>e.g. set${tmpJavaName}_LikeSearch("xxx", new <span style="color: #DD4747">LikeSearchOption</span>().likeContain());</pre>
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as likeSearch. (NullAllowed: if null (or empty), no condition)
-     * @param likeSearchOption The option of like-search. (NotNull)
+     * @param optionCall The callback for option of like-search. (NotNull)
      */
-    def set${tmpJavaName}_LikeSearch(${tmpUncapitalisedJavaName}: ${col.javaNative}, likeSearchOption: LikeSearchOption): Unit = {
-        regLSQ(CK_LS, fRES(${tmpUncapitalisedJavaName}), getCValue${tmpJavaName}(), "${col.name}", likeSearchOption);
+    def set${tmpJavaName}_LikeSearch(${tmpUncapitalisedJavaName}: ${col.javaNative})(optionCall: (ScrLikeSearchOption) => Unit): Unit = {
+        regLSQ(CK_LS, fRES(${tmpUncapitalisedJavaName}), getCValue${tmpJavaName}(), "${col.name}", callbackLSOP(optionCall));
     }
 #end
 #if (${col.isAvailableStringNotLikeSearch()})
@@ -338,10 +352,10 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * And NullOrEmptyIgnored, SeveralRegistered. <br />
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as notLikeSearch. (NullAllowed: if null (or empty), no condition)
-     * @param likeSearchOption The option of not-like-search. (NotNull)
+     * @param optionCall The callback for option of not-like-search. (NotNull)
      */
-    def set${tmpJavaName}_NotLikeSearch(${tmpUncapitalisedJavaName}: ${col.javaNative}, likeSearchOption: LikeSearchOption): Unit = {
-        regLSQ(CK_NLS, fRES(${tmpUncapitalisedJavaName}), getCValue${tmpJavaName}(), "${col.name}", likeSearchOption);
+    def set${tmpJavaName}_NotLikeSearch(${tmpUncapitalisedJavaName}: ${col.javaNative})(optionCall: (ScrLikeSearchOption) => Unit): Unit = {
+        regLSQ(CK_NLS, fRES(${tmpUncapitalisedJavaName}), getCValue${tmpJavaName}(), "${col.name}", callbackLSOP(optionCall));
     }
 #end
 #foreach ($referrer in $col.existsReferrerReferrers)
@@ -555,8 +569,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * </pre>
      * @return The object to set up a function for referrer table. (NotNull)
      */
-    def derived${referrer.referrerPropertyNameInitCap}(): HpQDRFunction[${relatedCBClassName}] = {
-        return xcreateQDRFunction${referrer.referrerPropertyNameInitCap}();
+    def derived${referrer.referrerPropertyNameInitCap}(): ScrHpQDRFunction[${relatedCBClassName}] = {
+        return toScalaQDRFunction(xcreateQDRFunction${referrer.referrerPropertyNameInitCap}());
     }
     protected def xcreateQDRFunction${referrer.referrerPropertyNameInitCap}(): HpQDRFunction[${relatedCBClassName}] = {
         return new HpQDRFunction[${relatedCBClassName}](new HpQDRSetupper[${relatedCBClassName}]() {
@@ -578,14 +592,13 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
 #end
 #end
 #if (${col.isJavaNativeNumberObject()})
-    
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as equal. (NullAllowed: if null, no condition)
      */
-    ${col.propertySettingModifier} def set${tmpJavaName}_Equal(${tmpUncapitalisedJavaName}: ${col.javaNative}): Unit = {
-        doSet${tmpJavaName}_Equal(${tmpUncapitalisedJavaName});
+    ${col.propertySettingModifierAsPrefix}def set${tmpJavaName}_Equal(${tmpUncapitalisedJavaName}: ${col.immutableJavaNative}): Unit = {
+        doSet${tmpJavaName}_Equal(${col.convertToMutableJavaNativeValue(${tmpUncapitalisedJavaName})});
     }
 #if ($col.hasClassification())
 #set ($classificationTop = $database.getClassificationTop($col.classificationName))
@@ -640,8 +653,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as notEqual. (NullAllowed: if null, no condition)
      */
-    ${col.propertySettingModifier} def set${tmpJavaName}_NotEqual(${tmpUncapitalisedJavaName}: ${col.javaNative}): Unit = {
-        doSet${tmpJavaName}_NotEqual(${tmpUncapitalisedJavaName});
+    ${col.propertySettingModifierAsPrefix}def set${tmpJavaName}_NotEqual(${tmpUncapitalisedJavaName}: ${col.immutableJavaNative}): Unit = {
+        doSet${tmpJavaName}_NotEqual(${col.convertToMutableJavaNativeValue(${tmpUncapitalisedJavaName})});
     }
 #if ($col.hasClassification())
 #set ($classificationTop = $database.getClassificationTop($col.classificationName))
@@ -683,8 +696,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as greaterThan. (NullAllowed: if null, no condition)
      */
-    def set${tmpJavaName}_GreaterThan(${tmpUncapitalisedJavaName}: ${col.javaNative}): Unit = {
-        reg${tmpJavaName}(CK_GT, ${tmpUncapitalisedJavaName});
+    def set${tmpJavaName}_GreaterThan(${tmpUncapitalisedJavaName}: ${col.immutableJavaNative}): Unit = {
+        reg${tmpJavaName}(CK_GT, ${col.convertToMutableJavaNativeValue(${tmpUncapitalisedJavaName})});
     }
 #end
 #if (${col.isAvailableNumberLessThan()})
@@ -694,8 +707,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as lessThan. (NullAllowed: if null, no condition)
      */
-    def set${tmpJavaName}_LessThan(${tmpUncapitalisedJavaName}: ${col.javaNative}): Unit = {
-        reg${tmpJavaName}(CK_LT, ${tmpUncapitalisedJavaName});
+    def set${tmpJavaName}_LessThan(${tmpUncapitalisedJavaName}: ${col.immutableJavaNative}): Unit = {
+        reg${tmpJavaName}(CK_LT, ${col.convertToMutableJavaNativeValue(${tmpUncapitalisedJavaName})});
     }
 #end
 #if (${col.isAvailableNumberGreaterEqual()})
@@ -705,8 +718,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as greaterEqual. (NullAllowed: if null, no condition)
      */
-    def set${tmpJavaName}_GreaterEqual(${tmpUncapitalisedJavaName}: ${col.javaNative}): Unit = {
-        reg${tmpJavaName}(CK_GE, ${tmpUncapitalisedJavaName});
+    def set${tmpJavaName}_GreaterEqual(${tmpUncapitalisedJavaName}: ${col.immutableJavaNative}): Unit = {
+        reg${tmpJavaName}(CK_GE, ${col.convertToMutableJavaNativeValue(${tmpUncapitalisedJavaName})});
     }
 #end
 #if (${col.isAvailableNumberLessEqual()})
@@ -716,8 +729,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as lessEqual. (NullAllowed: if null, no condition)
      */
-    def set${tmpJavaName}_LessEqual(${tmpUncapitalisedJavaName}: ${col.javaNative}): Unit = {
-        reg${tmpJavaName}(CK_LE, ${tmpUncapitalisedJavaName});
+    def set${tmpJavaName}_LessEqual(${tmpUncapitalisedJavaName}: ${col.immutableJavaNative}): Unit = {
+        reg${tmpJavaName}(CK_LE, ${col.convertToMutableJavaNativeValue(${tmpUncapitalisedJavaName})});
     }
 #end
 #if (${col.isAvailableNumberRangeOf()})
@@ -729,10 +742,10 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param minNumber The min number of ${col.uncapitalisedJavaName}. (NullAllowed: if null, no from-condition)
      * @param maxNumber The max number of ${col.uncapitalisedJavaName}. (NullAllowed: if null, no to-condition)
-     * @param rangeOfOption The option of range-of. (NotNull)
+     * @param optionCall The callback for option of range-of. (NotNull)
      */
-    def set${tmpJavaName}_RangeOf(minNumber: ${col.javaNative}, maxNumber: ${col.javaNative}, rangeOfOption: RangeOfOption): Unit = {
-        regROO(minNumber, maxNumber, getCValue${tmpJavaName}(), "${col.name}", rangeOfOption);
+    def set${tmpJavaName}_RangeOf(minNumber: ${col.immutableJavaNative}, maxNumber: ${col.immutableJavaNative})(optionCall: (RangeOfOption) => Unit): Unit = {
+        regROO(minNumber, maxNumber, getCValue${tmpJavaName}(), "${col.name}", callbackROOP(optionCall));
     }
 #end
 #if (${col.isAvailableNumberInScope()})
@@ -742,8 +755,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName}List The collection of ${col.uncapitalisedJavaName} as inScope. (NullAllowed: if null (or empty), no condition)
      */
-    def set${tmpJavaName}_InScope(${tmpUncapitalisedJavaName}List: Collection[${col.javaNative}]): Unit = {
-        doSet${tmpJavaName}_InScope(${tmpUncapitalisedJavaName}List);
+    def set${tmpJavaName}_InScope(${tmpUncapitalisedJavaName}List: List[${col.immutableJavaNative}]): Unit = {
+        doSet${tmpJavaName}_InScope(toMutableValueCollectionImplicitly(${tmpUncapitalisedJavaName}List));
     }
 #if ($col.hasClassification())
 #set ($classificationTop = $database.getClassificationTop($col.classificationName))
@@ -756,8 +769,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
 #end
      * @param cdefList The list of classification definition (as ENUM type). (NullAllowed: if null (or empty), no condition)
      */
-    def set${tmpJavaName}_InScope_As${col.classificationName}(cdefList: Collection[${glCDef}.${col.classificationName}]): Unit = {
-        doSet${tmpJavaName}_InScope(cTNumL(cdefList, classOf[${col.javaNative}]));
+    def set${tmpJavaName}_InScope_As${col.classificationName}(cdefList: List[${glCDef}.${col.classificationName}]): Unit = {
+        doSet${tmpJavaName}_InScope(cTNumL(cdefList.asJava, classOf[${col.javaNative}]));
     }
 #foreach ($group in $classificationTop.groupList)
 
@@ -788,8 +801,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName}List The collection of ${col.uncapitalisedJavaName} as notInScope. (NullAllowed: if null (or empty), no condition)
      */
-    def set${tmpJavaName}_NotInScope(${tmpUncapitalisedJavaName}List: Collection[${col.javaNative}]): Unit = {
-        doSet${tmpJavaName}_NotInScope(${tmpUncapitalisedJavaName}List);
+    def set${tmpJavaName}_NotInScope(${tmpUncapitalisedJavaName}List: List[${col.immutableJavaNative}]): Unit = {
+        doSet${tmpJavaName}_NotInScope(if (${tmpUncapitalisedJavaName}List != null) { ${tmpUncapitalisedJavaName}List.map(_.asInstanceOf[${col.javaNative}]).asJava } else { null });
     }
 #if ($col.hasClassification())
 #set ($classificationTop = $database.getClassificationTop($col.classificationName))
@@ -802,8 +815,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
 #end
      * @param cdefList The list of classification definition (as ENUM type). (NullAllowed: if null (or empty), no condition)
      */
-    def set${tmpJavaName}_NotInScope_As${col.classificationName}(cdefList: Collection[${glCDef}.${col.classificationName}]): Unit = {
-        doSet${tmpJavaName}_NotInScope(cTNumL(cdefList, classOf[${col.javaNative}]));
+    def set${tmpJavaName}_NotInScope_As${col.classificationName}(cdefList: List[${glCDef}.${col.classificationName}]): Unit = {
+        doSet${tmpJavaName}_NotInScope(cTNumL(cdefList.asJava, classOf[${col.javaNative}]));
     }
 #end
 
@@ -1022,8 +1035,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * </pre>
      * @return The object to set up a function for referrer table. (NotNull)
      */
-    def derived${referrer.referrerPropertyNameInitCap}(): HpQDRFunction[${relatedCBClassName}] = {
-        return xcreateQDRFunction${referrer.referrerPropertyNameInitCap}();
+    def derived${referrer.referrerPropertyNameInitCap}(): ScrHpQDRFunction[${relatedCBClassName}] = {
+        return toScalaQDRFunction(xcreateQDRFunction${referrer.referrerPropertyNameInitCap}());
     }
     protected def xcreateQDRFunction${referrer.referrerPropertyNameInitCap}(): HpQDRFunction[${relatedCBClassName}] = {
         return new HpQDRFunction[${relatedCBClassName}](new HpQDRSetupper[${relatedCBClassName}]() {
@@ -1045,14 +1058,13 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
 #end
 #end
 #if (${col.isJavaNativeDateObject()})
-
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as equal. (NullAllowed: if null, no condition)
      */
-    def set${tmpJavaName}_Equal(${tmpUncapitalisedJavaName}: $col.javaNative): Unit = {
-        reg${tmpJavaName}(CK_EQ, #if ($col.isJavaNativeUtilDate()) fCTPD(${tmpUncapitalisedJavaName})#else ${tmpUncapitalisedJavaName}#end);
+    def set${tmpJavaName}_Equal(${tmpUncapitalisedJavaName}: $col.immutableJavaNative): Unit = {
+        reg${tmpJavaName}(CK_EQ, #if ($col.isJavaNativeUtilDate()) fCTPD(${col.convertToMutableJavaNativeValue(${tmpUncapitalisedJavaName})})#else ${col.convertToMutableJavaNativeValue(${tmpUncapitalisedJavaName})}#end);
     }
 #if (${col.isAvailableDateNotEqual()})
 
@@ -1061,8 +1073,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as notEqual. (NullAllowed: if null, no condition)
      */
-    def set${tmpJavaName}_NotEqual(${tmpUncapitalisedJavaName}: $col.javaNative): Unit = {
-        reg${tmpJavaName}(${database.conditionQueryNotEqualDefinitionName}, #if ($col.isJavaNativeUtilDate()) fCTPD(${tmpUncapitalisedJavaName})#else ${tmpUncapitalisedJavaName}#end);
+    def set${tmpJavaName}_NotEqual(${tmpUncapitalisedJavaName}: $col.immutableJavaNative): Unit = {
+        reg${tmpJavaName}(${database.conditionQueryNotEqualDefinitionName}, #if ($col.isJavaNativeUtilDate()) fCTPD(${col.convertToMutableJavaNativeValue(${tmpUncapitalisedJavaName})})#else ${col.convertToMutableJavaNativeValue(${tmpUncapitalisedJavaName})}#end);
     }
 #end
 #if (${col.isAvailableDateGreaterThan()})
@@ -1072,8 +1084,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as greaterThan. (NullAllowed: if null, no condition)
      */
-    def set${tmpJavaName}_GreaterThan(${tmpUncapitalisedJavaName}: $col.javaNative): Unit = {
-        reg${tmpJavaName}(CK_GT, #if ($col.isJavaNativeUtilDate()) fCTPD(${tmpUncapitalisedJavaName})#else ${tmpUncapitalisedJavaName}#end);
+    def set${tmpJavaName}_GreaterThan(${tmpUncapitalisedJavaName}: $col.immutableJavaNative): Unit = {
+        reg${tmpJavaName}(CK_GT, #if ($col.isJavaNativeUtilDate()) fCTPD(${col.convertToMutableJavaNativeValue(${tmpUncapitalisedJavaName})})#else ${col.convertToMutableJavaNativeValue(${tmpUncapitalisedJavaName})}#end);
     }
 #end
 #if (${col.isAvailableDateLessThan()})
@@ -1083,8 +1095,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as lessThan. (NullAllowed: if null, no condition)
      */
-    def set${tmpJavaName}_LessThan(${tmpUncapitalisedJavaName}: $col.javaNative): Unit = {
-        reg${tmpJavaName}(CK_LT, #if ($col.isJavaNativeUtilDate()) fCTPD(${tmpUncapitalisedJavaName})#else ${tmpUncapitalisedJavaName}#end);
+    def set${tmpJavaName}_LessThan(${tmpUncapitalisedJavaName}: $col.immutableJavaNative): Unit = {
+        reg${tmpJavaName}(CK_LT, #if ($col.isJavaNativeUtilDate()) fCTPD(${col.convertToMutableJavaNativeValue(${tmpUncapitalisedJavaName})})#else ${col.convertToMutableJavaNativeValue(${tmpUncapitalisedJavaName})}#end);
     }
 #end
 #if (${col.isAvailableDateGreaterEqual()})
@@ -1094,8 +1106,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as greaterEqual. (NullAllowed: if null, no condition)
      */
-    def set${tmpJavaName}_GreaterEqual(${tmpUncapitalisedJavaName}: $col.javaNative): Unit = {
-        reg${tmpJavaName}(CK_GE, #if ($col.isJavaNativeUtilDate()) fCTPD(${tmpUncapitalisedJavaName})#else ${tmpUncapitalisedJavaName}#end);
+    def set${tmpJavaName}_GreaterEqual(${tmpUncapitalisedJavaName}: $col.immutableJavaNative): Unit = {
+        reg${tmpJavaName}(CK_GE, #if ($col.isJavaNativeUtilDate()) fCTPD(${col.convertToMutableJavaNativeValue(${tmpUncapitalisedJavaName})})#else ${col.convertToMutableJavaNativeValue(${tmpUncapitalisedJavaName})}#end);
     }
 #end
 #if (${col.isAvailableDateLessEqual()})
@@ -1105,8 +1117,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as lessEqual. (NullAllowed: if null, no condition)
      */
-    def set${tmpJavaName}_LessEqual(${tmpUncapitalisedJavaName}: $col.javaNative): Unit = {
-        reg${tmpJavaName}(CK_LE,#if ($col.isJavaNativeUtilDate()) fCTPD(${tmpUncapitalisedJavaName})#else ${tmpUncapitalisedJavaName}#end);
+    def set${tmpJavaName}_LessEqual(${tmpUncapitalisedJavaName}: $col.immutableJavaNative): Unit = {
+        reg${tmpJavaName}(CK_LE,#if ($col.isJavaNativeUtilDate()) fCTPD(${col.convertToMutableJavaNativeValue(${tmpUncapitalisedJavaName})})#else ${col.convertToMutableJavaNativeValue(${tmpUncapitalisedJavaName})}#end);
     }
 #end
 #if (${col.isAvailableDateFromTo()})
@@ -1120,11 +1132,15 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * @param toDatetime The to-datetime(yyyy/MM/dd HH:mm:ss.SSS) of ${col.uncapitalisedJavaName}. (NullAllowed: if null, no to-condition)
      * @param fromToOption The option of from-to. (NotNull)
      */
-    def set${tmpJavaName}_FromTo(fromDatetime: Date, toDatetime: Date, fromToOption: FromToOption): Unit = {
+    def set${tmpJavaName}_FromTo(fromDatetime: ${col.fromToJavaNativeDate}, toDatetime: ${col.fromToJavaNativeDate})(optionCall: (ScrFromToOption) => Unit): Unit = {
 #if ($col.isJavaNativeUtilDate())
-        regFTQ(fCTPD(fromDatetime), fCTPD(toDatetime), getCValue${tmpJavaName}(), "${col.name}", fromToOption);
+        regFTQ(fCTPD(fromDatetime), fCTPD(toDatetime), getCValue${tmpJavaName}(), "${col.name}", callbackFTOP(optionCall));
+#elseif ($col.isJavaNativeNextLocalDate())
+        regFTQ(toUtilDate(fromDatetime), toUtilDate(toDatetime), getCValue${tmpJavaName}(), "${col.name}", callbackFTOP(optionCall));
+#elseif ($col.isJavaNativeNextLocalDateTime())
+        regFTQ(toTimestamp(fromDatetime), toTimestamp(toDatetime), getCValue${tmpJavaName}(), "${col.name}", callbackFTOP(optionCall));
 #else
-        regFTQ(if (fromDatetime != null) { new ${col.javaNative}(fromDatetime.getTime()) } else { null }, if (toDatetime != null) { new ${col.javaNative}(toDatetime.getTime()) } else { null }, getCValue${tmpJavaName}(), "${col.name}", fromToOption);
+        regFTQ(if (fromDatetime != null) { new ${col.javaNative}(fromDatetime.getTime()) } else { null }, if (toDatetime != null) { new ${col.javaNative}(toDatetime.getTime()) } else { null }, getCValue${tmpJavaName}(), "${col.name}", callbackFTOP(optionCall));
 #end
     }
 #end
@@ -1141,8 +1157,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * @param fromDate The from-date(yyyy/MM/dd) of ${col.uncapitalisedJavaName}. (NullAllowed: if null, no from-condition)
      * @param toDate The to-date(yyyy/MM/dd) of ${col.uncapitalisedJavaName}. (NullAllowed: if null, no to-condition)
      */
-    def set${tmpJavaName}_DateFromTo(fromDate: Date, toDate: Date): Unit = {
-        set${tmpJavaName}_FromTo(fromDate, toDate, new FromToOption().compareAsDate());
+    def set${tmpJavaName}_DateFromTo(fromDate: ${col.fromToJavaNativeDate}, toDate: ${col.fromToJavaNativeDate}): Unit = {
+        set${tmpJavaName}_FromTo(fromDate, toDate)(_.compareAsDate);
     }
 #end
 #if (${col.isAvailableDateInScope()})
@@ -1152,8 +1168,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName}List The collection of ${col.uncapitalisedJavaName} as inScope. (NullAllowed: if null (or empty), no condition)
      */
-    def set${tmpJavaName}_InScope(${tmpUncapitalisedJavaName}List: Collection[${col.javaNative}]): Unit = {
-        doSet${tmpJavaName}_InScope(${tmpUncapitalisedJavaName}List);
+    def set${tmpJavaName}_InScope(${tmpUncapitalisedJavaName}List: List[${col.immutableJavaNative}]): Unit = {
+        doSet${tmpJavaName}_InScope(toMutableValueCollectionImplicitly(${tmpUncapitalisedJavaName}List));
     }
 
     protected def doSet${tmpJavaName}_InScope(${tmpUncapitalisedJavaName}List: Collection[${col.javaNative}]): Unit = {
@@ -1167,8 +1183,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName}List The collection of ${col.uncapitalisedJavaName} as notInScope. (NullAllowed: if null (or empty), no condition)
      */
-    def set${tmpJavaName}_NotInScope(${tmpUncapitalisedJavaName}List: Collection[${col.javaNative}]): Unit = {
-        doSet${tmpJavaName}_NotInScope(${tmpUncapitalisedJavaName}List);
+    def set${tmpJavaName}_NotInScope(${tmpUncapitalisedJavaName}List: List[${col.immutableJavaNative}]): Unit = {
+        doSet${tmpJavaName}_NotInScope(toMutableValueCollectionImplicitly(${tmpUncapitalisedJavaName}List));
     }
 
     protected def doSet${tmpJavaName}_NotInScope(${tmpUncapitalisedJavaName}List: Collection[${col.javaNative}]): Unit = {
@@ -1177,14 +1193,13 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
 #end
 #end
 #if (${col.isJavaNativeBooleanObject()})
-
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as equal. (NullAllowed: if null, no condition)
      */
-    def set${tmpJavaName}_Equal(${tmpUncapitalisedJavaName}: ${col.javaNative}): Unit = {
-        reg${tmpJavaName}(CK_EQ, ${tmpUncapitalisedJavaName});
+    def set${tmpJavaName}_Equal(${tmpUncapitalisedJavaName}: ${col.immutableJavaNative}): Unit = {
+        reg${tmpJavaName}(CK_EQ, ${col.convertToMutableJavaNativeValue(${tmpUncapitalisedJavaName})});
     }
 #if ($col.hasClassification())
 #foreach ($classificationElement in $col.classificationTop.classificationElementList)
@@ -1203,14 +1218,13 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
 #end
 #end
 #if (${col.isJavaNativeUUIDObject()})
-
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName} The value of ${col.uncapitalisedJavaName} as equal. (NullAllowed: if null, no condition)
      */
-    def set${tmpJavaName}_Equal(${tmpUncapitalisedJavaName}: ${col.javaNative}): Unit = {
-        reg${tmpJavaName}(CK_EQ, ${tmpUncapitalisedJavaName});
+    def set${tmpJavaName}_Equal(${tmpUncapitalisedJavaName}: ${col.immutableJavaNative}): Unit = {
+        reg${tmpJavaName}(CK_EQ, ${col.convertToMutableJavaNativeValue(${tmpUncapitalisedJavaName})}${tmpUncapitalisedJavaName}));
     }
 #if (${col.isAvailableStringInScope()})
 
@@ -1219,8 +1233,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * ${col.aliasExpression}${col.name}: {${col.columnDefinitionLineDisp}}
      * @param ${tmpUncapitalisedJavaName}List The collection of ${col.uncapitalisedJavaName} as inScope. (NullAllowed: if null (or empty), no condition)
      */
-    def set${tmpJavaName}_InScope(${tmpUncapitalisedJavaName}List: Collection[${col.javaNative}]): Unit = {
-        regINS(CK_INS, cTL(${tmpUncapitalisedJavaName}List), getCValue${tmpJavaName}(), "${col.name}");
+    def set${tmpJavaName}_InScope(${tmpUncapitalisedJavaName}List: List[${col.immutableJavaNative}]): Unit = {
+        regINS(CK_INS, cTL(toMutableValueCollectionImplicitly((${tmpUncapitalisedJavaName}List)), getCValue${tmpJavaName}(), "${col.name}");
     }
 #end
 #end
@@ -1247,8 +1261,9 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
     def set${tmpJavaName}_IsNotNull(): Unit = { reg${tmpJavaName}(CK_ISNN, AbstractConditionQuery.DOBJ); }
 #end
 
-    protected def reg${tmpJavaName}(ky: ConditionKey, vl: Object): Unit = { regQ(ky, vl, getCValue${tmpJavaName}(), "${col.name}"); }
+    protected def reg${tmpJavaName}(ky: ConditionKey, vl: Any): Unit = { regQ(ky, vl, getCValue${tmpJavaName}(), "${col.name}"); }
     protected def getCValue${tmpJavaName}(): ConditionValue;
+#set ($columnLoopIndex = $columnLoopIndex + 1)
 #end
 #if ($table.isAvailableMyselfScalarCondition())
 
@@ -1268,8 +1283,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * </pre>
      * @return The object to set up a function. (NotNull)
      */
-    def scalar_Equal(): HpSSQFunction[${myConditionBeanClassName}] = {
-        return xcreateSSQFunction(CK_EQ.getOperand(), classOf[${myConditionBeanClassName}]);
+    def scalar_Equal(): ScrHpSSQFunction[${myConditionBeanClassName}] = {
+        return toScalaSSQFunction(xcreateSSQFunction(CK_EQ, classOf[${myConditionBeanClassName}]));
     }
 
     /**
@@ -1285,8 +1300,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * </pre>
      * @return The object to set up a function. (NotNull)
      */
-    def scalar_NotEqual(): HpSSQFunction[${myConditionBeanClassName}] = {
-        return xcreateSSQFunction(CK_NES.getOperand(), classOf[${myConditionBeanClassName}]);
+    def scalar_NotEqual(): ScrHpSSQFunction[${myConditionBeanClassName}] = {
+        return toScalaSSQFunction(xcreateSSQFunction(CK_NES, classOf[${myConditionBeanClassName}]));
     }
 
     /**
@@ -1302,8 +1317,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * </pre>
      * @return The object to set up a function. (NotNull)
      */
-    def scalar_GreaterThan(): HpSSQFunction[${myConditionBeanClassName}] = {
-        return xcreateSSQFunction(CK_GT.getOperand(), classOf[${myConditionBeanClassName}]);
+    def scalar_GreaterThan(): ScrHpSSQFunction[${myConditionBeanClassName}] = {
+        return toScalaSSQFunction(xcreateSSQFunction(CK_GT, classOf[${myConditionBeanClassName}]));
     }
 
     /**
@@ -1319,8 +1334,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * </pre>
      * @return The object to set up a function. (NotNull)
      */
-    def scalar_LessThan(): HpSSQFunction[${myConditionBeanClassName}] = {
-        return xcreateSSQFunction(CK_LT.getOperand(), classOf[${myConditionBeanClassName}]);
+    def scalar_LessThan(): ScrHpSSQFunction[${myConditionBeanClassName}] = {
+        return toScalaSSQFunction(xcreateSSQFunction(CK_LT, classOf[${myConditionBeanClassName}]));
     }
 
     /**
@@ -1336,8 +1351,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * </pre>
      * @return The object to set up a function. (NotNull)
      */
-    def scalar_GreaterEqual(): HpSSQFunction[${myConditionBeanClassName}] = {
-        return xcreateSSQFunction(CK_GE.getOperand(), classOf[${myConditionBeanClassName}]);
+    def scalar_GreaterEqual(): ScrHpSSQFunction[${myConditionBeanClassName}] = {
+        return toScalaSSQFunction(xcreateSSQFunction(CK_GE, classOf[${myConditionBeanClassName}]));
     }
 
     /**
@@ -1353,9 +1368,12 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * </pre>
      * @return The object to set up a function. (NotNull)
      */
-    def scalar_LessEqual(): HpSSQFunction[${myConditionBeanClassName}] = {
-        return xcreateSSQFunction(CK_LE.getOperand(), classOf[${myConditionBeanClassName}]);
+    def scalar_LessEqual(): ScrHpSSQFunction[${myConditionBeanClassName}] = {
+        return toScalaSSQFunction(xcreateSSQFunction(CK_LE, classOf[${myConditionBeanClassName}]));
     }
+
+    protected def toScalaSSQFunction(function: HpSSQFunction[${myConditionBeanClassName}]): ScrHpSSQFunction[${myConditionBeanClassName}] =
+    { new ScrHpSSQFunction(function) }
 
     override protected def xscalarCondition[CB <: ConditionBean](fn: String, sq: SubQuery[CB], rd: String, op: HpSSQOption[CB]): Unit = {
         assertObjectNotNull("subQuery", sq);
@@ -1394,8 +1412,8 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * Prepare for (Query)MyselfDerived (correlated sub-query).
      * @return The object to set up a function for myself table. (NotNull)
      */
-    def myselfDerived(): HpQDRFunction[${myConditionBeanClassName}] = {
-        return xcreateQDRFunctionMyselfDerived(classOf[${myConditionBeanClassName}]);
+    def myselfDerived(): ScrHpQDRFunction[${myConditionBeanClassName}] = {
+        return toScalaQDRFunction(xcreateQDRFunctionMyselfDerived(classOf[${myConditionBeanClassName}]));
     }
     override protected def xqderiveMyselfDerived[CB <: ConditionBean](fn: String, sq: SubQuery[CB], rd: String, vl: Object, op: DerivedReferrerOption): Unit = {
         assertObjectNotNull("subQuery", sq);
@@ -1553,22 +1571,29 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
     }
 #end
 #end
-#if ($table.isMakeConditionQueryPlainListManualOrder())
 
     // ===================================================================================
-    //                                                                          Compatible
-    //                                                                          ==========
+    //                                                                            Order By
+    //                                                                            ========
     /**
-     * Order along the list of manual values. #beforejava8 <br />
-     * This function with Union is unsupported! <br />
-     * The order values are bound (treated as bind parameter).
+     * Order along manual ordering information.
      * <pre>
      * MemberCB cb = new MemberCB();
-     * List&lt;CDef.MemberStatus&gt; orderValueList = new ArrayList&lt;CDef.MemberStatus&gt;();
-     * orderValueList.add(CDef.MemberStatus.Withdrawal);
-     * orderValueList.add(CDef.MemberStatus.Formalized);
-     * orderValueList.add(CDef.MemberStatus.Provisional);
-     * cb.query().addOrderBy_MemberStatusCode_Asc().<span style="color: #DD4747">withManualOrder(orderValueList)</span>;
+     * ManualOrderBean mob = new ManualOrderBean();
+     * mob.<span style="color: #DD4747">when_GreaterEqual</span>(priorityDate); <span style="color: #3F7E5E">// e.g. 2000/01/01</span>
+     * cb.query().addOrderBy_Birthdate_Asc().<span style="color: #DD4747">withManualOrder(mob)</span>;
+     * <span style="color: #3F7E5E">// order by </span>
+     * <span style="color: #3F7E5E">//   case</span>
+     * <span style="color: #3F7E5E">//     when BIRTHDATE &gt;= '2000/01/01' then 0</span>
+     * <span style="color: #3F7E5E">//     else 1</span>
+     * <span style="color: #3F7E5E">//   end asc, ...</span>
+     *
+     * MemberCB cb = new MemberCB();
+     * ManualOrderBean mob = new ManualOrderBean();
+     * mob.<span style="color: #DD4747">when_Equal</span>(CDef.MemberStatus.Withdrawal);
+     * mob.<span style="color: #DD4747">when_Equal</span>(CDef.MemberStatus.Formalized);
+     * mob.<span style="color: #DD4747">when_Equal</span>(CDef.MemberStatus.Provisional);
+     * cb.query().addOrderBy_MemberStatusCode_Asc().<span style="color: #DD4747">withManualOrder(mob)</span>;
      * <span style="color: #3F7E5E">// order by </span>
      * <span style="color: #3F7E5E">//   case</span>
      * <span style="color: #3F7E5E">//     when MEMBER_STATUS_CODE = 'WDL' then 0</span>
@@ -1577,15 +1602,84 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
      * <span style="color: #3F7E5E">//     else 3</span>
      * <span style="color: #3F7E5E">//   end asc, ...</span>
      * </pre>
-     * @param orderValueList The list of order values for manual ordering. (NotNull)
+     * <p>This function with Union is unsupported!</p>
+     * <p>The order values are bound (treated as bind parameter).</p>
+     * @param mob The bean of manual order containing order values. (NotNull)
      */
-    def withManualOrder(orderValueList: List[_ <: Object]): Unit = { // is user public!
-        assertObjectNotNull("withManualOrder(orderValueList)", orderValueList);
-        val manualOrderBean: ManualOrderBean = new ManualOrderBean();
-        manualOrderBean.acceptOrderValueList(orderValueList);
-        withManualOrder(manualOrderBean);
+    def withManualOrder(mobCall: (ScrManualOrderBean) => Unit): Unit = { // is user public!
+        assertObjectNotNull("withManualOrder(mobCall)", mobCall);
+        xdoWithManualOrder(callbackMOB(mobCall));
     }
+
+#if ($database.isAvailableJodaTimeEntity())
+    protected def toUtilDate(date: Object): Date = {
+        if (date != null && date.isInstanceOf[ReadablePartial]) {
+            return new Date(date.asInstanceOf[ReadablePartial].toDateTime(null).getMillis());
+        } else if (date != null && date.isInstanceOf[ReadableInstant]) {
+            return new Date(date.asInstanceOf[ReadableInstant].getMillis());
+        }
+        return DfTypeUtil.toDate(date);
+    }
+
+    protected def toTimestamp(date: Object): java.sql.Timestamp = {
+        if (date != null && date.isInstanceOf[ReadablePartial]) {
+            return new java.sql.Timestamp(date.asInstanceOf[ReadablePartial].toDateTime(null).getMillis());
+        } else if (date != null && date.isInstanceOf[ReadableInstant]) {
+            return new java.sql.Timestamp(date.asInstanceOf[ReadableInstant].getMillis());
+        }
+        return DfTypeUtil.toTimestamp(date);
+    }
+
+    override protected def filterFromToRegisteredDate(date: Date, columnDbName: String): Object = {
+        if (date.isInstanceOf[java.sql.Timestamp]) {
+            return LocalDateTime.fromDateFields(date);
+        } else { // basically pure Date
+            return LocalDate.fromDateFields(date);
+        }
+    }
+
 #end
+    // ===================================================================================
+    //                                                                       Create Option
+    //                                                                       =============
+    protected def callbackLSOP(optionCall: (ScrLikeSearchOption) => Unit): LikeSearchOption =
+    { val op = createLikeSearchOption(); optionCall(op); return op; }
+    protected def createLikeSearchOption(): ScrLikeSearchOption = { new ScrLikeSearchOption() }
+
+    protected def callbackFTOP(optionCall: (ScrFromToOption) => Unit): FromToOption =
+    { val op = createFromToOption(); optionCall(op); return op; }
+    protected def createFromToOption(): ScrFromToOption = { new ScrFromToOption() }
+
+    protected def callbackROOP(optionCall: (ScrRangeOfOption) => Unit): RangeOfOption =
+    { val op = createRangeOfOption(); optionCall(op); return op; }
+    protected def createRangeOfOption(): ScrRangeOfOption = { new ScrRangeOfOption() }
+
+    protected def callbackMOB(mobCall: (ScrManualOrderBean) => Unit): ManualOrderBean =
+    { val mob = createManualOrderBean(); mobCall(mob); return mob; }
+    protected def createManualOrderBean(): ScrManualOrderBean = { new ScrManualOrderBean() }
+
+    // ===================================================================================
+    //                                                                        Invoke Query
+    //                                                                        ============
+    override protected def xfilterInvokeQueryParameterType(colName: String, ckey: String, parameterType: Class[_]): Class[_] =
+    { if (classOf[Collection[_]].isAssignableFrom(parameterType)) { classOf[List[_]] } else { parameterType } }
+
+    override protected def xfilterInvokeQueryParameterValue(colName: String, ckey: String, parameterValue: Object): Object =
+    { if (parameterValue.isInstanceOf[Collection[_]]) { toScalaList(parameterValue.asInstanceOf[Collection[_]]) } else { parameterValue } }
+
+    // ===================================================================================
+    //                                                                        Scala Helper
+    //                                                                        ============
+    protected def toScalaList[ENTITY](javaList: Collection[ENTITY]): immutable.List[ENTITY] = {
+        if (javaList == null) { immutable.List() }
+        return javaList.toArray.toList.asInstanceOf[immutable.List[ENTITY]];
+    }
+
+    protected def toMutableValueCollectionImplicitly[SCALA, JAVA](ls: immutable.List[SCALA]): Collection[JAVA] =
+    { if (ls != null) { ls.map(_.asInstanceOf[JAVA]).asJava } else { null } }
+
+    protected def toScalaQDRFunction[CB <: ConditionBean](function: HpQDRFunction[CB]): ScrHpQDRFunction[CB] =
+    { new ScrHpQDRFunction[CB](function) }
 
     // ===================================================================================
     //                                                                       Very Internal
@@ -1594,6 +1688,7 @@ abstract class ${myClassName}(referrerQuery: ConditionQuery, sqlClause: SqlClaus
         return new ${myConditionBeanClassName}();
     }
     // very internal (for suppressing warn about 'Not Use Import')
+    protected def xabUDT(): String = { return classOf[Date].getName(); }
     protected def xabCQ(): String = { return classOf[${myConditionQueryClassName}].getName(); }
     protected def xabLSO(): String = { return classOf[LikeSearchOption].getName(); }
     protected def xabSSQS(): String = { return classOf[HpSSQSetupper[_]].getName(); }

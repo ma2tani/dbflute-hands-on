@@ -15,13 +15,11 @@
  */
 package org.dbflute.quickstage.dbflute.bsentity;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Set;
 
 import org.seasar.dbflute.dbmeta.DBMeta;
-import org.seasar.dbflute.Entity;
+import org.seasar.dbflute.dbmeta.AbstractEntity;
 import org.dbflute.quickstage.dbflute.allcommon.DBMetaInstanceHandler;
 import org.dbflute.quickstage.dbflute.allcommon.CDef;
 import org.dbflute.quickstage.dbflute.exentity.*;
@@ -69,7 +67,7 @@ import org.dbflute.quickstage.dbflute.exentity.*;
  * </pre>
  * @author DBFlute(AutoGenerator)
  */
-public abstract class BsWithdrawalReason implements Entity, Serializable, Cloneable {
+public abstract class BsWithdrawalReason extends AbstractEntity {
 
     // ===================================================================================
     //                                                                          Definition
@@ -91,18 +89,6 @@ public abstract class BsWithdrawalReason implements Entity, Serializable, Clonea
 
     /** DISPLAY_ORDER: {UQ, NotNull, INTEGER(10)} */
     protected Integer _displayOrder;
-
-    // -----------------------------------------------------
-    //                                              Internal
-    //                                              --------
-    /** The unique-driven properties for this entity. (NotNull) */
-    protected final EntityUniqueDrivenProperties __uniqueDrivenProperties = newUniqueDrivenProperties();
-
-    /** The modified properties for this entity. (NotNull) */
-    protected final EntityModifiedProperties __modifiedProperties = newModifiedProperties();
-
-    /** Is the entity created by DBFlute select process? */
-    protected boolean __createdBySelect;
 
     // ===================================================================================
     //                                                                          Table Name
@@ -151,17 +137,6 @@ public abstract class BsWithdrawalReason implements Entity, Serializable, Clonea
         __uniqueDrivenProperties.clear();
         __uniqueDrivenProperties.addPropertyName("displayOrder");
         setDisplayOrder(displayOrder);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Set<String> myuniqueDrivenProperties() {
-        return __uniqueDrivenProperties.getPropertyNames();
-    }
-
-    protected EntityUniqueDrivenProperties newUniqueDrivenProperties() {
-        return new EntityUniqueDrivenProperties();
     }
 
     // ===================================================================================
@@ -271,9 +246,6 @@ public abstract class BsWithdrawalReason implements Entity, Serializable, Clonea
     }
 
     // ===================================================================================
-    //                                                           Classification Name/Alias
-    //                                                           =========================
-    // ===================================================================================
     //                                                                    Foreign Property
     //                                                                    ================
     // ===================================================================================
@@ -283,7 +255,7 @@ public abstract class BsWithdrawalReason implements Entity, Serializable, Clonea
     protected List<MemberWithdrawal> _memberWithdrawalList;
 
     /**
-     * (会員退会情報)MEMBER_WITHDRAWAL by WITHDRAWAL_REASON_CODE, named 'memberWithdrawalList'.
+     * [get] (会員退会情報)MEMBER_WITHDRAWAL by WITHDRAWAL_REASON_CODE, named 'memberWithdrawalList'.
      * @return The entity list of referrer property 'memberWithdrawalList'. (NotNull: even if no loading, returns empty list)
      */
     public List<MemberWithdrawal> getMemberWithdrawalList() {
@@ -292,7 +264,7 @@ public abstract class BsWithdrawalReason implements Entity, Serializable, Clonea
     }
 
     /**
-     * (会員退会情報)MEMBER_WITHDRAWAL by WITHDRAWAL_REASON_CODE, named 'memberWithdrawalList'.
+     * [set] (会員退会情報)MEMBER_WITHDRAWAL by WITHDRAWAL_REASON_CODE, named 'memberWithdrawalList'.
      * @param memberWithdrawalList The entity list of referrer property 'memberWithdrawalList'. (NullAllowed)
      */
     public void setMemberWithdrawalList(List<MemberWithdrawal> memberWithdrawalList) {
@@ -304,157 +276,62 @@ public abstract class BsWithdrawalReason implements Entity, Serializable, Clonea
     }
 
     // ===================================================================================
-    //                                                                 Modified Properties
-    //                                                                 ===================
-    /**
-     * {@inheritDoc}
-     */
-    public Set<String> modifiedProperties() {
-        return __modifiedProperties.getPropertyNames();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void clearModifiedInfo() {
-        __modifiedProperties.clear();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean hasModification() {
-        return !__modifiedProperties.isEmpty();
-    }
-
-    protected EntityModifiedProperties newModifiedProperties() {
-        return new EntityModifiedProperties();
-    }
-
-    // ===================================================================================
-    //                                                                     Birthplace Mark
-    //                                                                     ===============
-    /**
-     * {@inheritDoc}
-     */
-    public void markAsSelect() {
-        __createdBySelect = true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean createdBySelect() {
-        return __createdBySelect;
-    }
-
-    // ===================================================================================
     //                                                                      Basic Override
     //                                                                      ==============
-    /**
-     * Determine the object is equal with this. <br />
-     * If primary-keys or columns of the other are same as this one, returns true.
-     * @param obj The object as other entity. (NullAllowed: if null, returns false fixedly)
-     * @return Comparing result.
-     */
-    public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof BsWithdrawalReason)) { return false; }
-        BsWithdrawalReason other = (BsWithdrawalReason)obj;
-        if (!xSV(getWithdrawalReasonCode(), other.getWithdrawalReasonCode())) { return false; }
-        return true;
-    }
-    protected boolean xSV(Object v1, Object v2) {
-        return FunCustodial.isSameValue(v1, v2);
+    @Override
+    protected boolean doEquals(Object obj) {
+        if (obj instanceof BsWithdrawalReason) {
+            BsWithdrawalReason other = (BsWithdrawalReason)obj;
+            if (!xSV(_withdrawalReasonCode, other._withdrawalReasonCode)) { return false; }
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    /**
-     * Calculate the hash-code from primary-keys or columns.
-     * @return The hash-code from primary-key or columns.
-     */
-    public int hashCode() {
-        int hs = 17;
+    @Override
+    protected int doHashCode(int initial) {
+        int hs = initial;
         hs = xCH(hs, getTableDbName());
-        hs = xCH(hs, getWithdrawalReasonCode());
+        hs = xCH(hs, _withdrawalReasonCode);
         return hs;
     }
-    protected int xCH(int hs, Object vl) {
-        return FunCustodial.calculateHashcode(hs, vl);
-    }
 
-    /**
-     * {@inheritDoc}
-     */
-    public int instanceHash() {
-        return super.hashCode();
-    }
-
-    /**
-     * Convert to display string of entity's data. (no relation data)
-     * @return The display string of all columns and relation existences. (NotNull)
-     */
-    public String toString() {
-        return buildDisplayString(FunCustodial.toClassTitle(this), true, true);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String toStringWithRelation() {
+    @Override
+    protected String doBuildStringWithRelation(String li) {
         StringBuilder sb = new StringBuilder();
-        sb.append(toString());
-        String li = "\n  ";
-        if (_memberWithdrawalList != null) { for (Entity et : _memberWithdrawalList)
+        if (_memberWithdrawalList != null) { for (MemberWithdrawal et : _memberWithdrawalList)
         { if (et != null) { sb.append(li).append(xbRDS(et, "memberWithdrawalList")); } } }
         return sb.toString();
     }
-    protected String xbRDS(Entity et, String name) { // buildRelationDisplayString()
-        return et.buildDisplayString(name, true, true);
-    }
 
-    /**
-     * {@inheritDoc}
-     */
-    public String buildDisplayString(String name, boolean column, boolean relation) {
+    @Override
+    protected String doBuildColumnString(String dm) {
         StringBuilder sb = new StringBuilder();
-        if (name != null) { sb.append(name).append(column || relation ? ":" : ""); }
-        if (column) { sb.append(buildColumnString()); }
-        if (relation) { sb.append(buildRelationString()); }
-        sb.append("@").append(Integer.toHexString(hashCode()));
-        return sb.toString();
-    }
-    protected String buildColumnString() {
-        StringBuilder sb = new StringBuilder();
-        String dm = ", ";
-        sb.append(dm).append(getWithdrawalReasonCode());
-        sb.append(dm).append(getWithdrawalReasonText());
-        sb.append(dm).append(getDisplayOrder());
+        sb.append(dm).append(xfND(_withdrawalReasonCode));
+        sb.append(dm).append(xfND(_withdrawalReasonText));
+        sb.append(dm).append(xfND(_displayOrder));
         if (sb.length() > dm.length()) {
             sb.delete(0, dm.length());
         }
         sb.insert(0, "{").append("}");
         return sb.toString();
     }
-    protected String buildRelationString() {
+
+    @Override
+    protected String doBuildRelationString(String dm) {
         StringBuilder sb = new StringBuilder();
-        String cm = ",";
         if (_memberWithdrawalList != null && !_memberWithdrawalList.isEmpty())
-        { sb.append(cm).append("memberWithdrawalList"); }
-        if (sb.length() > cm.length()) {
-            sb.delete(0, cm.length()).insert(0, "(").append(")");
+        { sb.append(dm).append("memberWithdrawalList"); }
+        if (sb.length() > dm.length()) {
+            sb.delete(0, dm.length()).insert(0, "(").append(")");
         }
         return sb.toString();
     }
 
-    /**
-     * Clone entity instance using super.clone(). (shallow copy) 
-     * @return The cloned instance of this entity. (NotNull)
-     */
+    @Override
     public WithdrawalReason clone() {
-        try {
-            return (WithdrawalReason)super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new IllegalStateException("Failed to clone the entity: " + toString(), e);
-        }
+        return (WithdrawalReason)super.clone();
     }
 
     // ===================================================================================
@@ -465,6 +342,7 @@ public abstract class BsWithdrawalReason implements Entity, Serializable, Clonea
      * @return The value of the column 'WITHDRAWAL_REASON_CODE'. (basically NotNull if selected: for the constraint)
      */
     public String getWithdrawalReasonCode() {
+        checkSpecifiedProperty("withdrawalReasonCode");
         return convertEmptyToNull(_withdrawalReasonCode);
     }
 
@@ -473,8 +351,8 @@ public abstract class BsWithdrawalReason implements Entity, Serializable, Clonea
      * @param withdrawalReasonCode The value of the column 'WITHDRAWAL_REASON_CODE'. (basically NotNull if update: for the constraint)
      */
     protected void setWithdrawalReasonCode(String withdrawalReasonCode) {
-        __modifiedProperties.addPropertyName("withdrawalReasonCode");
-        this._withdrawalReasonCode = withdrawalReasonCode;
+        registerModifiedProperty("withdrawalReasonCode");
+        _withdrawalReasonCode = withdrawalReasonCode;
     }
 
     /**
@@ -484,6 +362,7 @@ public abstract class BsWithdrawalReason implements Entity, Serializable, Clonea
      * @return The value of the column 'WITHDRAWAL_REASON_TEXT'. (basically NotNull if selected: for the constraint)
      */
     public String getWithdrawalReasonText() {
+        checkSpecifiedProperty("withdrawalReasonText");
         return convertEmptyToNull(_withdrawalReasonText);
     }
 
@@ -494,8 +373,8 @@ public abstract class BsWithdrawalReason implements Entity, Serializable, Clonea
      * @param withdrawalReasonText The value of the column 'WITHDRAWAL_REASON_TEXT'. (basically NotNull if update: for the constraint)
      */
     public void setWithdrawalReasonText(String withdrawalReasonText) {
-        __modifiedProperties.addPropertyName("withdrawalReasonText");
-        this._withdrawalReasonText = withdrawalReasonText;
+        registerModifiedProperty("withdrawalReasonText");
+        _withdrawalReasonText = withdrawalReasonText;
     }
 
     /**
@@ -503,6 +382,7 @@ public abstract class BsWithdrawalReason implements Entity, Serializable, Clonea
      * @return The value of the column 'DISPLAY_ORDER'. (basically NotNull if selected: for the constraint)
      */
     public Integer getDisplayOrder() {
+        checkSpecifiedProperty("displayOrder");
         return _displayOrder;
     }
 
@@ -511,11 +391,15 @@ public abstract class BsWithdrawalReason implements Entity, Serializable, Clonea
      * @param displayOrder The value of the column 'DISPLAY_ORDER'. (basically NotNull if update: for the constraint)
      */
     public void setDisplayOrder(Integer displayOrder) {
-        __modifiedProperties.addPropertyName("displayOrder");
-        this._displayOrder = displayOrder;
+        registerModifiedProperty("displayOrder");
+        _displayOrder = displayOrder;
     }
 
-    protected String convertEmptyToNull(String value) {
-        return FunCustodial.convertEmptyToNull(value);
+    /**
+     * For framework so basically DON'T use this method.
+     * @param withdrawalReasonCode The value of the column 'WITHDRAWAL_REASON_CODE'. (basically NotNull if update: for the constraint)
+     */
+    public void mynativeMappingWithdrawalReasonCode(String withdrawalReasonCode) {
+        setWithdrawalReasonCode(withdrawalReasonCode);
     }
 }

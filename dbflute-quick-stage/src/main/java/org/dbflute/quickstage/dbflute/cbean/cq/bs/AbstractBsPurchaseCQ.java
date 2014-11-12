@@ -59,7 +59,6 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
     // ===================================================================================
     //                                                                               Query
     //                                                                               =====
-    
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
      * PURCHASE_ID: {PK, ID, NotNull, BIGINT(19)}
@@ -292,7 +291,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     protected void regPurchaseId(ConditionKey ky, Object vl) { regQ(ky, vl, getCValuePurchaseId(), "PURCHASE_ID"); }
     protected abstract ConditionValue getCValuePurchaseId();
-    
+
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
      * (会員ID)MEMBER_ID: {UQ+, IX+, NotNull, INTEGER(10), FK to MEMBER}
@@ -426,7 +425,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     protected void regMemberId(ConditionKey ky, Object vl) { regQ(ky, vl, getCValueMemberId(), "MEMBER_ID"); }
     protected abstract ConditionValue getCValueMemberId();
-    
+
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
      * (商品ID)PRODUCT_ID: {+UQ, IX+, NotNull, INTEGER(10), FK to PRODUCT}
@@ -636,7 +635,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     protected void regPurchaseDatetime(ConditionKey ky, Object vl) { regQ(ky, vl, getCValuePurchaseDatetime(), "PURCHASE_DATETIME"); }
     protected abstract ConditionValue getCValuePurchaseDatetime();
-    
+
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
      * (購入数量)PURCHASE_COUNT: {NotNull, INTEGER(10)}
@@ -740,7 +739,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     protected void regPurchaseCount(ConditionKey ky, Object vl) { regQ(ky, vl, getCValuePurchaseCount(), "PURCHASE_COUNT"); }
     protected abstract ConditionValue getCValuePurchaseCount();
-    
+
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
      * (購入価格)PURCHASE_PRICE: {IX, NotNull, INTEGER(10)}
@@ -844,7 +843,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     protected void regPurchasePrice(ConditionKey ky, Object vl) { regQ(ky, vl, getCValuePurchasePrice(), "PURCHASE_PRICE"); }
     protected abstract ConditionValue getCValuePurchasePrice();
-    
+
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
      * (支払完了フラグ)PAYMENT_COMPLETE_FLG: {NotNull, INTEGER(10), classification=Flg}
@@ -1377,7 +1376,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
 
     protected void regUpdateUser(ConditionKey ky, Object vl) { regQ(ky, vl, getCValueUpdateUser(), "UPDATE_USER"); }
     protected abstract ConditionValue getCValueUpdateUser();
-    
+
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
      * VERSION_NO: {NotNull, BIGINT(19)}
@@ -1499,7 +1498,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<PurchaseCB> scalar_Equal() {
-        return xcreateSSQFunction(CK_EQ.getOperand(), PurchaseCB.class);
+        return xcreateSSQFunction(CK_EQ, PurchaseCB.class);
     }
 
     /**
@@ -1516,7 +1515,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<PurchaseCB> scalar_NotEqual() {
-        return xcreateSSQFunction(CK_NES.getOperand(), PurchaseCB.class);
+        return xcreateSSQFunction(CK_NES, PurchaseCB.class);
     }
 
     /**
@@ -1533,7 +1532,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<PurchaseCB> scalar_GreaterThan() {
-        return xcreateSSQFunction(CK_GT.getOperand(), PurchaseCB.class);
+        return xcreateSSQFunction(CK_GT, PurchaseCB.class);
     }
 
     /**
@@ -1550,7 +1549,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<PurchaseCB> scalar_LessThan() {
-        return xcreateSSQFunction(CK_LT.getOperand(), PurchaseCB.class);
+        return xcreateSSQFunction(CK_LT, PurchaseCB.class);
     }
 
     /**
@@ -1567,7 +1566,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<PurchaseCB> scalar_GreaterEqual() {
-        return xcreateSSQFunction(CK_GE.getOperand(), PurchaseCB.class);
+        return xcreateSSQFunction(CK_GE, PurchaseCB.class);
     }
 
     /**
@@ -1584,7 +1583,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<PurchaseCB> scalar_LessEqual() {
-        return xcreateSSQFunction(CK_LE.getOperand(), PurchaseCB.class);
+        return xcreateSSQFunction(CK_LE, PurchaseCB.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -1670,8 +1669,46 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
     public abstract String keepMyselfInScope(PurchaseCQ sq);
 
     // ===================================================================================
-    //                                                                          Compatible
-    //                                                                          ==========
+    //                                                                        Manual Order
+    //                                                                        ============
+    /**
+     * Order along manual ordering information.
+     * <pre>
+     * MemberCB cb = new MemberCB();
+     * ManualOrderBean mob = new ManualOrderBean();
+     * mob.<span style="color: #DD4747">when_GreaterEqual</span>(priorityDate); <span style="color: #3F7E5E">// e.g. 2000/01/01</span>
+     * cb.query().addOrderBy_Birthdate_Asc().<span style="color: #DD4747">withManualOrder(mob)</span>;
+     * <span style="color: #3F7E5E">// order by </span>
+     * <span style="color: #3F7E5E">//   case</span>
+     * <span style="color: #3F7E5E">//     when BIRTHDATE &gt;= '2000/01/01' then 0</span>
+     * <span style="color: #3F7E5E">//     else 1</span>
+     * <span style="color: #3F7E5E">//   end asc, ...</span>
+     *
+     * MemberCB cb = new MemberCB();
+     * ManualOrderBean mob = new ManualOrderBean();
+     * mob.<span style="color: #DD4747">when_Equal</span>(CDef.MemberStatus.Withdrawal);
+     * mob.<span style="color: #DD4747">when_Equal</span>(CDef.MemberStatus.Formalized);
+     * mob.<span style="color: #DD4747">when_Equal</span>(CDef.MemberStatus.Provisional);
+     * cb.query().addOrderBy_MemberStatusCode_Asc().<span style="color: #DD4747">withManualOrder(mob)</span>;
+     * <span style="color: #3F7E5E">// order by </span>
+     * <span style="color: #3F7E5E">//   case</span>
+     * <span style="color: #3F7E5E">//     when MEMBER_STATUS_CODE = 'WDL' then 0</span>
+     * <span style="color: #3F7E5E">//     when MEMBER_STATUS_CODE = 'FML' then 1</span>
+     * <span style="color: #3F7E5E">//     when MEMBER_STATUS_CODE = 'PRV' then 2</span>
+     * <span style="color: #3F7E5E">//     else 3</span>
+     * <span style="color: #3F7E5E">//   end asc, ...</span>
+     * </pre>
+     * <p>This function with Union is unsupported!</p>
+     * <p>The order values are bound (treated as bind parameter).</p>
+     * @param mob The bean of manual order containing order values. (NotNull)
+     */
+    public void withManualOrder(ManualOrderBean mob) { // is user public!
+        xdoWithManualOrder(mob);
+    }
+
+    // ===================================================================================
+    //                                                                    Small Adjustment
+    //                                                                    ================
     /**
      * Order along the list of manual values. #beforejava8 <br />
      * This function with Union is unsupported! <br />
@@ -1700,6 +1737,11 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
         withManualOrder(manualOrderBean);
     }
 
+    @Override
+    protected void filterFromToOption(FromToOption option) {
+        option.allowOneSide();
+    }
+
     // ===================================================================================
     //                                                                       Very Internal
     //                                                                       =============
@@ -1707,6 +1749,7 @@ public abstract class AbstractBsPurchaseCQ extends AbstractConditionQuery {
         return new PurchaseCB();
     }
     // very internal (for suppressing warn about 'Not Use Import')
+    protected String xabUDT() { return Date.class.getName(); }
     protected String xabCQ() { return PurchaseCQ.class.getName(); }
     protected String xabLSO() { return LikeSearchOption.class.getName(); }
     protected String xabSSQS() { return HpSSQSetupper.class.getName(); }

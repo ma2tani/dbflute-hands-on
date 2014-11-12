@@ -15,14 +15,11 @@
  */
 package org.dbflute.quickstage.dbflute.bsentity.customize;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Set;
-import java.util.Date;
 
 import org.seasar.dbflute.dbmeta.DBMeta;
-import org.seasar.dbflute.Entity;
+import org.seasar.dbflute.dbmeta.AbstractEntity;
 import org.dbflute.quickstage.dbflute.allcommon.CDef;
 import org.dbflute.quickstage.dbflute.exentity.customize.*;
 
@@ -80,7 +77,7 @@ import org.dbflute.quickstage.dbflute.exentity.customize.*;
  * </pre>
  * @author DBFlute(AutoGenerator)
  */
-public abstract class BsOptionMember implements Entity, Serializable, Cloneable {
+public abstract class BsOptionMember extends AbstractEntity {
 
     // ===================================================================================
     //                                                                          Definition
@@ -121,18 +118,6 @@ public abstract class BsOptionMember implements Entity, Serializable, Cloneable 
     /** DUMMY_NOFLG: {INTEGER(10)} */
     protected Integer _dummyNoflg;
 
-    // -----------------------------------------------------
-    //                                              Internal
-    //                                              --------
-    /** The unique-driven properties for this entity. (NotNull) */
-    protected final EntityUniqueDrivenProperties __uniqueDrivenProperties = newUniqueDrivenProperties();
-
-    /** The modified properties for this entity. (NotNull) */
-    protected final EntityModifiedProperties __modifiedProperties = newModifiedProperties();
-
-    /** Is the entity created by DBFlute select process? */
-    protected boolean __createdBySelect;
-
     // ===================================================================================
     //                                                                          Table Name
     //                                                                          ==========
@@ -168,17 +153,6 @@ public abstract class BsOptionMember implements Entity, Serializable, Cloneable 
      */
     public boolean hasPrimaryKeyValue() {
         return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Set<String> myuniqueDrivenProperties() {
-        return __uniqueDrivenProperties.getPropertyNames();
-    }
-
-    protected EntityUniqueDrivenProperties newUniqueDrivenProperties() {
-        return new EntityUniqueDrivenProperties();
     }
 
     // ===================================================================================
@@ -223,7 +197,7 @@ public abstract class BsOptionMember implements Entity, Serializable, Cloneable 
      * @param cdef The instance of classification definition (as ENUM type). (NullAllowed: if null, null value is set to the column)
      */
     public void setDummyFlgAsFlg(CDef.Flg cdef) {
-        setDummyFlg(cdef != null ? FunCustodial.toNumber(cdef.code(), Integer.class) : null);
+        setDummyFlg(cdef != null ? toNumber(cdef.code(), Integer.class) : null);
     }
 
     /**
@@ -379,172 +353,75 @@ public abstract class BsOptionMember implements Entity, Serializable, Cloneable 
     }
 
     // ===================================================================================
-    //                                                                 Modified Properties
-    //                                                                 ===================
-    /**
-     * {@inheritDoc}
-     */
-    public Set<String> modifiedProperties() {
-        return __modifiedProperties.getPropertyNames();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void clearModifiedInfo() {
-        __modifiedProperties.clear();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean hasModification() {
-        return !__modifiedProperties.isEmpty();
-    }
-
-    protected EntityModifiedProperties newModifiedProperties() {
-        return new EntityModifiedProperties();
-    }
-
-    // ===================================================================================
-    //                                                                     Birthplace Mark
-    //                                                                     ===============
-    /**
-     * {@inheritDoc}
-     */
-    public void markAsSelect() {
-        __createdBySelect = true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean createdBySelect() {
-        return __createdBySelect;
-    }
-
-    // ===================================================================================
     //                                                                      Basic Override
     //                                                                      ==============
-    /**
-     * Determine the object is equal with this. <br />
-     * If primary-keys or columns of the other are same as this one, returns true.
-     * @param obj The object as other entity. (NullAllowed: if null, returns false fixedly)
-     * @return Comparing result.
-     */
-    public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof BsOptionMember)) { return false; }
-        BsOptionMember other = (BsOptionMember)obj;
-        if (!xSV(getMemberId(), other.getMemberId())) { return false; }
-        if (!xSV(getMemberName(), other.getMemberName())) { return false; }
-        if (!xSV(getBirthdate(), other.getBirthdate())) { return false; }
-        if (!xSV(getFormalizedDatetime(), other.getFormalizedDatetime())) { return false; }
-        if (!xSV(getMemberStatusCode(), other.getMemberStatusCode())) { return false; }
-        if (!xSV(getMemberStatusName(), other.getMemberStatusName())) { return false; }
-        if (!xSV(getStatusDisplayOrder(), other.getStatusDisplayOrder())) { return false; }
-        if (!xSV(getDummyFlg(), other.getDummyFlg())) { return false; }
-        if (!xSV(getDummyNoflg(), other.getDummyNoflg())) { return false; }
-        return true;
-    }
-    protected boolean xSV(Object v1, Object v2) {
-        return FunCustodial.isSameValue(v1, v2);
+    @Override
+    protected boolean doEquals(Object obj) {
+        if (obj instanceof BsOptionMember) {
+            BsOptionMember other = (BsOptionMember)obj;
+            if (!xSV(_memberId, other._memberId)) { return false; }
+            if (!xSV(_memberName, other._memberName)) { return false; }
+            if (!xSV(_birthdate, other._birthdate)) { return false; }
+            if (!xSV(_formalizedDatetime, other._formalizedDatetime)) { return false; }
+            if (!xSV(_memberStatusCode, other._memberStatusCode)) { return false; }
+            if (!xSV(_memberStatusName, other._memberStatusName)) { return false; }
+            if (!xSV(_statusDisplayOrder, other._statusDisplayOrder)) { return false; }
+            if (!xSV(_dummyFlg, other._dummyFlg)) { return false; }
+            if (!xSV(_dummyNoflg, other._dummyNoflg)) { return false; }
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    /**
-     * Calculate the hash-code from primary-keys or columns.
-     * @return The hash-code from primary-key or columns.
-     */
-    public int hashCode() {
-        int hs = 17;
+    @Override
+    protected int doHashCode(int initial) {
+        int hs = initial;
         hs = xCH(hs, getTableDbName());
-        hs = xCH(hs, getMemberId());
-        hs = xCH(hs, getMemberName());
-        hs = xCH(hs, getBirthdate());
-        hs = xCH(hs, getFormalizedDatetime());
-        hs = xCH(hs, getMemberStatusCode());
-        hs = xCH(hs, getMemberStatusName());
-        hs = xCH(hs, getStatusDisplayOrder());
-        hs = xCH(hs, getDummyFlg());
-        hs = xCH(hs, getDummyNoflg());
+        hs = xCH(hs, _memberId);
+        hs = xCH(hs, _memberName);
+        hs = xCH(hs, _birthdate);
+        hs = xCH(hs, _formalizedDatetime);
+        hs = xCH(hs, _memberStatusCode);
+        hs = xCH(hs, _memberStatusName);
+        hs = xCH(hs, _statusDisplayOrder);
+        hs = xCH(hs, _dummyFlg);
+        hs = xCH(hs, _dummyNoflg);
         return hs;
     }
-    protected int xCH(int hs, Object vl) {
-        return FunCustodial.calculateHashcode(hs, vl);
+
+    @Override
+    protected String doBuildStringWithRelation(String li) {
+        return "";
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public int instanceHash() {
-        return super.hashCode();
-    }
-
-    /**
-     * Convert to display string of entity's data. (no relation data)
-     * @return The display string of all columns and relation existences. (NotNull)
-     */
-    public String toString() {
-        return buildDisplayString(FunCustodial.toClassTitle(this), true, true);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String toStringWithRelation() {
+    @Override
+    protected String doBuildColumnString(String dm) {
         StringBuilder sb = new StringBuilder();
-        sb.append(toString());
-        return sb.toString();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String buildDisplayString(String name, boolean column, boolean relation) {
-        StringBuilder sb = new StringBuilder();
-        if (name != null) { sb.append(name).append(column || relation ? ":" : ""); }
-        if (column) { sb.append(buildColumnString()); }
-        if (relation) { sb.append(buildRelationString()); }
-        sb.append("@").append(Integer.toHexString(hashCode()));
-        return sb.toString();
-    }
-    protected String buildColumnString() {
-        StringBuilder sb = new StringBuilder();
-        String dm = ", ";
-        sb.append(dm).append(getMemberId());
-        sb.append(dm).append(getMemberName());
-        sb.append(dm).append(xfUD(getBirthdate()));
-        sb.append(dm).append(getFormalizedDatetime());
-        sb.append(dm).append(getMemberStatusCode());
-        sb.append(dm).append(getMemberStatusName());
-        sb.append(dm).append(getStatusDisplayOrder());
-        sb.append(dm).append(getDummyFlg());
-        sb.append(dm).append(getDummyNoflg());
+        sb.append(dm).append(xfND(_memberId));
+        sb.append(dm).append(xfND(_memberName));
+        sb.append(dm).append(xfUD(_birthdate));
+        sb.append(dm).append(xfND(_formalizedDatetime));
+        sb.append(dm).append(xfND(_memberStatusCode));
+        sb.append(dm).append(xfND(_memberStatusName));
+        sb.append(dm).append(xfND(_statusDisplayOrder));
+        sb.append(dm).append(xfND(_dummyFlg));
+        sb.append(dm).append(xfND(_dummyNoflg));
         if (sb.length() > dm.length()) {
             sb.delete(0, dm.length());
         }
         sb.insert(0, "{").append("}");
         return sb.toString();
     }
-    protected String xfUD(Date date) { // formatUtilDate()
-        return FunCustodial.toString(date, xgDP());
-    }
-    protected String xgDP() { // getDatePattern
-        return "yyyy-MM-dd";
-    }
-    protected String buildRelationString() {
+
+    @Override
+    protected String doBuildRelationString(String dm) {
         return "";
     }
 
-    /**
-     * Clone entity instance using super.clone(). (shallow copy) 
-     * @return The cloned instance of this entity. (NotNull)
-     */
+    @Override
     public OptionMember clone() {
-        try {
-            return (OptionMember)super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new IllegalStateException("Failed to clone the entity: " + toString(), e);
-        }
+        return (OptionMember)super.clone();
     }
 
     // ===================================================================================
@@ -556,6 +433,7 @@ public abstract class BsOptionMember implements Entity, Serializable, Cloneable 
      * @return The value of the column 'MEMBER_ID'. (NullAllowed even if selected: for no constraint)
      */
     public Integer getMemberId() {
+        checkSpecifiedProperty("memberId");
         return _memberId;
     }
 
@@ -565,8 +443,8 @@ public abstract class BsOptionMember implements Entity, Serializable, Cloneable 
      * @param memberId The value of the column 'MEMBER_ID'. (NullAllowed: null update allowed for no constraint)
      */
     public void setMemberId(Integer memberId) {
-        __modifiedProperties.addPropertyName("memberId");
-        this._memberId = memberId;
+        registerModifiedProperty("memberId");
+        _memberId = memberId;
     }
 
     /**
@@ -576,6 +454,7 @@ public abstract class BsOptionMember implements Entity, Serializable, Cloneable 
      * @return The value of the column 'MEMBER_NAME'. (NullAllowed even if selected: for no constraint)
      */
     public String getMemberName() {
+        checkSpecifiedProperty("memberName");
         return convertEmptyToNull(_memberName);
     }
 
@@ -586,8 +465,8 @@ public abstract class BsOptionMember implements Entity, Serializable, Cloneable 
      * @param memberName The value of the column 'MEMBER_NAME'. (NullAllowed: null update allowed for no constraint)
      */
     public void setMemberName(String memberName) {
-        __modifiedProperties.addPropertyName("memberName");
-        this._memberName = memberName;
+        registerModifiedProperty("memberName");
+        _memberName = memberName;
     }
 
     /**
@@ -597,6 +476,7 @@ public abstract class BsOptionMember implements Entity, Serializable, Cloneable 
      * @return The value of the column 'BIRTHDATE'. (NullAllowed even if selected: for no constraint)
      */
     public java.util.Date getBirthdate() {
+        checkSpecifiedProperty("birthdate");
         return _birthdate;
     }
 
@@ -607,8 +487,8 @@ public abstract class BsOptionMember implements Entity, Serializable, Cloneable 
      * @param birthdate The value of the column 'BIRTHDATE'. (NullAllowed: null update allowed for no constraint)
      */
     public void setBirthdate(java.util.Date birthdate) {
-        __modifiedProperties.addPropertyName("birthdate");
-        this._birthdate = birthdate;
+        registerModifiedProperty("birthdate");
+        _birthdate = birthdate;
     }
 
     /**
@@ -619,6 +499,7 @@ public abstract class BsOptionMember implements Entity, Serializable, Cloneable 
      * @return The value of the column 'FORMALIZED_DATETIME'. (NullAllowed even if selected: for no constraint)
      */
     public java.sql.Timestamp getFormalizedDatetime() {
+        checkSpecifiedProperty("formalizedDatetime");
         return _formalizedDatetime;
     }
 
@@ -630,8 +511,8 @@ public abstract class BsOptionMember implements Entity, Serializable, Cloneable 
      * @param formalizedDatetime The value of the column 'FORMALIZED_DATETIME'. (NullAllowed: null update allowed for no constraint)
      */
     public void setFormalizedDatetime(java.sql.Timestamp formalizedDatetime) {
-        __modifiedProperties.addPropertyName("formalizedDatetime");
-        this._formalizedDatetime = formalizedDatetime;
+        registerModifiedProperty("formalizedDatetime");
+        _formalizedDatetime = formalizedDatetime;
     }
 
     /**
@@ -641,6 +522,7 @@ public abstract class BsOptionMember implements Entity, Serializable, Cloneable 
      * @return The value of the column 'MEMBER_STATUS_CODE'. (NullAllowed even if selected: for no constraint)
      */
     public String getMemberStatusCode() {
+        checkSpecifiedProperty("memberStatusCode");
         return convertEmptyToNull(_memberStatusCode);
     }
 
@@ -651,8 +533,8 @@ public abstract class BsOptionMember implements Entity, Serializable, Cloneable 
      * @param memberStatusCode The value of the column 'MEMBER_STATUS_CODE'. (NullAllowed: null update allowed for no constraint)
      */
     protected void setMemberStatusCode(String memberStatusCode) {
-        __modifiedProperties.addPropertyName("memberStatusCode");
-        this._memberStatusCode = memberStatusCode;
+        registerModifiedProperty("memberStatusCode");
+        _memberStatusCode = memberStatusCode;
     }
 
     /**
@@ -662,6 +544,7 @@ public abstract class BsOptionMember implements Entity, Serializable, Cloneable 
      * @return The value of the column 'MEMBER_STATUS_NAME'. (NullAllowed even if selected: for no constraint)
      */
     public String getMemberStatusName() {
+        checkSpecifiedProperty("memberStatusName");
         return convertEmptyToNull(_memberStatusName);
     }
 
@@ -672,8 +555,8 @@ public abstract class BsOptionMember implements Entity, Serializable, Cloneable 
      * @param memberStatusName The value of the column 'MEMBER_STATUS_NAME'. (NullAllowed: null update allowed for no constraint)
      */
     public void setMemberStatusName(String memberStatusName) {
-        __modifiedProperties.addPropertyName("memberStatusName");
-        this._memberStatusName = memberStatusName;
+        registerModifiedProperty("memberStatusName");
+        _memberStatusName = memberStatusName;
     }
 
     /**
@@ -683,6 +566,7 @@ public abstract class BsOptionMember implements Entity, Serializable, Cloneable 
      * @return The value of the column 'STATUS_DISPLAY_ORDER'. (NullAllowed even if selected: for no constraint)
      */
     public Integer getStatusDisplayOrder() {
+        checkSpecifiedProperty("statusDisplayOrder");
         return _statusDisplayOrder;
     }
 
@@ -693,8 +577,8 @@ public abstract class BsOptionMember implements Entity, Serializable, Cloneable 
      * @param statusDisplayOrder The value of the column 'STATUS_DISPLAY_ORDER'. (NullAllowed: null update allowed for no constraint)
      */
     public void setStatusDisplayOrder(Integer statusDisplayOrder) {
-        __modifiedProperties.addPropertyName("statusDisplayOrder");
-        this._statusDisplayOrder = statusDisplayOrder;
+        registerModifiedProperty("statusDisplayOrder");
+        _statusDisplayOrder = statusDisplayOrder;
     }
 
     /**
@@ -702,6 +586,7 @@ public abstract class BsOptionMember implements Entity, Serializable, Cloneable 
      * @return The value of the column 'DUMMY_FLG'. (NullAllowed even if selected: for no constraint)
      */
     public Integer getDummyFlg() {
+        checkSpecifiedProperty("dummyFlg");
         return _dummyFlg;
     }
 
@@ -710,9 +595,9 @@ public abstract class BsOptionMember implements Entity, Serializable, Cloneable 
      * @param dummyFlg The value of the column 'DUMMY_FLG'. (NullAllowed: null update allowed for no constraint)
      */
     protected void setDummyFlg(Integer dummyFlg) {
-        checkImplicitSet("DUMMY_FLG", CDef.DefMeta.Flg, dummyFlg);
-        __modifiedProperties.addPropertyName("dummyFlg");
-        this._dummyFlg = dummyFlg;
+        checkClassificationCode("DUMMY_FLG", CDef.DefMeta.Flg, dummyFlg);
+        registerModifiedProperty("dummyFlg");
+        _dummyFlg = dummyFlg;
     }
 
     /**
@@ -720,6 +605,7 @@ public abstract class BsOptionMember implements Entity, Serializable, Cloneable 
      * @return The value of the column 'DUMMY_NOFLG'. (NullAllowed even if selected: for no constraint)
      */
     public Integer getDummyNoflg() {
+        checkSpecifiedProperty("dummyNoflg");
         return _dummyNoflg;
     }
 
@@ -728,15 +614,23 @@ public abstract class BsOptionMember implements Entity, Serializable, Cloneable 
      * @param dummyNoflg The value of the column 'DUMMY_NOFLG'. (NullAllowed: null update allowed for no constraint)
      */
     public void setDummyNoflg(Integer dummyNoflg) {
-        __modifiedProperties.addPropertyName("dummyNoflg");
-        this._dummyNoflg = dummyNoflg;
+        registerModifiedProperty("dummyNoflg");
+        _dummyNoflg = dummyNoflg;
     }
 
-    protected String convertEmptyToNull(String value) {
-        return FunCustodial.convertEmptyToNull(value);
+    /**
+     * For framework so basically DON'T use this method.
+     * @param memberStatusCode The value of the column 'MEMBER_STATUS_CODE'. (NullAllowed: null update allowed for no constraint)
+     */
+    public void mynativeMappingMemberStatusCode(String memberStatusCode) {
+        setMemberStatusCode(memberStatusCode);
     }
 
-    protected void checkImplicitSet(String columnDbName, CDef.DefMeta meta, Object value) {
-        FunCustodial.checkImplicitSet(this, columnDbName, meta, value);
+    /**
+     * For framework so basically DON'T use this method.
+     * @param dummyFlg The value of the column 'DUMMY_FLG'. (NullAllowed: null update allowed for no constraint)
+     */
+    public void mynativeMappingDummyFlg(Integer dummyFlg) {
+        setDummyFlg(dummyFlg);
     }
 }

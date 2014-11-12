@@ -15,13 +15,11 @@
  */
 package org.dbflute.quickstage.dbflute.bsentity;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Set;
 
 import org.seasar.dbflute.dbmeta.DBMeta;
-import org.seasar.dbflute.Entity;
+import org.seasar.dbflute.dbmeta.AbstractEntity;
 import org.dbflute.quickstage.dbflute.allcommon.DBMetaInstanceHandler;
 import org.dbflute.quickstage.dbflute.allcommon.CDef;
 import org.dbflute.quickstage.dbflute.exentity.*;
@@ -74,7 +72,7 @@ import org.dbflute.quickstage.dbflute.exentity.*;
  * </pre>
  * @author DBFlute(AutoGenerator)
  */
-public abstract class BsMemberLogin implements Entity, Serializable, Cloneable {
+public abstract class BsMemberLogin extends AbstractEntity {
 
     // ===================================================================================
     //                                                                          Definition
@@ -102,18 +100,6 @@ public abstract class BsMemberLogin implements Entity, Serializable, Cloneable {
 
     /** (ログイン時会員ステータスコード)LOGIN_MEMBER_STATUS_CODE: {IX, NotNull, CHAR(3), FK to MEMBER_STATUS, classification=MemberStatus} */
     protected String _loginMemberStatusCode;
-
-    // -----------------------------------------------------
-    //                                              Internal
-    //                                              --------
-    /** The unique-driven properties for this entity. (NotNull) */
-    protected final EntityUniqueDrivenProperties __uniqueDrivenProperties = newUniqueDrivenProperties();
-
-    /** The modified properties for this entity. (NotNull) */
-    protected final EntityModifiedProperties __modifiedProperties = newModifiedProperties();
-
-    /** Is the entity created by DBFlute select process? */
-    protected boolean __createdBySelect;
 
     // ===================================================================================
     //                                                                          Table Name
@@ -166,17 +152,6 @@ public abstract class BsMemberLogin implements Entity, Serializable, Cloneable {
         setMemberId(memberId);setLoginDatetime(loginDatetime);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Set<String> myuniqueDrivenProperties() {
-        return __uniqueDrivenProperties.getPropertyNames();
-    }
-
-    protected EntityUniqueDrivenProperties newUniqueDrivenProperties() {
-        return new EntityUniqueDrivenProperties();
-    }
-
     // ===================================================================================
     //                                                             Classification Property
     //                                                             =======================
@@ -198,7 +173,7 @@ public abstract class BsMemberLogin implements Entity, Serializable, Cloneable {
      * @param cdef The instance of classification definition (as ENUM type). (NullAllowed: if null, null value is set to the column)
      */
     public void setMobileLoginFlgAsFlg(CDef.Flg cdef) {
-        setMobileLoginFlg(cdef != null ? FunCustodial.toNumber(cdef.code(), Integer.class) : null);
+        setMobileLoginFlg(cdef != null ? toNumber(cdef.code(), Integer.class) : null);
     }
 
     /**
@@ -371,7 +346,7 @@ public abstract class BsMemberLogin implements Entity, Serializable, Cloneable {
     protected Member _member;
 
     /**
-     * (会員)MEMBER by my MEMBER_ID, named 'member'.
+     * [get] (会員)MEMBER by my MEMBER_ID, named 'member'.
      * @return The entity of foreign property 'member'. (NullAllowed: when e.g. null FK column, no setupSelect)
      */
     public Member getMember() {
@@ -379,7 +354,7 @@ public abstract class BsMemberLogin implements Entity, Serializable, Cloneable {
     }
 
     /**
-     * (会員)MEMBER by my MEMBER_ID, named 'member'.
+     * [set] (会員)MEMBER by my MEMBER_ID, named 'member'.
      * @param member The entity of foreign property 'member'. (NullAllowed)
      */
     public void setMember(Member member) {
@@ -390,7 +365,7 @@ public abstract class BsMemberLogin implements Entity, Serializable, Cloneable {
     protected MemberStatus _memberStatus;
 
     /**
-     * (会員ステータス)MEMBER_STATUS by my LOGIN_MEMBER_STATUS_CODE, named 'memberStatus'.
+     * [get] (会員ステータス)MEMBER_STATUS by my LOGIN_MEMBER_STATUS_CODE, named 'memberStatus'.
      * @return The entity of foreign property 'memberStatus'. (NullAllowed: when e.g. null FK column, no setupSelect)
      */
     public MemberStatus getMemberStatus() {
@@ -398,7 +373,7 @@ public abstract class BsMemberLogin implements Entity, Serializable, Cloneable {
     }
 
     /**
-     * (会員ステータス)MEMBER_STATUS by my LOGIN_MEMBER_STATUS_CODE, named 'memberStatus'.
+     * [set] (会員ステータス)MEMBER_STATUS by my LOGIN_MEMBER_STATUS_CODE, named 'memberStatus'.
      * @param memberStatus The entity of foreign property 'memberStatus'. (NullAllowed)
      */
     public void setMemberStatus(MemberStatus memberStatus) {
@@ -413,161 +388,68 @@ public abstract class BsMemberLogin implements Entity, Serializable, Cloneable {
     }
 
     // ===================================================================================
-    //                                                                 Modified Properties
-    //                                                                 ===================
-    /**
-     * {@inheritDoc}
-     */
-    public Set<String> modifiedProperties() {
-        return __modifiedProperties.getPropertyNames();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void clearModifiedInfo() {
-        __modifiedProperties.clear();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean hasModification() {
-        return !__modifiedProperties.isEmpty();
-    }
-
-    protected EntityModifiedProperties newModifiedProperties() {
-        return new EntityModifiedProperties();
-    }
-
-    // ===================================================================================
-    //                                                                     Birthplace Mark
-    //                                                                     ===============
-    /**
-     * {@inheritDoc}
-     */
-    public void markAsSelect() {
-        __createdBySelect = true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean createdBySelect() {
-        return __createdBySelect;
-    }
-
-    // ===================================================================================
     //                                                                      Basic Override
     //                                                                      ==============
-    /**
-     * Determine the object is equal with this. <br />
-     * If primary-keys or columns of the other are same as this one, returns true.
-     * @param obj The object as other entity. (NullAllowed: if null, returns false fixedly)
-     * @return Comparing result.
-     */
-    public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof BsMemberLogin)) { return false; }
-        BsMemberLogin other = (BsMemberLogin)obj;
-        if (!xSV(getMemberLoginId(), other.getMemberLoginId())) { return false; }
-        return true;
-    }
-    protected boolean xSV(Object v1, Object v2) {
-        return FunCustodial.isSameValue(v1, v2);
+    @Override
+    protected boolean doEquals(Object obj) {
+        if (obj instanceof BsMemberLogin) {
+            BsMemberLogin other = (BsMemberLogin)obj;
+            if (!xSV(_memberLoginId, other._memberLoginId)) { return false; }
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    /**
-     * Calculate the hash-code from primary-keys or columns.
-     * @return The hash-code from primary-key or columns.
-     */
-    public int hashCode() {
-        int hs = 17;
+    @Override
+    protected int doHashCode(int initial) {
+        int hs = initial;
         hs = xCH(hs, getTableDbName());
-        hs = xCH(hs, getMemberLoginId());
+        hs = xCH(hs, _memberLoginId);
         return hs;
     }
-    protected int xCH(int hs, Object vl) {
-        return FunCustodial.calculateHashcode(hs, vl);
-    }
 
-    /**
-     * {@inheritDoc}
-     */
-    public int instanceHash() {
-        return super.hashCode();
-    }
-
-    /**
-     * Convert to display string of entity's data. (no relation data)
-     * @return The display string of all columns and relation existences. (NotNull)
-     */
-    public String toString() {
-        return buildDisplayString(FunCustodial.toClassTitle(this), true, true);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String toStringWithRelation() {
+    @Override
+    protected String doBuildStringWithRelation(String li) {
         StringBuilder sb = new StringBuilder();
-        sb.append(toString());
-        String li = "\n  ";
         if (_member != null)
         { sb.append(li).append(xbRDS(_member, "member")); }
         if (_memberStatus != null)
         { sb.append(li).append(xbRDS(_memberStatus, "memberStatus")); }
         return sb.toString();
     }
-    protected String xbRDS(Entity et, String name) { // buildRelationDisplayString()
-        return et.buildDisplayString(name, true, true);
-    }
 
-    /**
-     * {@inheritDoc}
-     */
-    public String buildDisplayString(String name, boolean column, boolean relation) {
+    @Override
+    protected String doBuildColumnString(String dm) {
         StringBuilder sb = new StringBuilder();
-        if (name != null) { sb.append(name).append(column || relation ? ":" : ""); }
-        if (column) { sb.append(buildColumnString()); }
-        if (relation) { sb.append(buildRelationString()); }
-        sb.append("@").append(Integer.toHexString(hashCode()));
-        return sb.toString();
-    }
-    protected String buildColumnString() {
-        StringBuilder sb = new StringBuilder();
-        String dm = ", ";
-        sb.append(dm).append(getMemberLoginId());
-        sb.append(dm).append(getMemberId());
-        sb.append(dm).append(getLoginDatetime());
-        sb.append(dm).append(getMobileLoginFlg());
-        sb.append(dm).append(getLoginMemberStatusCode());
+        sb.append(dm).append(xfND(_memberLoginId));
+        sb.append(dm).append(xfND(_memberId));
+        sb.append(dm).append(xfND(_loginDatetime));
+        sb.append(dm).append(xfND(_mobileLoginFlg));
+        sb.append(dm).append(xfND(_loginMemberStatusCode));
         if (sb.length() > dm.length()) {
             sb.delete(0, dm.length());
         }
         sb.insert(0, "{").append("}");
         return sb.toString();
     }
-    protected String buildRelationString() {
+
+    @Override
+    protected String doBuildRelationString(String dm) {
         StringBuilder sb = new StringBuilder();
-        String cm = ",";
-        if (_member != null) { sb.append(cm).append("member"); }
-        if (_memberStatus != null) { sb.append(cm).append("memberStatus"); }
-        if (sb.length() > cm.length()) {
-            sb.delete(0, cm.length()).insert(0, "(").append(")");
+        if (_member != null)
+        { sb.append(dm).append("member"); }
+        if (_memberStatus != null)
+        { sb.append(dm).append("memberStatus"); }
+        if (sb.length() > dm.length()) {
+            sb.delete(0, dm.length()).insert(0, "(").append(")");
         }
         return sb.toString();
     }
 
-    /**
-     * Clone entity instance using super.clone(). (shallow copy) 
-     * @return The cloned instance of this entity. (NotNull)
-     */
+    @Override
     public MemberLogin clone() {
-        try {
-            return (MemberLogin)super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new IllegalStateException("Failed to clone the entity: " + toString(), e);
-        }
+        return (MemberLogin)super.clone();
     }
 
     // ===================================================================================
@@ -578,6 +460,7 @@ public abstract class BsMemberLogin implements Entity, Serializable, Cloneable {
      * @return The value of the column 'MEMBER_LOGIN_ID'. (basically NotNull if selected: for the constraint)
      */
     public Long getMemberLoginId() {
+        checkSpecifiedProperty("memberLoginId");
         return _memberLoginId;
     }
 
@@ -586,8 +469,8 @@ public abstract class BsMemberLogin implements Entity, Serializable, Cloneable {
      * @param memberLoginId The value of the column 'MEMBER_LOGIN_ID'. (basically NotNull if update: for the constraint)
      */
     public void setMemberLoginId(Long memberLoginId) {
-        __modifiedProperties.addPropertyName("memberLoginId");
-        this._memberLoginId = memberLoginId;
+        registerModifiedProperty("memberLoginId");
+        _memberLoginId = memberLoginId;
     }
 
     /**
@@ -595,6 +478,7 @@ public abstract class BsMemberLogin implements Entity, Serializable, Cloneable {
      * @return The value of the column 'MEMBER_ID'. (basically NotNull if selected: for the constraint)
      */
     public Integer getMemberId() {
+        checkSpecifiedProperty("memberId");
         return _memberId;
     }
 
@@ -603,8 +487,8 @@ public abstract class BsMemberLogin implements Entity, Serializable, Cloneable {
      * @param memberId The value of the column 'MEMBER_ID'. (basically NotNull if update: for the constraint)
      */
     public void setMemberId(Integer memberId) {
-        __modifiedProperties.addPropertyName("memberId");
-        this._memberId = memberId;
+        registerModifiedProperty("memberId");
+        _memberId = memberId;
     }
 
     /**
@@ -614,6 +498,7 @@ public abstract class BsMemberLogin implements Entity, Serializable, Cloneable {
      * @return The value of the column 'LOGIN_DATETIME'. (basically NotNull if selected: for the constraint)
      */
     public java.sql.Timestamp getLoginDatetime() {
+        checkSpecifiedProperty("loginDatetime");
         return _loginDatetime;
     }
 
@@ -624,8 +509,8 @@ public abstract class BsMemberLogin implements Entity, Serializable, Cloneable {
      * @param loginDatetime The value of the column 'LOGIN_DATETIME'. (basically NotNull if update: for the constraint)
      */
     public void setLoginDatetime(java.sql.Timestamp loginDatetime) {
-        __modifiedProperties.addPropertyName("loginDatetime");
-        this._loginDatetime = loginDatetime;
+        registerModifiedProperty("loginDatetime");
+        _loginDatetime = loginDatetime;
     }
 
     /**
@@ -634,6 +519,7 @@ public abstract class BsMemberLogin implements Entity, Serializable, Cloneable {
      * @return The value of the column 'MOBILE_LOGIN_FLG'. (basically NotNull if selected: for the constraint)
      */
     public Integer getMobileLoginFlg() {
+        checkSpecifiedProperty("mobileLoginFlg");
         return _mobileLoginFlg;
     }
 
@@ -643,9 +529,9 @@ public abstract class BsMemberLogin implements Entity, Serializable, Cloneable {
      * @param mobileLoginFlg The value of the column 'MOBILE_LOGIN_FLG'. (basically NotNull if update: for the constraint)
      */
     protected void setMobileLoginFlg(Integer mobileLoginFlg) {
-        checkImplicitSet("MOBILE_LOGIN_FLG", CDef.DefMeta.Flg, mobileLoginFlg);
-        __modifiedProperties.addPropertyName("mobileLoginFlg");
-        this._mobileLoginFlg = mobileLoginFlg;
+        checkClassificationCode("MOBILE_LOGIN_FLG", CDef.DefMeta.Flg, mobileLoginFlg);
+        registerModifiedProperty("mobileLoginFlg");
+        _mobileLoginFlg = mobileLoginFlg;
     }
 
     /**
@@ -654,6 +540,7 @@ public abstract class BsMemberLogin implements Entity, Serializable, Cloneable {
      * @return The value of the column 'LOGIN_MEMBER_STATUS_CODE'. (basically NotNull if selected: for the constraint)
      */
     public String getLoginMemberStatusCode() {
+        checkSpecifiedProperty("loginMemberStatusCode");
         return convertEmptyToNull(_loginMemberStatusCode);
     }
 
@@ -663,15 +550,23 @@ public abstract class BsMemberLogin implements Entity, Serializable, Cloneable {
      * @param loginMemberStatusCode The value of the column 'LOGIN_MEMBER_STATUS_CODE'. (basically NotNull if update: for the constraint)
      */
     protected void setLoginMemberStatusCode(String loginMemberStatusCode) {
-        __modifiedProperties.addPropertyName("loginMemberStatusCode");
-        this._loginMemberStatusCode = loginMemberStatusCode;
+        registerModifiedProperty("loginMemberStatusCode");
+        _loginMemberStatusCode = loginMemberStatusCode;
     }
 
-    protected String convertEmptyToNull(String value) {
-        return FunCustodial.convertEmptyToNull(value);
+    /**
+     * For framework so basically DON'T use this method.
+     * @param mobileLoginFlg The value of the column 'MOBILE_LOGIN_FLG'. (basically NotNull if update: for the constraint)
+     */
+    public void mynativeMappingMobileLoginFlg(Integer mobileLoginFlg) {
+        setMobileLoginFlg(mobileLoginFlg);
     }
 
-    protected void checkImplicitSet(String columnDbName, CDef.DefMeta meta, Object value) {
-        FunCustodial.checkImplicitSet(this, columnDbName, meta, value);
+    /**
+     * For framework so basically DON'T use this method.
+     * @param loginMemberStatusCode The value of the column 'LOGIN_MEMBER_STATUS_CODE'. (basically NotNull if update: for the constraint)
+     */
+    public void mynativeMappingLoginMemberStatusCode(String loginMemberStatusCode) {
+        setLoginMemberStatusCode(loginMemberStatusCode);
     }
 }

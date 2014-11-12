@@ -59,7 +59,6 @@ public abstract class AbstractBsMemberLoginCQ extends AbstractConditionQuery {
     // ===================================================================================
     //                                                                               Query
     //                                                                               =====
-    
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
      * (会員ログインID)MEMBER_LOGIN_ID: {PK, ID, NotNull, BIGINT(19)}
@@ -175,7 +174,7 @@ public abstract class AbstractBsMemberLoginCQ extends AbstractConditionQuery {
 
     protected void regMemberLoginId(ConditionKey ky, Object vl) { regQ(ky, vl, getCValueMemberLoginId(), "MEMBER_LOGIN_ID"); }
     protected abstract ConditionValue getCValueMemberLoginId();
-    
+
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
      * (会員ID)MEMBER_ID: {UQ+, IX, NotNull, INTEGER(10), FK to MEMBER}
@@ -385,7 +384,7 @@ public abstract class AbstractBsMemberLoginCQ extends AbstractConditionQuery {
 
     protected void regLoginDatetime(ConditionKey ky, Object vl) { regQ(ky, vl, getCValueLoginDatetime(), "LOGIN_DATETIME"); }
     protected abstract ConditionValue getCValueLoginDatetime();
-    
+
     /**
      * Equal(=). And NullIgnored, OnlyOnceRegistered. <br />
      * (モバイルログインフラグ)MOBILE_LOGIN_FLG: {NotNull, INTEGER(10), classification=Flg}
@@ -723,7 +722,7 @@ public abstract class AbstractBsMemberLoginCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<MemberLoginCB> scalar_Equal() {
-        return xcreateSSQFunction(CK_EQ.getOperand(), MemberLoginCB.class);
+        return xcreateSSQFunction(CK_EQ, MemberLoginCB.class);
     }
 
     /**
@@ -740,7 +739,7 @@ public abstract class AbstractBsMemberLoginCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<MemberLoginCB> scalar_NotEqual() {
-        return xcreateSSQFunction(CK_NES.getOperand(), MemberLoginCB.class);
+        return xcreateSSQFunction(CK_NES, MemberLoginCB.class);
     }
 
     /**
@@ -757,7 +756,7 @@ public abstract class AbstractBsMemberLoginCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<MemberLoginCB> scalar_GreaterThan() {
-        return xcreateSSQFunction(CK_GT.getOperand(), MemberLoginCB.class);
+        return xcreateSSQFunction(CK_GT, MemberLoginCB.class);
     }
 
     /**
@@ -774,7 +773,7 @@ public abstract class AbstractBsMemberLoginCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<MemberLoginCB> scalar_LessThan() {
-        return xcreateSSQFunction(CK_LT.getOperand(), MemberLoginCB.class);
+        return xcreateSSQFunction(CK_LT, MemberLoginCB.class);
     }
 
     /**
@@ -791,7 +790,7 @@ public abstract class AbstractBsMemberLoginCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<MemberLoginCB> scalar_GreaterEqual() {
-        return xcreateSSQFunction(CK_GE.getOperand(), MemberLoginCB.class);
+        return xcreateSSQFunction(CK_GE, MemberLoginCB.class);
     }
 
     /**
@@ -808,7 +807,7 @@ public abstract class AbstractBsMemberLoginCQ extends AbstractConditionQuery {
      * @return The object to set up a function. (NotNull)
      */
     public HpSSQFunction<MemberLoginCB> scalar_LessEqual() {
-        return xcreateSSQFunction(CK_LE.getOperand(), MemberLoginCB.class);
+        return xcreateSSQFunction(CK_LE, MemberLoginCB.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -894,8 +893,46 @@ public abstract class AbstractBsMemberLoginCQ extends AbstractConditionQuery {
     public abstract String keepMyselfInScope(MemberLoginCQ sq);
 
     // ===================================================================================
-    //                                                                          Compatible
-    //                                                                          ==========
+    //                                                                        Manual Order
+    //                                                                        ============
+    /**
+     * Order along manual ordering information.
+     * <pre>
+     * MemberCB cb = new MemberCB();
+     * ManualOrderBean mob = new ManualOrderBean();
+     * mob.<span style="color: #DD4747">when_GreaterEqual</span>(priorityDate); <span style="color: #3F7E5E">// e.g. 2000/01/01</span>
+     * cb.query().addOrderBy_Birthdate_Asc().<span style="color: #DD4747">withManualOrder(mob)</span>;
+     * <span style="color: #3F7E5E">// order by </span>
+     * <span style="color: #3F7E5E">//   case</span>
+     * <span style="color: #3F7E5E">//     when BIRTHDATE &gt;= '2000/01/01' then 0</span>
+     * <span style="color: #3F7E5E">//     else 1</span>
+     * <span style="color: #3F7E5E">//   end asc, ...</span>
+     *
+     * MemberCB cb = new MemberCB();
+     * ManualOrderBean mob = new ManualOrderBean();
+     * mob.<span style="color: #DD4747">when_Equal</span>(CDef.MemberStatus.Withdrawal);
+     * mob.<span style="color: #DD4747">when_Equal</span>(CDef.MemberStatus.Formalized);
+     * mob.<span style="color: #DD4747">when_Equal</span>(CDef.MemberStatus.Provisional);
+     * cb.query().addOrderBy_MemberStatusCode_Asc().<span style="color: #DD4747">withManualOrder(mob)</span>;
+     * <span style="color: #3F7E5E">// order by </span>
+     * <span style="color: #3F7E5E">//   case</span>
+     * <span style="color: #3F7E5E">//     when MEMBER_STATUS_CODE = 'WDL' then 0</span>
+     * <span style="color: #3F7E5E">//     when MEMBER_STATUS_CODE = 'FML' then 1</span>
+     * <span style="color: #3F7E5E">//     when MEMBER_STATUS_CODE = 'PRV' then 2</span>
+     * <span style="color: #3F7E5E">//     else 3</span>
+     * <span style="color: #3F7E5E">//   end asc, ...</span>
+     * </pre>
+     * <p>This function with Union is unsupported!</p>
+     * <p>The order values are bound (treated as bind parameter).</p>
+     * @param mob The bean of manual order containing order values. (NotNull)
+     */
+    public void withManualOrder(ManualOrderBean mob) { // is user public!
+        xdoWithManualOrder(mob);
+    }
+
+    // ===================================================================================
+    //                                                                    Small Adjustment
+    //                                                                    ================
     /**
      * Order along the list of manual values. #beforejava8 <br />
      * This function with Union is unsupported! <br />
@@ -924,6 +961,11 @@ public abstract class AbstractBsMemberLoginCQ extends AbstractConditionQuery {
         withManualOrder(manualOrderBean);
     }
 
+    @Override
+    protected void filterFromToOption(FromToOption option) {
+        option.allowOneSide();
+    }
+
     // ===================================================================================
     //                                                                       Very Internal
     //                                                                       =============
@@ -931,6 +973,7 @@ public abstract class AbstractBsMemberLoginCQ extends AbstractConditionQuery {
         return new MemberLoginCB();
     }
     // very internal (for suppressing warn about 'Not Use Import')
+    protected String xabUDT() { return Date.class.getName(); }
     protected String xabCQ() { return MemberLoginCQ.class.getName(); }
     protected String xabLSO() { return LikeSearchOption.class.getName(); }
     protected String xabSSQS() { return HpSSQSetupper.class.getName(); }

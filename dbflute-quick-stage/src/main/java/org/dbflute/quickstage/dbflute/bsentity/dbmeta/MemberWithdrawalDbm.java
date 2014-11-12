@@ -21,9 +21,9 @@ import java.util.Map;
 import org.seasar.dbflute.DBDef;
 import org.seasar.dbflute.Entity;
 import org.seasar.dbflute.dbmeta.AbstractDBMeta;
-import org.seasar.dbflute.dbmeta.PropertyGateway;
 import org.seasar.dbflute.dbmeta.info.*;
 import org.seasar.dbflute.dbmeta.name.*;
+import org.seasar.dbflute.dbmeta.property.PropertyGateway;
 import org.dbflute.quickstage.dbflute.allcommon.*;
 import org.dbflute.quickstage.dbflute.exentity.*;
 
@@ -72,7 +72,12 @@ public class MemberWithdrawalDbm extends AbstractDBMeta {
         public void write(Entity et, Object vl) {
             ColumnInfo col = columnWithdrawalReasonCode();
             ccls(col, vl);
-            ((MemberWithdrawal)et).setWithdrawalReasonCodeAsWithdrawalReason((CDef.WithdrawalReason)gcls(col, vl));
+            CDef.WithdrawalReason cls = (CDef.WithdrawalReason)gcls(col, vl);
+            if (cls != null) {
+                ((MemberWithdrawal)et).setWithdrawalReasonCodeAsWithdrawalReason(cls);
+            } else {
+                ((MemberWithdrawal)et).mynativeMappingWithdrawalReasonCode((String)vl);
+            }
         }
     }
     public static class EpgWithdrawalReasonInputText implements PropertyGateway {
@@ -282,7 +287,7 @@ public class MemberWithdrawalDbm extends AbstractDBMeta {
     // ===================================================================================
     //                                                                     Object Instance
     //                                                                     ===============
-    public Entity newEntity() { return newMyEntity(); }
+    public MemberWithdrawal newEntity() { return new MemberWithdrawal(); }
     public MemberWithdrawal newMyEntity() { return new MemberWithdrawal(); }
 
     // ===================================================================================

@@ -125,13 +125,13 @@ public class BsPurchaseSummaryMemberPmb implements CursorHandlingPmb<MemberBhv, 
     }
 
     @SuppressWarnings("unchecked")
-    protected <ELEMENT> ArrayList<ELEMENT> newArrayList(ELEMENT... elements) {
+    protected <ELEMENT> ArrayList<ELEMENT> newArrayList(ELEMENT... elements) { // might be called by option handling
         Object obj = DfCollectionUtil.newArrayList(elements);
         return (ArrayList<ELEMENT>)obj; // to avoid the warning between JDK6 and JDK7
     }
 
     @SuppressWarnings("unchecked")
-    protected <NUMBER extends Number> NUMBER toNumber(Object obj, Class<NUMBER> type) {
+    protected <NUMBER extends Number> NUMBER toNumber(Object obj, Class<NUMBER> type) { // might be called by option handling
         return (NUMBER)DfTypeUtil.toNumber(obj, type);
     }
 
@@ -177,13 +177,13 @@ public class BsPurchaseSummaryMemberPmb implements CursorHandlingPmb<MemberBhv, 
         sb.append(xbuildColumnString());
         return sb.toString();
     }
-    private String xbuildColumnString() {
-        final String c = ", ";
+    protected String xbuildColumnString() {
+        final String dm = ", ";
         final StringBuilder sb = new StringBuilder();
-        sb.append(c).append(_memberStatusCode);
-        sb.append(c).append(_formalizedDatetime);
-        sb.append(c).append(_memberNameList);
-        if (sb.length() > 0) { sb.delete(0, c.length()); }
+        sb.append(dm).append(_memberStatusCode);
+        sb.append(dm).append(_formalizedDatetime);
+        sb.append(dm).append(_memberNameList);
+        if (sb.length() > 0) { sb.delete(0, dm.length()); }
         sb.insert(0, "{").append("}");
         return sb.toString();
     }
@@ -193,7 +193,7 @@ public class BsPurchaseSummaryMemberPmb implements CursorHandlingPmb<MemberBhv, 
     //                                                                            ========
     /**
      * [get] memberStatusCode:cls(MemberStatus) <br />
-     * @return The value of memberStatusCode. (Nullable, NotEmptyString(when String): if empty string, returns null)
+     * @return The value of memberStatusCode. (NullAllowed, NotEmptyString(when String): if empty string, returns null)
      */
     public String getMemberStatusCode() {
         return filterStringParameter(_memberStatusCode);
@@ -225,7 +225,7 @@ public class BsPurchaseSummaryMemberPmb implements CursorHandlingPmb<MemberBhv, 
 
     /**
      * [get] formalizedDatetime <br />
-     * @return The value of formalizedDatetime. (Nullable, NotEmptyString(when String): if empty string, returns null)
+     * @return The value of formalizedDatetime. (NullAllowed, NotEmptyString(when String): if empty string, returns null)
      */
     public java.sql.Timestamp getFormalizedDatetime() {
         return _formalizedDatetime;
@@ -241,7 +241,7 @@ public class BsPurchaseSummaryMemberPmb implements CursorHandlingPmb<MemberBhv, 
 
     /**
      * [get] memberNameList:likeContain <br />
-     * @return The value of memberNameList. (Nullable, NotEmptyString(when String): if empty string, returns null)
+     * @return The value of memberNameList. (NullAllowed, NotEmptyString(when String): if empty string, returns null)
      */
     public List<String> getMemberNameList() {
         return _memberNameList;
@@ -263,5 +263,4 @@ public class BsPurchaseSummaryMemberPmb implements CursorHandlingPmb<MemberBhv, 
     public LikeSearchOption getMemberNameListInternalLikeSearchOption() {
         return _memberNameListInternalLikeSearchOption;
     }
-
 }

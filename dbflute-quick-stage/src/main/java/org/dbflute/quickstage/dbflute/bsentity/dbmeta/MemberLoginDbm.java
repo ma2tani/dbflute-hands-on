@@ -21,9 +21,9 @@ import java.util.Map;
 import org.seasar.dbflute.DBDef;
 import org.seasar.dbflute.Entity;
 import org.seasar.dbflute.dbmeta.AbstractDBMeta;
-import org.seasar.dbflute.dbmeta.PropertyGateway;
 import org.seasar.dbflute.dbmeta.info.*;
 import org.seasar.dbflute.dbmeta.name.*;
+import org.seasar.dbflute.dbmeta.property.PropertyGateway;
 import org.dbflute.quickstage.dbflute.allcommon.*;
 import org.dbflute.quickstage.dbflute.exentity.*;
 
@@ -76,7 +76,12 @@ public class MemberLoginDbm extends AbstractDBMeta {
         public void write(Entity et, Object vl) {
             ColumnInfo col = columnMobileLoginFlg();
             ccls(col, vl);
-            ((MemberLogin)et).setMobileLoginFlgAsFlg((CDef.Flg)gcls(col, vl));
+            CDef.Flg cls = (CDef.Flg)gcls(col, vl);
+            if (cls != null) {
+                ((MemberLogin)et).setMobileLoginFlgAsFlg(cls);
+            } else {
+                ((MemberLogin)et).mynativeMappingMobileLoginFlg(ctn(vl, Integer.class));
+            }
         }
     }
     public class EpgLoginMemberStatusCode implements PropertyGateway {
@@ -84,7 +89,12 @@ public class MemberLoginDbm extends AbstractDBMeta {
         public void write(Entity et, Object vl) {
             ColumnInfo col = columnLoginMemberStatusCode();
             ccls(col, vl);
-            ((MemberLogin)et).setLoginMemberStatusCodeAsMemberStatus((CDef.MemberStatus)gcls(col, vl));
+            CDef.MemberStatus cls = (CDef.MemberStatus)gcls(col, vl);
+            if (cls != null) {
+                ((MemberLogin)et).setLoginMemberStatusCodeAsMemberStatus(cls);
+            } else {
+                ((MemberLogin)et).mynativeMappingLoginMemberStatusCode((String)vl);
+            }
         }
     }
     public PropertyGateway findPropertyGateway(String prop)
@@ -127,7 +137,7 @@ public class MemberLoginDbm extends AbstractDBMeta {
     // ===================================================================================
     //                                                                         Column Info
     //                                                                         ===========
-    protected final ColumnInfo _columnMemberLoginId = cci("MEMBER_LOGIN_ID", "MEMBER_LOGIN_ID", null, "会員ログインID", Long.class, "memberLoginId", null, true, true, true, "BIGINT", 19, 0, "NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_949AFCA2_BF0E_4882_B694_9B1835920CBE", false, null, null, null, null, null);
+    protected final ColumnInfo _columnMemberLoginId = cci("MEMBER_LOGIN_ID", "MEMBER_LOGIN_ID", null, "会員ログインID", Long.class, "memberLoginId", null, true, true, true, "BIGINT", 19, 0, "NEXT VALUE FOR PUBLIC.SYSTEM_SEQUENCE_D79F0BB6_229C_49A7_94DD_045E67DFB121", false, null, null, null, null, null);
     protected final ColumnInfo _columnMemberId = cci("MEMBER_ID", "MEMBER_ID", null, "会員ID", Integer.class, "memberId", null, false, false, true, "INTEGER", 10, 0, null, false, null, null, "member", null, null);
     protected final ColumnInfo _columnLoginDatetime = cci("LOGIN_DATETIME", "LOGIN_DATETIME", null, "ログイン日時", java.sql.Timestamp.class, "loginDatetime", null, false, false, true, "TIMESTAMP", 23, 10, null, false, null, "ログインした瞬間の日時。\n同じ会員が同じ日時にログインはできない。(ユニーク制約で重複ログインできないようにしてある)", null, null, null);
     protected final ColumnInfo _columnMobileLoginFlg = cci("MOBILE_LOGIN_FLG", "MOBILE_LOGIN_FLG", null, "モバイルログインフラグ", Integer.class, "mobileLoginFlg", null, false, false, true, "INTEGER", 10, 0, null, false, null, "モバイル機器からのログインか否か。", null, null, CDef.DefMeta.Flg);
@@ -230,7 +240,7 @@ public class MemberLoginDbm extends AbstractDBMeta {
     // ===================================================================================
     //                                                                     Object Instance
     //                                                                     ===============
-    public Entity newEntity() { return newMyEntity(); }
+    public MemberLogin newEntity() { return new MemberLogin(); }
     public MemberLogin newMyEntity() { return new MemberLogin(); }
 
     // ===================================================================================

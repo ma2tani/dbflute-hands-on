@@ -110,13 +110,13 @@ public class BsPurchaseMaxPriceMemberPmb extends SimplePagingBean implements Ent
     }
 
     @SuppressWarnings("unchecked")
-    protected <ELEMENT> ArrayList<ELEMENT> newArrayList(ELEMENT... elements) {
+    protected <ELEMENT> ArrayList<ELEMENT> newArrayList(ELEMENT... elements) { // might be called by option handling
         Object obj = DfCollectionUtil.newArrayList(elements);
         return (ArrayList<ELEMENT>)obj; // to avoid the warning between JDK6 and JDK7
     }
 
     @SuppressWarnings("unchecked")
-    protected <NUMBER extends Number> NUMBER toNumber(Object obj, Class<NUMBER> type) {
+    protected <NUMBER extends Number> NUMBER toNumber(Object obj, Class<NUMBER> type) { // might be called by option handling
         return (NUMBER)DfTypeUtil.toNumber(obj, type);
     }
 
@@ -162,13 +162,13 @@ public class BsPurchaseMaxPriceMemberPmb extends SimplePagingBean implements Ent
         sb.append(xbuildColumnString());
         return sb.toString();
     }
-    private String xbuildColumnString() {
-        final String c = ", ";
+    protected String xbuildColumnString() {
+        final String dm = ", ";
         final StringBuilder sb = new StringBuilder();
-        sb.append(c).append(_memberId);
-        sb.append(c).append(_memberStatusCodeList);
-        sb.append(c).append(_memberNameList);
-        if (sb.length() > 0) { sb.delete(0, c.length()); }
+        sb.append(dm).append(_memberId);
+        sb.append(dm).append(_memberStatusCodeList);
+        sb.append(dm).append(_memberNameList);
+        if (sb.length() > 0) { sb.delete(0, dm.length()); }
         sb.insert(0, "{").append("}");
         return sb.toString();
     }
@@ -178,7 +178,7 @@ public class BsPurchaseMaxPriceMemberPmb extends SimplePagingBean implements Ent
     //                                                                            ========
     /**
      * [get] memberId <br />
-     * @return The value of memberId. (Nullable, NotEmptyString(when String): if empty string, returns null)
+     * @return The value of memberId. (NullAllowed, NotEmptyString(when String): if empty string, returns null)
      */
     public Integer getMemberId() {
         return _memberId;
@@ -194,15 +194,23 @@ public class BsPurchaseMaxPriceMemberPmb extends SimplePagingBean implements Ent
 
     /**
      * [get] memberStatusCodeList:ref(MEMBER) :: refers to (会員ステータスコード)MEMBER_STATUS_CODE: {IX, NotNull, CHAR(3), FK to MEMBER_STATUS, classification=MemberStatus} <br />
-     * @return The value of memberStatusCodeList. (Nullable, NotEmptyString(when String): if empty string, returns null)
+     * @return The value of memberStatusCodeList. (NullAllowed, NotEmptyString(when String): if empty string, returns null)
      */
     public List<String> getMemberStatusCodeList() {
         return _memberStatusCodeList;
     }
 
     /**
+     * [set] memberStatusCodeList:ref(MEMBER) :: refers to (会員ステータスコード)MEMBER_STATUS_CODE: {IX, NotNull, CHAR(3), FK to MEMBER_STATUS, classification=MemberStatus} <br />
+     * @param memberStatusCodeList The value of memberStatusCodeList. (NullAllowed)
+     */
+    public void setMemberStatusCodeList(List<String> memberStatusCodeList) {
+        _memberStatusCodeList = memberStatusCodeList;
+    }
+
+    /**
      * [get] memberNameList:likePrefix <br />
-     * @return The value of memberNameList. (Nullable, NotEmptyString(when String): if empty string, returns null)
+     * @return The value of memberNameList. (NullAllowed, NotEmptyString(when String): if empty string, returns null)
      */
     public List<String> getMemberNameList() {
         return _memberNameList;
@@ -224,5 +232,4 @@ public class BsPurchaseMaxPriceMemberPmb extends SimplePagingBean implements Ent
     public LikeSearchOption getMemberNameListInternalLikeSearchOption() {
         return _memberNameListInternalLikeSearchOption;
     }
-
 }

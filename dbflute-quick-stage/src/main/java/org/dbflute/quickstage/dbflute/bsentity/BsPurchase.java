@@ -15,13 +15,11 @@
  */
 package org.dbflute.quickstage.dbflute.bsentity;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Set;
 
 import org.seasar.dbflute.dbmeta.DBMeta;
-import org.seasar.dbflute.Entity;
+import org.seasar.dbflute.dbmeta.AbstractEntity;
 import org.dbflute.quickstage.dbflute.allcommon.EntityDefinedCommonColumn;
 import org.dbflute.quickstage.dbflute.allcommon.DBMetaInstanceHandler;
 import org.dbflute.quickstage.dbflute.allcommon.CDef;
@@ -89,7 +87,7 @@ import org.dbflute.quickstage.dbflute.exentity.*;
  * </pre>
  * @author DBFlute(AutoGenerator)
  */
-public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializable, Cloneable {
+public abstract class BsPurchase extends AbstractEntity implements EntityDefinedCommonColumn {
 
     // ===================================================================================
     //                                                                          Definition
@@ -142,17 +140,8 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
     // -----------------------------------------------------
     //                                              Internal
     //                                              --------
-    /** The unique-driven properties for this entity. (NotNull) */
-    protected final EntityUniqueDrivenProperties __uniqueDrivenProperties = newUniqueDrivenProperties();
-
-    /** The modified properties for this entity. (NotNull) */
-    protected final EntityModifiedProperties __modifiedProperties = newModifiedProperties();
-
     /** Is common column auto set up effective? */
     protected boolean __canCommonColumnAutoSetup = true;
-
-    /** Is the entity created by DBFlute select process? */
-    protected boolean __createdBySelect;
 
     // ===================================================================================
     //                                                                          Table Name
@@ -207,17 +196,6 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
         setMemberId(memberId);setProductId(productId);setPurchaseDatetime(purchaseDatetime);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Set<String> myuniqueDrivenProperties() {
-        return __uniqueDrivenProperties.getPropertyNames();
-    }
-
-    protected EntityUniqueDrivenProperties newUniqueDrivenProperties() {
-        return new EntityUniqueDrivenProperties();
-    }
-
     // ===================================================================================
     //                                                             Classification Property
     //                                                             =======================
@@ -239,7 +217,7 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @param cdef The instance of classification definition (as ENUM type). (NullAllowed: if null, null value is set to the column)
      */
     public void setPaymentCompleteFlgAsFlg(CDef.Flg cdef) {
-        setPaymentCompleteFlg(cdef != null ? FunCustodial.toNumber(cdef.code(), Integer.class) : null);
+        setPaymentCompleteFlg(cdef != null ? toNumber(cdef.code(), Integer.class) : null);
     }
 
     /**
@@ -324,7 +302,7 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
     protected Member _member;
 
     /**
-     * (会員)MEMBER by my MEMBER_ID, named 'member'.
+     * [get] (会員)MEMBER by my MEMBER_ID, named 'member'.
      * @return The entity of foreign property 'member'. (NullAllowed: when e.g. null FK column, no setupSelect)
      */
     public Member getMember() {
@@ -332,7 +310,7 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
     }
 
     /**
-     * (会員)MEMBER by my MEMBER_ID, named 'member'.
+     * [set] (会員)MEMBER by my MEMBER_ID, named 'member'.
      * @param member The entity of foreign property 'member'. (NullAllowed)
      */
     public void setMember(Member member) {
@@ -343,7 +321,7 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
     protected Product _product;
 
     /**
-     * (商品)PRODUCT by my PRODUCT_ID, named 'product'.
+     * [get] (商品)PRODUCT by my PRODUCT_ID, named 'product'.
      * @return The entity of foreign property 'product'. (NullAllowed: when e.g. null FK column, no setupSelect)
      */
     public Product getProduct() {
@@ -351,7 +329,7 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
     }
 
     /**
-     * (商品)PRODUCT by my PRODUCT_ID, named 'product'.
+     * [set] (商品)PRODUCT by my PRODUCT_ID, named 'product'.
      * @param product The entity of foreign property 'product'. (NullAllowed)
      */
     public void setProduct(Product product) {
@@ -362,7 +340,7 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
     protected SummaryProduct _summaryProduct;
 
     /**
-     * SUMMARY_PRODUCT by my PRODUCT_ID, named 'summaryProduct'.
+     * [get] SUMMARY_PRODUCT by my PRODUCT_ID, named 'summaryProduct'.
      * @return The entity of foreign property 'summaryProduct'. (NullAllowed: when e.g. null FK column, no setupSelect)
      */
     public SummaryProduct getSummaryProduct() {
@@ -370,7 +348,7 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
     }
 
     /**
-     * SUMMARY_PRODUCT by my PRODUCT_ID, named 'summaryProduct'.
+     * [set] SUMMARY_PRODUCT by my PRODUCT_ID, named 'summaryProduct'.
      * @param summaryProduct The entity of foreign property 'summaryProduct'. (NullAllowed)
      */
     public void setSummaryProduct(SummaryProduct summaryProduct) {
@@ -384,7 +362,7 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
     protected List<PurchasePayment> _purchasePaymentList;
 
     /**
-     * (購入支払)PURCHASE_PAYMENT by PURCHASE_ID, named 'purchasePaymentList'.
+     * [get] (購入支払)PURCHASE_PAYMENT by PURCHASE_ID, named 'purchasePaymentList'.
      * @return The entity list of referrer property 'purchasePaymentList'. (NotNull: even if no loading, returns empty list)
      */
     public List<PurchasePayment> getPurchasePaymentList() {
@@ -393,7 +371,7 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
     }
 
     /**
-     * (購入支払)PURCHASE_PAYMENT by PURCHASE_ID, named 'purchasePaymentList'.
+     * [set] (購入支払)PURCHASE_PAYMENT by PURCHASE_ID, named 'purchasePaymentList'.
      * @param purchasePaymentList The entity list of referrer property 'purchasePaymentList'. (NullAllowed)
      */
     public void setPurchasePaymentList(List<PurchasePayment> purchasePaymentList) {
@@ -402,51 +380,6 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
 
     protected <ELEMENT> List<ELEMENT> newReferrerList() {
         return new ArrayList<ELEMENT>();
-    }
-
-    // ===================================================================================
-    //                                                                 Modified Properties
-    //                                                                 ===================
-    /**
-     * {@inheritDoc}
-     */
-    public Set<String> modifiedProperties() {
-        return __modifiedProperties.getPropertyNames();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void clearModifiedInfo() {
-        __modifiedProperties.clear();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean hasModification() {
-        return !__modifiedProperties.isEmpty();
-    }
-
-    protected EntityModifiedProperties newModifiedProperties() {
-        return new EntityModifiedProperties();
-    }
-
-    // ===================================================================================
-    //                                                                     Birthplace Mark
-    //                                                                     ===============
-    /**
-     * {@inheritDoc}
-     */
-    public void markAsSelect() {
-        __createdBySelect = true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public boolean createdBySelect() {
-        return __createdBySelect;
     }
 
     // ===================================================================================
@@ -476,128 +409,81 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
     // ===================================================================================
     //                                                                      Basic Override
     //                                                                      ==============
-    /**
-     * Determine the object is equal with this. <br />
-     * If primary-keys or columns of the other are same as this one, returns true.
-     * @param obj The object as other entity. (NullAllowed: if null, returns false fixedly)
-     * @return Comparing result.
-     */
-    public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof BsPurchase)) { return false; }
-        BsPurchase other = (BsPurchase)obj;
-        if (!xSV(getPurchaseId(), other.getPurchaseId())) { return false; }
-        return true;
-    }
-    protected boolean xSV(Object v1, Object v2) {
-        return FunCustodial.isSameValue(v1, v2);
+    @Override
+    protected boolean doEquals(Object obj) {
+        if (obj instanceof BsPurchase) {
+            BsPurchase other = (BsPurchase)obj;
+            if (!xSV(_purchaseId, other._purchaseId)) { return false; }
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    /**
-     * Calculate the hash-code from primary-keys or columns.
-     * @return The hash-code from primary-key or columns.
-     */
-    public int hashCode() {
-        int hs = 17;
+    @Override
+    protected int doHashCode(int initial) {
+        int hs = initial;
         hs = xCH(hs, getTableDbName());
-        hs = xCH(hs, getPurchaseId());
+        hs = xCH(hs, _purchaseId);
         return hs;
     }
-    protected int xCH(int hs, Object vl) {
-        return FunCustodial.calculateHashcode(hs, vl);
-    }
 
-    /**
-     * {@inheritDoc}
-     */
-    public int instanceHash() {
-        return super.hashCode();
-    }
-
-    /**
-     * Convert to display string of entity's data. (no relation data)
-     * @return The display string of all columns and relation existences. (NotNull)
-     */
-    public String toString() {
-        return buildDisplayString(FunCustodial.toClassTitle(this), true, true);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String toStringWithRelation() {
+    @Override
+    protected String doBuildStringWithRelation(String li) {
         StringBuilder sb = new StringBuilder();
-        sb.append(toString());
-        String li = "\n  ";
         if (_member != null)
         { sb.append(li).append(xbRDS(_member, "member")); }
         if (_product != null)
         { sb.append(li).append(xbRDS(_product, "product")); }
         if (_summaryProduct != null)
         { sb.append(li).append(xbRDS(_summaryProduct, "summaryProduct")); }
-        if (_purchasePaymentList != null) { for (Entity et : _purchasePaymentList)
+        if (_purchasePaymentList != null) { for (PurchasePayment et : _purchasePaymentList)
         { if (et != null) { sb.append(li).append(xbRDS(et, "purchasePaymentList")); } } }
         return sb.toString();
     }
-    protected String xbRDS(Entity et, String name) { // buildRelationDisplayString()
-        return et.buildDisplayString(name, true, true);
-    }
 
-    /**
-     * {@inheritDoc}
-     */
-    public String buildDisplayString(String name, boolean column, boolean relation) {
+    @Override
+    protected String doBuildColumnString(String dm) {
         StringBuilder sb = new StringBuilder();
-        if (name != null) { sb.append(name).append(column || relation ? ":" : ""); }
-        if (column) { sb.append(buildColumnString()); }
-        if (relation) { sb.append(buildRelationString()); }
-        sb.append("@").append(Integer.toHexString(hashCode()));
-        return sb.toString();
-    }
-    protected String buildColumnString() {
-        StringBuilder sb = new StringBuilder();
-        String dm = ", ";
-        sb.append(dm).append(getPurchaseId());
-        sb.append(dm).append(getMemberId());
-        sb.append(dm).append(getProductId());
-        sb.append(dm).append(getPurchaseDatetime());
-        sb.append(dm).append(getPurchaseCount());
-        sb.append(dm).append(getPurchasePrice());
-        sb.append(dm).append(getPaymentCompleteFlg());
-        sb.append(dm).append(getRegisterDatetime());
-        sb.append(dm).append(getRegisterUser());
-        sb.append(dm).append(getUpdateDatetime());
-        sb.append(dm).append(getUpdateUser());
-        sb.append(dm).append(getVersionNo());
+        sb.append(dm).append(xfND(_purchaseId));
+        sb.append(dm).append(xfND(_memberId));
+        sb.append(dm).append(xfND(_productId));
+        sb.append(dm).append(xfND(_purchaseDatetime));
+        sb.append(dm).append(xfND(_purchaseCount));
+        sb.append(dm).append(xfND(_purchasePrice));
+        sb.append(dm).append(xfND(_paymentCompleteFlg));
+        sb.append(dm).append(xfND(_registerDatetime));
+        sb.append(dm).append(xfND(_registerUser));
+        sb.append(dm).append(xfND(_updateDatetime));
+        sb.append(dm).append(xfND(_updateUser));
+        sb.append(dm).append(xfND(_versionNo));
         if (sb.length() > dm.length()) {
             sb.delete(0, dm.length());
         }
         sb.insert(0, "{").append("}");
         return sb.toString();
     }
-    protected String buildRelationString() {
+
+    @Override
+    protected String doBuildRelationString(String dm) {
         StringBuilder sb = new StringBuilder();
-        String cm = ",";
-        if (_member != null) { sb.append(cm).append("member"); }
-        if (_product != null) { sb.append(cm).append("product"); }
-        if (_summaryProduct != null) { sb.append(cm).append("summaryProduct"); }
+        if (_member != null)
+        { sb.append(dm).append("member"); }
+        if (_product != null)
+        { sb.append(dm).append("product"); }
+        if (_summaryProduct != null)
+        { sb.append(dm).append("summaryProduct"); }
         if (_purchasePaymentList != null && !_purchasePaymentList.isEmpty())
-        { sb.append(cm).append("purchasePaymentList"); }
-        if (sb.length() > cm.length()) {
-            sb.delete(0, cm.length()).insert(0, "(").append(")");
+        { sb.append(dm).append("purchasePaymentList"); }
+        if (sb.length() > dm.length()) {
+            sb.delete(0, dm.length()).insert(0, "(").append(")");
         }
         return sb.toString();
     }
 
-    /**
-     * Clone entity instance using super.clone(). (shallow copy) 
-     * @return The cloned instance of this entity. (NotNull)
-     */
+    @Override
     public Purchase clone() {
-        try {
-            return (Purchase)super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new IllegalStateException("Failed to clone the entity: " + toString(), e);
-        }
+        return (Purchase)super.clone();
     }
 
     // ===================================================================================
@@ -608,6 +494,7 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @return The value of the column 'PURCHASE_ID'. (basically NotNull if selected: for the constraint)
      */
     public Long getPurchaseId() {
+        checkSpecifiedProperty("purchaseId");
         return _purchaseId;
     }
 
@@ -616,8 +503,8 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @param purchaseId The value of the column 'PURCHASE_ID'. (basically NotNull if update: for the constraint)
      */
     public void setPurchaseId(Long purchaseId) {
-        __modifiedProperties.addPropertyName("purchaseId");
-        this._purchaseId = purchaseId;
+        registerModifiedProperty("purchaseId");
+        _purchaseId = purchaseId;
     }
 
     /**
@@ -627,6 +514,7 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @return The value of the column 'MEMBER_ID'. (basically NotNull if selected: for the constraint)
      */
     public Integer getMemberId() {
+        checkSpecifiedProperty("memberId");
         return _memberId;
     }
 
@@ -637,8 +525,8 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @param memberId The value of the column 'MEMBER_ID'. (basically NotNull if update: for the constraint)
      */
     public void setMemberId(Integer memberId) {
-        __modifiedProperties.addPropertyName("memberId");
-        this._memberId = memberId;
+        registerModifiedProperty("memberId");
+        _memberId = memberId;
     }
 
     /**
@@ -647,6 +535,7 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @return The value of the column 'PRODUCT_ID'. (basically NotNull if selected: for the constraint)
      */
     public Integer getProductId() {
+        checkSpecifiedProperty("productId");
         return _productId;
     }
 
@@ -656,8 +545,8 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @param productId The value of the column 'PRODUCT_ID'. (basically NotNull if update: for the constraint)
      */
     public void setProductId(Integer productId) {
-        __modifiedProperties.addPropertyName("productId");
-        this._productId = productId;
+        registerModifiedProperty("productId");
+        _productId = productId;
     }
 
     /**
@@ -666,6 +555,7 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @return The value of the column 'PURCHASE_DATETIME'. (basically NotNull if selected: for the constraint)
      */
     public java.sql.Timestamp getPurchaseDatetime() {
+        checkSpecifiedProperty("purchaseDatetime");
         return _purchaseDatetime;
     }
 
@@ -675,8 +565,8 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @param purchaseDatetime The value of the column 'PURCHASE_DATETIME'. (basically NotNull if update: for the constraint)
      */
     public void setPurchaseDatetime(java.sql.Timestamp purchaseDatetime) {
-        __modifiedProperties.addPropertyName("purchaseDatetime");
-        this._purchaseDatetime = purchaseDatetime;
+        registerModifiedProperty("purchaseDatetime");
+        _purchaseDatetime = purchaseDatetime;
     }
 
     /**
@@ -685,6 +575,7 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @return The value of the column 'PURCHASE_COUNT'. (basically NotNull if selected: for the constraint)
      */
     public Integer getPurchaseCount() {
+        checkSpecifiedProperty("purchaseCount");
         return _purchaseCount;
     }
 
@@ -694,8 +585,8 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @param purchaseCount The value of the column 'PURCHASE_COUNT'. (basically NotNull if update: for the constraint)
      */
     public void setPurchaseCount(Integer purchaseCount) {
-        __modifiedProperties.addPropertyName("purchaseCount");
-        this._purchaseCount = purchaseCount;
+        registerModifiedProperty("purchaseCount");
+        _purchaseCount = purchaseCount;
     }
 
     /**
@@ -705,6 +596,7 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @return The value of the column 'PURCHASE_PRICE'. (basically NotNull if selected: for the constraint)
      */
     public Integer getPurchasePrice() {
+        checkSpecifiedProperty("purchasePrice");
         return _purchasePrice;
     }
 
@@ -715,8 +607,8 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @param purchasePrice The value of the column 'PURCHASE_PRICE'. (basically NotNull if update: for the constraint)
      */
     public void setPurchasePrice(Integer purchasePrice) {
-        __modifiedProperties.addPropertyName("purchasePrice");
-        this._purchasePrice = purchasePrice;
+        registerModifiedProperty("purchasePrice");
+        _purchasePrice = purchasePrice;
     }
 
     /**
@@ -725,6 +617,7 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @return The value of the column 'PAYMENT_COMPLETE_FLG'. (basically NotNull if selected: for the constraint)
      */
     public Integer getPaymentCompleteFlg() {
+        checkSpecifiedProperty("paymentCompleteFlg");
         return _paymentCompleteFlg;
     }
 
@@ -734,9 +627,9 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @param paymentCompleteFlg The value of the column 'PAYMENT_COMPLETE_FLG'. (basically NotNull if update: for the constraint)
      */
     protected void setPaymentCompleteFlg(Integer paymentCompleteFlg) {
-        checkImplicitSet("PAYMENT_COMPLETE_FLG", CDef.DefMeta.Flg, paymentCompleteFlg);
-        __modifiedProperties.addPropertyName("paymentCompleteFlg");
-        this._paymentCompleteFlg = paymentCompleteFlg;
+        checkClassificationCode("PAYMENT_COMPLETE_FLG", CDef.DefMeta.Flg, paymentCompleteFlg);
+        registerModifiedProperty("paymentCompleteFlg");
+        _paymentCompleteFlg = paymentCompleteFlg;
     }
 
     /**
@@ -744,6 +637,7 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @return The value of the column 'REGISTER_DATETIME'. (basically NotNull if selected: for the constraint)
      */
     public java.sql.Timestamp getRegisterDatetime() {
+        checkSpecifiedProperty("registerDatetime");
         return _registerDatetime;
     }
 
@@ -752,8 +646,8 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @param registerDatetime The value of the column 'REGISTER_DATETIME'. (basically NotNull if update: for the constraint)
      */
     public void setRegisterDatetime(java.sql.Timestamp registerDatetime) {
-        __modifiedProperties.addPropertyName("registerDatetime");
-        this._registerDatetime = registerDatetime;
+        registerModifiedProperty("registerDatetime");
+        _registerDatetime = registerDatetime;
     }
 
     /**
@@ -761,6 +655,7 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @return The value of the column 'REGISTER_USER'. (basically NotNull if selected: for the constraint)
      */
     public String getRegisterUser() {
+        checkSpecifiedProperty("registerUser");
         return convertEmptyToNull(_registerUser);
     }
 
@@ -769,8 +664,8 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @param registerUser The value of the column 'REGISTER_USER'. (basically NotNull if update: for the constraint)
      */
     public void setRegisterUser(String registerUser) {
-        __modifiedProperties.addPropertyName("registerUser");
-        this._registerUser = registerUser;
+        registerModifiedProperty("registerUser");
+        _registerUser = registerUser;
     }
 
     /**
@@ -778,6 +673,7 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @return The value of the column 'UPDATE_DATETIME'. (basically NotNull if selected: for the constraint)
      */
     public java.sql.Timestamp getUpdateDatetime() {
+        checkSpecifiedProperty("updateDatetime");
         return _updateDatetime;
     }
 
@@ -786,8 +682,8 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @param updateDatetime The value of the column 'UPDATE_DATETIME'. (basically NotNull if update: for the constraint)
      */
     public void setUpdateDatetime(java.sql.Timestamp updateDatetime) {
-        __modifiedProperties.addPropertyName("updateDatetime");
-        this._updateDatetime = updateDatetime;
+        registerModifiedProperty("updateDatetime");
+        _updateDatetime = updateDatetime;
     }
 
     /**
@@ -795,6 +691,7 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @return The value of the column 'UPDATE_USER'. (basically NotNull if selected: for the constraint)
      */
     public String getUpdateUser() {
+        checkSpecifiedProperty("updateUser");
         return convertEmptyToNull(_updateUser);
     }
 
@@ -803,8 +700,8 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @param updateUser The value of the column 'UPDATE_USER'. (basically NotNull if update: for the constraint)
      */
     public void setUpdateUser(String updateUser) {
-        __modifiedProperties.addPropertyName("updateUser");
-        this._updateUser = updateUser;
+        registerModifiedProperty("updateUser");
+        _updateUser = updateUser;
     }
 
     /**
@@ -812,6 +709,7 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @return The value of the column 'VERSION_NO'. (basically NotNull if selected: for the constraint)
      */
     public Long getVersionNo() {
+        checkSpecifiedProperty("versionNo");
         return _versionNo;
     }
 
@@ -820,15 +718,15 @@ public abstract class BsPurchase implements EntityDefinedCommonColumn, Serializa
      * @param versionNo The value of the column 'VERSION_NO'. (basically NotNull if update: for the constraint)
      */
     public void setVersionNo(Long versionNo) {
-        __modifiedProperties.addPropertyName("versionNo");
-        this._versionNo = versionNo;
+        registerModifiedProperty("versionNo");
+        _versionNo = versionNo;
     }
 
-    protected String convertEmptyToNull(String value) {
-        return FunCustodial.convertEmptyToNull(value);
-    }
-
-    protected void checkImplicitSet(String columnDbName, CDef.DefMeta meta, Object value) {
-        FunCustodial.checkImplicitSet(this, columnDbName, meta, value);
+    /**
+     * For framework so basically DON'T use this method.
+     * @param paymentCompleteFlg The value of the column 'PAYMENT_COMPLETE_FLG'. (basically NotNull if update: for the constraint)
+     */
+    public void mynativeMappingPaymentCompleteFlg(Integer paymentCompleteFlg) {
+        setPaymentCompleteFlg(paymentCompleteFlg);
     }
 }

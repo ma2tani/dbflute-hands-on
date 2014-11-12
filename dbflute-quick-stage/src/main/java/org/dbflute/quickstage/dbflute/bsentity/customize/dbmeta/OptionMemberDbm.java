@@ -21,9 +21,9 @@ import java.util.Map;
 import org.seasar.dbflute.DBDef;
 import org.seasar.dbflute.Entity;
 import org.seasar.dbflute.dbmeta.AbstractDBMeta;
-import org.seasar.dbflute.dbmeta.PropertyGateway;
 import org.seasar.dbflute.dbmeta.info.*;
 import org.seasar.dbflute.dbmeta.name.*;
+import org.seasar.dbflute.dbmeta.property.PropertyGateway;
 import org.dbflute.quickstage.dbflute.allcommon.*;
 import org.dbflute.quickstage.dbflute.exentity.customize.*;
 
@@ -84,7 +84,12 @@ public class OptionMemberDbm extends AbstractDBMeta {
         public void write(Entity et, Object vl) {
             ColumnInfo col = columnMemberStatusCode();
             ccls(col, vl);
-            ((OptionMember)et).setMemberStatusCodeAsMemberStatus((CDef.MemberStatus)gcls(col, vl));
+            CDef.MemberStatus cls = (CDef.MemberStatus)gcls(col, vl);
+            if (cls != null) {
+                ((OptionMember)et).setMemberStatusCodeAsMemberStatus(cls);
+            } else {
+                ((OptionMember)et).mynativeMappingMemberStatusCode((String)vl);
+            }
         }
     }
     public static class EpgMemberStatusName implements PropertyGateway {
@@ -100,7 +105,12 @@ public class OptionMemberDbm extends AbstractDBMeta {
         public void write(Entity et, Object vl) {
             ColumnInfo col = columnDummyFlg();
             ccls(col, vl);
-            ((OptionMember)et).setDummyFlgAsFlg((CDef.Flg)gcls(col, vl));
+            CDef.Flg cls = (CDef.Flg)gcls(col, vl);
+            if (cls != null) {
+                ((OptionMember)et).setDummyFlgAsFlg(cls);
+            } else {
+                ((OptionMember)et).mynativeMappingDummyFlg(ctn(vl, Integer.class));
+            }
         }
     }
     public static class EpgDummyNoflg implements PropertyGateway {
@@ -240,7 +250,7 @@ public class OptionMemberDbm extends AbstractDBMeta {
     // ===================================================================================
     //                                                                     Object Instance
     //                                                                     ===============
-    public Entity newEntity() { return newMyEntity(); }
+    public OptionMember newEntity() { return new OptionMember(); }
     public OptionMember newMyEntity() { return new OptionMember(); }
 
     // ===================================================================================

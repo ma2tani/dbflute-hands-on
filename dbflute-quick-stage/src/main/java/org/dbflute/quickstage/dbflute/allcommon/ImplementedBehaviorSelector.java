@@ -17,7 +17,7 @@ package org.dbflute.quickstage.dbflute.allcommon;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,6 +27,7 @@ import org.seasar.dbflute.dbmeta.DBMeta;
 import org.seasar.dbflute.exception.IllegalBehaviorStateException;
 import org.seasar.dbflute.util.DfTraceViewUtil;
 import org.seasar.dbflute.util.DfTypeUtil;
+import org.seasar.dbflute.util.Srl;
 
 import org.seasar.framework.container.S2Container;
 import org.seasar.framework.container.ComponentNotFoundRuntimeException;
@@ -46,8 +47,8 @@ public class ImplementedBehaviorSelector implements BehaviorSelector {
     // ===================================================================================
     //                                                                           Attribute
     //                                                                           =========
-    /** The cache of behavior. */
-    protected final Map<Class<? extends BehaviorReadable>, BehaviorReadable> _behaviorCache = newHashMap();
+    /** The concurrent cache of behavior. */
+    protected final Map<Class<? extends BehaviorReadable>, BehaviorReadable> _behaviorCache = newConcurrentHashMap();
 
     /** The container of Seasar. */
     protected S2Container _container;
@@ -172,6 +173,10 @@ public class ImplementedBehaviorSelector implements BehaviorSelector {
     // ===================================================================================
     //                                                                      General Helper
     //                                                                      ==============
+    protected String replace(String str, String fromStr, String toStr) {
+        return Srl.replace(str, fromStr, toStr);
+    }
+
     protected String initUncap(String str) {
         return str.substring(0, 1).toLowerCase() + str.substring(1);
     }
@@ -180,8 +185,8 @@ public class ImplementedBehaviorSelector implements BehaviorSelector {
         return DfTypeUtil.toClassTitle(obj);
     }
 
-    protected <KEY, VALUE> HashMap<KEY, VALUE> newHashMap() {
-        return new HashMap<KEY, VALUE>();
+    protected <KEY, VALUE> ConcurrentHashMap<KEY, VALUE> newConcurrentHashMap() {
+        return new ConcurrentHashMap<KEY, VALUE>();
     }
 
     // ===================================================================================
