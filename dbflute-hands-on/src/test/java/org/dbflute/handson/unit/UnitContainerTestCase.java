@@ -3,24 +3,17 @@ package org.dbflute.handson.unit;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.sql.DataSource;
 
-import org.seasar.dbflute.cbean.ListResultBean;
-import org.seasar.dbflute.cbean.SpecifyQuery;
-import org.seasar.dbflute.cbean.SubQuery;
-import org.seasar.dbflute.cbean.coption.LikeSearchOption;
-import org.seasar.dbflute.helper.HandyDate;
-import org.seasar.dbflute.unit.seasar.ContainerTestCase;
-
-import org.dbflute.handson.dbflute.cbean.MemberCB;
-import org.dbflute.handson.dbflute.cbean.PurchaseCB;
+import org.dbflute.cbean.result.ListResultBean;
 import org.dbflute.handson.dbflute.exbhv.MemberBhv;
 import org.dbflute.handson.dbflute.exbhv.PurchaseBhv;
 import org.dbflute.handson.dbflute.exentity.Member;
 import org.dbflute.handson.dbflute.exentity.Purchase;
+import org.dbflute.helper.HandyDate;
+import org.dbflute.utflute.seasar.ContainerTestCase;
 
 /**
  * The base class of unit test cases with DI container. <br />
@@ -59,14 +52,14 @@ public abstract class UnitContainerTestCase extends ContainerTestCase {
      * @param nameKeyword The keyword as contain-search to search members updated. (NotNull)
      * @param limit The limit count of updated member. (NotMinus & NotZero)
      */
-    protected void adjustMember_FormalizedDatetime_FirstOnly(Date formalizedDatetime, String nameKeyword) {
+    protected void adjustMember_FormalizedDatetime_FirstOnly(LocalDateTime formalizedDatetime, String nameKeyword) {
         assertNotNull(nameKeyword);
-        MemberCB cb = new MemberCB();
-        cb.query().setMemberName_LikeSearch(nameKeyword, new LikeSearchOption().likeContain());
-        cb.query().addOrderBy_MemberId_Asc();
-        cb.fetchFirst(1);
-        Member member = memberBhv.selectEntityWithDeletedCheck(cb);
-        member.setFormalizedDatetime(toTimestamp(formalizedDatetime));
+        Member member = memberBhv.selectEntityWithDeletedCheck(cb -> {
+            cb.query().setMemberName_LikeSearch(nameKeyword, op -> op.likeContain());
+            cb.query().addOrderBy_MemberId_Asc();
+            cb.fetchFirst(1);
+        });
+        member.setFormalizedDatetime(formalizedDatetime);
         memberBhv.updateNonstrict(member);
     }
 
@@ -77,47 +70,29 @@ public abstract class UnitContainerTestCase extends ContainerTestCase {
      * You can get the target data that has border line.
      */
     protected void adjustPurchase_PurchaseDatetime_fromFormalizedDatetimeInWeek() {
-        Member adjustedMember;
-        {
-            MemberCB cb = new MemberCB();
-            cb.query().existsPurchaseList(new SubQuery<PurchaseCB>() {
-                public void query(PurchaseCB subCB) {
-                }
-            });
-            // not to select existing in-week data
-            Date fromDate = toDate("2005-01-01");
-            Date toDate = toDate("2007-01-01");
-            cb.query().setFormalizedDatetime_DateFromTo(fromDate, toDate);
+        // not to select existing in-week data
+        LocalDateTime fromDate = toLocalDateTime("2005-01-01");
+        LocalDateTime toDate = toLocalDateTime("2007-01-01");
+        Member adjustedMember = memberBhv.selectEntityWithDeletedCheck(cb -> {
+            cb.query().existsPurchase(purchaseCB -> {});
+            cb.query().setFormalizedDatetime_FromTo(fromDate, toDate, op -> op.compareAsDate());
             cb.fetchFirst(1);
-            adjustedMember = memberBhv.selectEntityWithDeletedCheck(cb);
-        }
-
-        ListResultBean<Purchase> updatedPurchaseList;
-        {
-            PurchaseCB cb = new PurchaseCB();
-            cb.query().setMemberId_Equal(adjustedMember.getMemberId());
-            cb.query().scalar_Equal().max(new SubQuery<PurchaseCB>() {
-                public void query(PurchaseCB subCB) {
-                    subCB.specify().columnPurchaseDatetime();
-                }
-            }).partitionBy(new SpecifyQuery<PurchaseCB>() {
-                public void specify(PurchaseCB cb) {
-                    cb.specify().columnMemberId();
-                }
-            });
-            updatedPurchaseList = purchaseBhv.selectList(cb);
-        }
-
-        HandyDate handyDate = new HandyDate(adjustedMember.getFormalizedDatetime());
-        Timestamp movedDatetime = handyDate.addDay(7).moveToDayTerminal().moveToSecondJust().getTimestamp();
-        for (Purchase purchase : updatedPurchaseList) {
-            purchase.setPurchaseDatetime(movedDatetime);
-        }
-        purchaseBhv.batchUpdateNonstrict(updatedPurchaseList, new SpecifyQuery<PurchaseCB>() {
-            public void specify(PurchaseCB cb) {
-                cb.specify().columnPurchaseDatetime();
-            }
         });
+
+        ListResultBean<Purchase> updatedPurchaseList = purchaseBhv.selectList(cb -> {
+            cb.query().setMemberId_Equal(adjustedMember.getMemberId());
+            cb.query().scalar_Equal().max(purCB -> {
+                purCB.specify().columnPurchaseDatetime();
+            }).partitionBy(purCB -> {
+                purCB.specify().columnMemberId();
+            });
+        });
+        HandyDate handyDate = new HandyDate(adjustedMember.getFormalizedDatetime(), getUnitTimeZone());
+        LocalDateTime movedDatetime = handyDate.addDay(7).moveToDayTerminal().moveToSecondJust().getLocalDateTime();
+        updatedPurchaseList.forEach(purchase -> {
+            purchase.setPurchaseDatetime(movedDatetime);
+        });
+        purchaseBhv.batchUpdate(updatedPurchaseList);
     }
 
     /**

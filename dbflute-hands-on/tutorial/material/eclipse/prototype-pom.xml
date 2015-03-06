@@ -12,9 +12,9 @@
 
 	<properties>
 		<seasar.version>2.4.46</seasar.version>
-		<dbflute.version>1.0.0</dbflute.version>
+		<dbflute.version>1.1.0</dbflute.version>
 		<mysql.jdbc.version>5.1.33</mysql.jdbc.version>
-		<utflute.version>0.4.8</utflute.version>
+		<utflute.version>0.5.0</utflute.version>
 	</properties>
 
 	<url>http://dbflute.seasar.org/ja/tutorial/handson/index.html</url>
@@ -34,8 +34,8 @@
 				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<configuration>
-						<source>1.6</source>
-						<target>1.6</target>
+						<source>1.8</source>
+						<target>1.8</target>
 						<encoding>UTF-8</encoding>
 					</configuration>
 				</plugin>
@@ -95,11 +95,21 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.seasar.dbflute</groupId>
+				<groupId>org.seasar.uruma</groupId>
+				<artifactId>maven-eclipath-plugin</artifactId>
+				<version>0.0.10</version>
+				<configuration>
+					<downloadJavadocs>false</downloadJavadocs>
+					<autoRefresh>true</autoRefresh>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.dbflute</groupId>
 				<artifactId>dbflute-maven-plugin</artifactId>
-				<version>1.0.0</version>
+				<version>1.1.0-RC2</version>
 				<configuration>
 					<clientProject>exampledb</clientProject>
+					<packageBase>org.dbflute.handson.dbflute</packageBase>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -175,7 +185,7 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.seasar.dbflute</groupId>
+			<groupId>org.dbflute</groupId>
 			<artifactId>dbflute-runtime</artifactId>
 			<version>${dbflute.version}</version>
 		</dependency>
@@ -224,7 +234,7 @@
 		<!-- |   test   | -->
 		<!-- ============ -->
         <dependency>
-            <groupId>org.seasar.dbflute</groupId>
+            <groupId>org.dbflute.utflute</groupId>
             <artifactId>utflute-seasar</artifactId>
             <version>${utflute.version}</version>
             <scope>test</scope>
