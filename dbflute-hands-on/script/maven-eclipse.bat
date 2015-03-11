@@ -7,6 +7,6 @@ cmd /c mvn -e eclipse:eclipse
 
 :: refreshing this eclipse project
 set pause_at_end=n
-call dbflute_exampledb/manage.bat refresh
+call dbflute_maihamadb/manage.bat refresh
 
 pause

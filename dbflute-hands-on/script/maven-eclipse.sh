@@ -5,4 +5,4 @@ cd ..
 
 mvn -e eclipse:eclipse
 
-sh dbflute_exampledb/manage.sh refresh
+sh dbflute_maihamadb/manage.sh refresh

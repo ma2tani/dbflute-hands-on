@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.dbflute</groupId>
+	<groupId>org.docksidestage.handson</groupId>
 	<artifactId>dbflute-hands-on</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -12,9 +12,9 @@
 
 	<properties>
 		<seasar.version>2.4.46</seasar.version>
-		<dbflute.version>1.1.0</dbflute.version>
+		<dbflute.version>1.1.0-sp1</dbflute.version>
 		<mysql.jdbc.version>5.1.33</mysql.jdbc.version>
-		<utflute.version>0.5.0</utflute.version>
+		<utflute.version>0.5.0-sp1</utflute.version>
 	</properties>
 
 	<url>http://dbflute.seasar.org/ja/tutorial/handson/index.html</url>
@@ -95,21 +95,12 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.seasar.uruma</groupId>
-				<artifactId>maven-eclipath-plugin</artifactId>
-				<version>0.0.10</version>
-				<configuration>
-					<downloadJavadocs>false</downloadJavadocs>
-					<autoRefresh>true</autoRefresh>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.dbflute</groupId>
 				<artifactId>dbflute-maven-plugin</artifactId>
 				<version>1.1.0-RC3</version>
 				<configuration>
-					<clientProject>exampledb</clientProject>
-					<packageBase>org.dbflute.handson.dbflute</packageBase>
+					<clientProject>maihamadb</clientProject>
+					<packageBase>org.docksidestage.handson.dbflute</packageBase>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -170,9 +161,23 @@
 	</pluginRepositories>
 
 	<dependencies>
-		<!-- =============== -->
-		<!-- |   compile   | -->
-		<!-- =============== -->
+		<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = -->
+		<!--                                                                Main Framework -->
+		<!--                                                                 = = = = = = = -->
+		<!-- database -->
+		<dependency>
+			<groupId>org.dbflute</groupId>
+			<artifactId>dbflute-runtime</artifactId>
+			<version>${dbflute.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.jdbc.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- container -->
 		<dependency>
 			<groupId>org.seasar.container</groupId>
 			<artifactId>s2-tiger</artifactId>
@@ -183,27 +188,6 @@
 					<artifactId>easymock</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.dbflute</groupId>
-			<artifactId>dbflute-runtime</artifactId>
-			<version>${dbflute.version}</version>
-		</dependency>
-
-		<!-- =============== -->
-		<!-- |   runtime   | -->
-		<!-- =============== -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.7</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>${mysql.jdbc.version}</version>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -230,12 +214,20 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- ============ -->
-		<!-- |   test   | -->
-		<!-- ============ -->
+		<!-- logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.7</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = -->
+		<!--                                                                       Testing -->
+		<!--                                                                       = = = = -->
         <dependency>
             <groupId>org.dbflute.utflute</groupId>
-            <artifactId>utflute-seasar</artifactId>
+            <artifactId>utflute-core</artifactId>
             <version>${utflute.version}</version>
             <scope>test</scope>
         </dependency>

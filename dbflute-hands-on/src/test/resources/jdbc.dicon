@@ -12,10 +12,10 @@
 			"com.mysql.jdbc.Driver"
 		</property>
 		<property name="URL">
-			"jdbc:mysql://localhost:43376/exampledb"
+			"jdbc:mysql://localhost:43376/maihamadb"
 		</property>
-		<property name="user">"exampuser"</property>
-		<property name="password">"exampword"</property>
+		<property name="user">"maihamadb"</property>
+		<property name="password">"maihamadb"</property>
 	</component>
 
 	<component name="connectionPool"
