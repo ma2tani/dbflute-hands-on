@@ -12,9 +12,9 @@
 
 	<properties>
 		<seasar.version>2.4.46</seasar.version>
-		<dbflute.version>1.1.0-sp1</dbflute.version>
+		<dbflute.version>1.1.0</dbflute.version>
 		<mysql.jdbc.version>5.1.33</mysql.jdbc.version>
-		<utflute.version>0.5.0-sp1</utflute.version>
+		<utflute.version>0.5.0-sp6</utflute.version>
 	</properties>
 
 	<url>http://dbflute.seasar.org/ja/tutorial/handson/index.html</url>
