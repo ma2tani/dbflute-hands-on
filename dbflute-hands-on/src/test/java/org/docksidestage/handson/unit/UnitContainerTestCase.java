@@ -9,7 +9,7 @@ import javax.sql.DataSource;
 
 import org.dbflute.cbean.result.ListResultBean;
 import org.dbflute.helper.HandyDate;
-import org.dbflute.utflute.seasar.ContainerTestCase;
+import org.dbflute.utflute.lastadi.ContainerTestCase;
 import org.docksidestage.handson.dbflute.exbhv.MemberBhv;
 import org.docksidestage.handson.dbflute.exbhv.PurchaseBhv;
 import org.docksidestage.handson.dbflute.exentity.Member;
