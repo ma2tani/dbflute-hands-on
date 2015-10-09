@@ -143,6 +143,9 @@
 			<version>${lasta.di.version}</version>
 		</dependency>
 
+		<!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = -->
+		<!--                                                               Partner Library -->
+		<!--                                                               = = = = = = = = -->
 		<!-- transaction -->
 		<dependency>
 			<groupId>javax.transaction</groupId>
