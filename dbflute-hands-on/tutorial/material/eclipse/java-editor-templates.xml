@@ -12,7 +12,7 @@ public HtmlResponse ${method}(${form}Form form) {
     , org.lastaflute.web.response.HtmlResponse)}@Execute
 public HtmlResponse index(long ${object}Id) {
     return asHtml(path_${newName});
-}</template><template autoinsert="true" context="java" deleted="false" description="LastaFlute: Execute Method as JSON response with Form" enabled="true" name="_lajsform">${:import(org.lastaflute.web.Execute
+}</template><template autoinsert="true" context="java" deleted="false" description="LastaFlute: Execute Method as JSON response with Body" enabled="true" name="_lajsform">${:import(org.lastaflute.web.Execute
     , org.lastaflute.web.response.JsonResponse)}@Execute
 public JsonResponse&lt;${bean}&gt; ${method}(${body}Body body) {
     return asJson(bean);
@@ -160,7 +160,7 @@ ${combo}.setItems(${word_selection}${});
 ${imp:import(org.eclipse.swt.SWT)}${cursor}</template><template autoinsert="false" context="swt-statements" deleted="false" description="new Composite with GridLayout" enabled="true" id="org.eclipse.jdt.ui.text.codetemplates.swt.gridcomposite" name="Composite">${compositeType:newType(org.eclipse.swt.widgets.Composite)} ${composite:newName(org.eclipse.swt.widgets.Composite)}= new ${compositeType}(${parent:var(org.eclipse.swt.widgets.Composite)}, ${style:link(SWT.NONE, SWT.BORDER)});
 ${composite}.setLayoutData(new ${gridDataType:newType(org.eclipse.swt.layout.GridData)}(SWT.${horizontal:link(FILL, BEGINNING, CENTER, END)}, SWT.${vertical:link(FILL, TOP, CENTER, BOTTOM)}, ${hex:link(true, false)}, ${vex:link(true, false)}));
 ${composite}.setLayout(new ${layoutType:newType(org.eclipse.swt.layout.GridLayout)}(${numberColumns:link(1, 2, 3, 4, 5)}, ${equalColumns:link(false, true)}));
-${imp:import(org.eclipse.swt.SWT)}${cursor}</template><template autoinsert="true" context="java" deleted="false" description="DBFlute: Trick for Configuration" enabled="true" name="confLambda">conf -&gt; conf.${method}</template><template autoinsert="true" context="java" deleted="false" description="LastaFlute: renderWith()" enabled="true" name="dataLambda">data -&gt; {
+${imp:import(org.eclipse.swt.SWT)}${cursor}</template><template autoinsert="true" context="java" deleted="false" description="DBFlute: Trick for Configuration" enabled="true" name="confLambda">conf -&gt; conf.${method}</template><template autoinsert="true" context="java" deleted="false" description="LastaFlute: Trick for renderWith()" enabled="true" name="dataLambda">data -&gt; {
     data.register(${nameOfData}, ${var});
 }</template><template autoinsert="false" context="swt-statements" deleted="false" description="new DateTime" enabled="true" id="org.eclipse.jdt.ui.text.codetemplates.swt.datetime" name="DateTime">${dateType:newType(org.eclipse.swt.widgets.DateTime)} ${dateTime:newName(org.eclipse.swt.widgets.DateTime)}= new ${dateType}(${parent:var(org.eclipse.swt.widgets.Composite)}, ${style:link('SWT.CALENDAR | SWT.SHORT', 'SWT.CALENDAR | SWT.MEDIUM', 'SWT.CALENDAR | SWT.LONG', 'SWT.TIME | SWT.SHORT', 'SWT.TIME | SWT.MEDIUM', 'SWT.TIME | SWT.LONG', 'SWT.DATE | SWT.SHORT', 'SWT.DATE | SWT.MEDIUM', 'SWT.DATE | SWT.LONG')});
 ${dateTime}.setLayoutData(new ${gridDataType:newType(org.eclipse.swt.layout.GridData)}(SWT.${horizontal:link(FILL, BEGINNING, CENTER, END)}, SWT.${vertical:link(FILL, TOP, CENTER, BOTTOM)}, ${hex:link(true, false)}, ${vex:link(true, false)}));
@@ -268,7 +268,7 @@ while (!${shell}.isDisposed()) {
 }
 ${display}.dispose();</template><template autoinsert="true" context="java" deleted="false" description="DBFlute: Trick for many arguments" enabled="true" name="manyArgLambda">(${arg1}, ${arg2}) -&gt; {
     ${cursor}
-}</template><template autoinsert="true" context="java" deleted="false" description="LastaFlute: more validation" enabled="true" name="moreValidationLambda">messages -&gt; {}</template><template autoinsert="false" context="java" deleted="false" description="create new object" enabled="true" id="org.eclipse.jdt.ui.templates.new" name="new">${type} ${name} = new ${type}(${});</template><template autoinsert="false" context="java" deleted="false" description="non-externalized string marker" enabled="true" id="org.eclipse.jdt.ui.templates.non-nls" name="nls">//$$NON-NLS-${N}$$</template><template autoinsert="true" context="java" deleted="false" description="DBFlute: Trick for no-argument1" enabled="true" name="noArg1Lambda">() -&gt; {
+}</template><template autoinsert="true" context="java" deleted="false" description="LastaFlute: Trick for more validation" enabled="true" name="moreValidationLambda">messages -&gt; {}</template><template autoinsert="false" context="java" deleted="false" description="create new object" enabled="true" id="org.eclipse.jdt.ui.templates.new" name="new">${type} ${name} = new ${type}(${});</template><template autoinsert="false" context="java" deleted="false" description="non-externalized string marker" enabled="true" id="org.eclipse.jdt.ui.templates.non-nls" name="nls">//$$NON-NLS-${N}$$</template><template autoinsert="true" context="java" deleted="false" description="DBFlute: Trick for no-argument1" enabled="true" name="noArg1Lambda">() -&gt; {
     ${cursor}
 }</template><template autoinsert="true" context="java" deleted="false" description="DBFlute: Trick for no-argument2" enabled="true" name="noArg2Lambda">() -&gt; {
     ${cursor}
@@ -282,7 +282,7 @@ ${display}.dispose();</template><template autoinsert="true" context="java" delet
     ${var}.${method}
 }</template><template autoinsert="true" context="java" deleted="false" description="DBFlute: Trick for ConditionOption" enabled="true" name="opLambda">op -&gt; op.${method}</template><template autoinsert="true" context="java" deleted="false" description="DBFlute: Trick for OrScopeQuery" enabled="true" name="orCBLambda">orCB -&gt; {
     orCB.query().set${columnName}
-}</template><template autoinsert="true" context="java" deleted="false" description="LastaFlute: Mail Postcard" enabled="true" name="postcardLambda">postcard -&gt; {
+}</template><template autoinsert="true" context="java" deleted="false" description="LastaFlute: Trick for Mail Postcard" enabled="true" name="postcardLambda">postcard -&gt; {
     postcard.setFrom(${fromAddress}, ${personal});
     postcard.addTo(${toAddress});
 }</template><template autoinsert="false" context="java-members" deleted="false" description="private method" enabled="true" id="org.eclipse.jdt.ui.templates.private_method" name="private_method">private ${return_type} ${name}(${}) {
@@ -415,11 +415,13 @@ ${imp:import(org.eclipse.swt.SWT)}${cursor}</template><template autoinsert="true
 	${line_selection}${cursor}
 } finally {
 	// ${todo}: handle finally clause
+}</template><template autoinsert="true" context="java" deleted="false" description="LastaFlute: Trick for Transaction Stage" enabled="true" name="txLambda">tx -&gt; {
+    ${cursor}
 }</template><template autoinsert="true" context="java" deleted="false" description="DBFlute: Trick for Union" enabled="true" name="unionCBLambda">unionCB -&gt; {
     unionCB.query().set${columnName}
-}</template><template autoinsert="true" context="java" deleted="false" description="LastaFlute: validation error" enabled="true" name="validationErrorLambda">() -&gt; {
+}</template><template autoinsert="true" context="java" deleted="false" description="LastaFlute: Trick for Validation Error" enabled="true" name="validationErrorLambda">() -&gt; {
     return asHtml(path_${newName});
-}</template><template autoinsert="true" context="java" deleted="false" description="LastaFlute: Validation Messages" enabled="true" name="validationMessagesLambda">messages -&gt; messages.addConstraints${newName}</template><template autoinsert="false" context="java-statements" deleted="false" description="iterate with enumeration" enabled="true" id="org.eclipse.jdt.ui.templates.while_enumeration" name="while">while (${en:var(java.util.Enumeration)}.hasMoreElements()) {
+}</template><template autoinsert="true" context="java" deleted="false" description="LastaFlute: Trick for Validation Messages" enabled="true" name="validationMessagesLambda">messages -&gt; messages.add${newName}</template><template autoinsert="false" context="java-statements" deleted="false" description="iterate with enumeration" enabled="true" id="org.eclipse.jdt.ui.templates.while_enumeration" name="while">while (${en:var(java.util.Enumeration)}.hasMoreElements()) {
 	${type:argType(en)} ${elem:newName(type)} = (${type}) ${en}.nextElement();
 	${cursor}
 }</template><template autoinsert="false" context="java-statements" deleted="false" description="iterate with iterator" enabled="true" id="org.eclipse.jdt.ui.templates.while_iterator" name="while">while (${it:var(java.util.Iterator)}.hasNext()) {
@@ -427,4 +429,8 @@ ${imp:import(org.eclipse.swt.SWT)}${cursor}</template><template autoinsert="true
 	${cursor}
 }</template><template autoinsert="false" context="java-statements" deleted="false" description="while loop with condition" enabled="true" id="org.eclipse.jdt.ui.templates.while_condition" name="while">while (${condition:var(boolean)}) {
 	${line_selection}${cursor}
+}</template><template autoinsert="true" context="java" deleted="false" description="LastaFlute: Trick for Writtern Stream" enabled="true" name="writtenStreamLambda">${:import(java.io.InputStream)}out -&gt; {
+    try (InputStream ins = ${newName}) {
+        out.write(ins);
+    }
 }</template></templates>
