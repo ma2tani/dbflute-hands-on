@@ -7,7 +7,7 @@
   <property name="domain.name" value="handson"/>
   <property name="log.level" value="debug"/>
   <property name="log.pattern" value="%d [%t] %-5p \\(%C{0}@%M\\(\\):%L\\) - %m%n"/>
-  <property name="log.file.basedir" value="-/tmp/dbflute/handson"/>
+  <property name="log.file.basedir" value="/tmp/dbflute/handson"/>
   <property name="backup.date.suffix" value="_%d{yyyyMMdd}"/>
   <property name="backup.max.history" value="180"/>
 
