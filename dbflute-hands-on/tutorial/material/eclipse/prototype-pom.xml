@@ -165,12 +165,12 @@
 		<!--                                                                       Testing -->
 		<!--                                                                       = = = = -->
 		<!-- unit test -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8.2</version> <!-- is latest version without hamcrest -->
-            <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version> <!-- is latest version without hamcrest -->
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.dbflute.utflute</groupId>
 			<artifactId>utflute-lasta-di</artifactId>
